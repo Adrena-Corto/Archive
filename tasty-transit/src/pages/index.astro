@@ -1,0 +1,61 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ItemGrid from '../components/ItemGrid.astro';
+import { getFeaturedItems, getAllItems } from '../lib/items';
+
+const featuredItems = getFeaturedItems();
+const allItems = getAllItems();
+const displayItems = featuredItems.length > 0 ? featuredItems : allItems.slice(0, 6);
+---
+
+<BaseLayout title="Collection | Antiques & Coins">
+  <section class="relative h-[60vh] min-h-[400px] flex items-center justify-center bg-charcoal/5">
+    <div class="text-center px-6">
+      <h1 class="font-serif text-5xl md:text-7xl tracking-tight mb-6">
+        The Collection
+      </h1>
+      <p class="text-lg md:text-xl text-charcoal/70 max-w-2xl mx-auto mb-10">
+        A curated selection of ancient coins, jewelry, cylinder seals, and historical artifacts spanning millennia of human civilization.
+      </p>
+      <a
+        href="/collection"
+        class="inline-block border border-charcoal px-8 py-3 text-sm uppercase tracking-widest hover:bg-charcoal hover:text-cream transition-colors duration-300"
+      >
+        Browse Collection
+      </a>
+    </div>
+  </section>
+
+  <section class="container-narrow py-20">
+    <div class="flex items-end justify-between mb-12">
+      <div>
+        <h2 class="font-serif text-3xl md:text-4xl">Featured Pieces</h2>
+        <p class="text-charcoal/60 mt-2">Highlights from the collection</p>
+      </div>
+      <a href="/collection" class="link-subtle text-sm uppercase tracking-widest">
+        View All →
+      </a>
+    </div>
+
+    <ItemGrid items={displayItems} columns={3} />
+  </section>
+
+  <section class="bg-charcoal/5 py-20">
+    <div class="container-narrow">
+      <div class="grid md:grid-cols-3 gap-12 text-center">
+        <div>
+          <p class="font-serif text-4xl text-gold mb-2">{allItems.length}</p>
+          <p class="text-sm uppercase tracking-widest text-charcoal/60">Items</p>
+        </div>
+        <div>
+          <p class="font-serif text-4xl text-gold mb-2">5000+</p>
+          <p class="text-sm uppercase tracking-widest text-charcoal/60">Years of History</p>
+        </div>
+        <div>
+          <p class="font-serif text-4xl text-gold mb-2">5</p>
+          <p class="text-sm uppercase tracking-widest text-charcoal/60">Categories</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

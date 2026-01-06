@@ -1,0 +1,21 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Search from '../components/Search.astro';
+---
+
+<BaseLayout title="Search | Collection">
+  <section class="container-narrow py-16">
+    <div class="mb-8">
+      <h1 class="font-serif text-4xl md:text-5xl mb-4">Search</h1>
+      <p class="text-charcoal/60 text-lg">
+        Find items by name, description, material, origin, or any other detail.
+      </p>
+    </div>
+
+    <Search />
+  </section>
+</BaseLayout>
+
+<style>
+  @import '@pagefind/default-ui/css/ui.css';
+</style>

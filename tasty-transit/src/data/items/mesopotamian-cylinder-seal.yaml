@@ -1,0 +1,21 @@
+id: mesopotamian-cylinder-seal
+name: "Mesopotamian Cylinder Seal - Contest Scene"
+category: seal
+era: "2400-2200 BC"
+period: "Akkadian"
+origin: "Mesopotamia"
+material: serpentine
+weight: "12g"
+dimensions: "24mm height, 14mm diameter"
+condition: "Good, minor chips"
+description: "A finely carved serpentine cylinder seal depicting a contest scene between a hero figure and rearing lions. The hero, shown nude with elaborate curled hair and beard in Akkadian style, grasps the lions by their manes. A guilloche pattern borders the scene. When rolled across wet clay, produces a continuous frieze."
+images:
+  - cylinder-seal-akkadian.jpg
+  - cylinder-seal-impression.jpg
+tags:
+  - akkadian
+  - cylinder seal
+  - mesopotamia
+  - contest scene
+  - ancient near east
+featured: true

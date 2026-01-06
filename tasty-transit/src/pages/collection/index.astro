@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ItemGrid from '../../components/ItemGrid.astro';
+import FilterBar from '../../components/FilterBar.astro';
+import { getAllItems } from '../../lib/items';
+
+const items = getAllItems();
+---
+
+<BaseLayout title="Browse Collection | Antiques & Coins">
+  <section class="container-narrow py-16">
+    <div class="mb-12">
+      <h1 class="font-serif text-4xl md:text-5xl mb-4">Browse Collection</h1>
+      <p class="text-charcoal/60 text-lg">
+        Explore {items.length} pieces spanning ancient civilizations to the modern era.
+      </p>
+    </div>
+
+    <FilterBar />
+
+    <ItemGrid items={items} columns={3} />
+  </section>
+</BaseLayout>

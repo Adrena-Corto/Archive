@@ -1,0 +1,46 @@
+---
+import type { Item } from '../lib/items';
+
+interface Props {
+  item: Item;
+}
+
+const { item } = Astro.props;
+const imagePath = item.images[0] ? `/images/items/${item.id}/${item.images[0]}` : '/images/placeholder.svg';
+
+const categoryLabels: Record<Item['category'], string> = {
+  coin: 'Coin',
+  jewelry: 'Jewelry',
+  ring: 'Ring',
+  seal: 'Seal',
+  misc: 'Miscellaneous',
+};
+---
+
+<a
+  href={`/item/${item.id}`}
+  class="group block bg-white rounded-sm overflow-hidden card-hover"
+  data-category={item.category}
+  data-material={item.material}
+  data-period={item.period}
+>
+  <div class="aspect-square bg-neutral-100 overflow-hidden">
+    <img
+      src={imagePath}
+      alt={item.name}
+      class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+      loading="lazy"
+    />
+  </div>
+  <div class="p-4">
+    <p class="text-xs uppercase tracking-widest text-charcoal/50 mb-1">
+      {categoryLabels[item.category]} · {item.period}
+    </p>
+    <h3 class="font-serif text-lg leading-tight group-hover:text-gold transition-colors">
+      {item.name}
+    </h3>
+    <p class="text-sm text-charcoal/60 mt-2">
+      {item.origin}
+    </p>
+  </div>
+</a>

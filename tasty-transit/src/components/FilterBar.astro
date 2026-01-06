@@ -1,0 +1,87 @@
+---
+import { getAllCategories, getAllMaterials, getAllPeriods } from '../lib/items';
+
+const categories = getAllCategories();
+const materials = getAllMaterials();
+const periods = getAllPeriods();
+
+const categoryLabels: Record<string, string> = {
+  coin: 'Coins',
+  jewelry: 'Jewelry',
+  ring: 'Rings',
+  seal: 'Seals',
+  misc: 'Miscellaneous',
+};
+---
+
+<div
+  x-data="{
+    category: 'all',
+    material: 'all',
+    period: 'all',
+    filterItems() {
+      const items = document.querySelectorAll('[data-category]');
+      items.forEach(item => {
+        const matchCategory = this.category === 'all' || item.dataset.category === this.category;
+        const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
+        const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
+        item.style.display = (matchCategory && matchMaterial && matchPeriod) ? '' : 'none';
+      });
+    }
+  }"
+  x-init="filterItems()"
+  class="flex flex-wrap items-center gap-6 mb-12 pb-6 border-b border-charcoal/10"
+>
+  <div class="flex items-center gap-2">
+    <label class="text-xs uppercase tracking-widest text-charcoal/50">Category</label>
+    <select
+      x-model="category"
+      @change="filterItems()"
+      class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold"
+    >
+      <option value="all">All</option>
+      {categories.map((cat) => (
+        <option value={cat}>{categoryLabels[cat] || cat}</option>
+      ))}
+    </select>
+  </div>
+
+  {materials.length > 0 && (
+    <div class="flex items-center gap-2">
+      <label class="text-xs uppercase tracking-widest text-charcoal/50">Material</label>
+      <select
+        x-model="material"
+        @change="filterItems()"
+        class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold capitalize"
+      >
+        <option value="all">All</option>
+        {materials.map((mat) => (
+          <option value={mat} class="capitalize">{mat}</option>
+        ))}
+      </select>
+    </div>
+  )}
+
+  {periods.length > 0 && (
+    <div class="flex items-center gap-2">
+      <label class="text-xs uppercase tracking-widest text-charcoal/50">Period</label>
+      <select
+        x-model="period"
+        @change="filterItems()"
+        class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold"
+      >
+        <option value="all">All</option>
+        {periods.map((p) => (
+          <option value={p}>{p}</option>
+        ))}
+      </select>
+    </div>
+  )}
+
+  <button
+    @click="category = 'all'; material = 'all'; period = 'all'; filterItems()"
+    class="text-xs uppercase tracking-widest text-charcoal/50 hover:text-charcoal transition-colors ml-auto"
+  >
+    Clear Filters
+  </button>
+</div>

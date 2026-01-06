@@ -1,0 +1,147 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getAllItems, getItemById } from '../../lib/items';
+import type { Item } from '../../lib/items';
+
+export async function getStaticPaths() {
+  const items = getAllItems();
+  return items.map((item) => ({
+    params: { id: item.id },
+    props: { item },
+  }));
+}
+
+interface Props {
+  item: Item;
+}
+
+const { item } = Astro.props;
+
+const categoryLabels: Record<Item['category'], string> = {
+  coin: 'Coin',
+  jewelry: 'Jewelry',
+  ring: 'Ring',
+  seal: 'Seal',
+  misc: 'Miscellaneous',
+};
+
+const allItems = getAllItems();
+const currentIndex = allItems.findIndex(i => i.id === item.id);
+const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
+const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
+---
+
+<BaseLayout title={`${item.name} | Collection`} description={item.description}>
+  <article class="container-narrow py-16" data-pagefind-body>
+    <nav class="mb-8" data-pagefind-ignore>
+      <a href={`${import.meta.env.BASE_URL}/collection`} class="link-subtle text-sm uppercase tracking-widest">
+        ← Back to Collection
+      </a>
+    </nav>
+
+    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+      <div class="space-y-4">
+        {item.images.map((image, index) => (
+          <div class="bg-neutral-100 rounded-sm overflow-hidden">
+            <img
+              src={`/images/items/${item.id}/${image}`}
+              alt={`${item.name} - Image ${index + 1}`}
+              class="w-full h-auto"
+              loading={index === 0 ? 'eager' : 'lazy'}
+            />
+          </div>
+        ))}
+        {item.images.length === 0 && (
+          <div class="aspect-square bg-neutral-100 flex items-center justify-center text-charcoal/30">
+            No image available
+          </div>
+        )}
+      </div>
+
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <p class="text-xs uppercase tracking-widest text-charcoal/50 mb-2">
+          {categoryLabels[item.category]} · {item.period}
+        </p>
+
+        <h1 class="font-serif text-3xl md:text-4xl mb-6" data-pagefind-meta="title">{item.name}</h1>
+        <span data-pagefind-meta={`category:${categoryLabels[item.category]}`} class="hidden"></span>
+        <span data-pagefind-meta={`period:${item.period}`} class="hidden"></span>
+        <span data-pagefind-meta={`origin:${item.origin}`} class="hidden"></span>
+        <span data-pagefind-meta={`material:${item.material}`} class="hidden"></span>
+
+        <div class="prose prose-charcoal mb-8">
+          <p class="text-charcoal/80 leading-relaxed">{item.description}</p>
+        </div>
+
+        <div class="border-t border-charcoal/10 pt-8 space-y-4">
+          <h2 class="text-xs uppercase tracking-widest text-charcoal/50 mb-4">Details</h2>
+
+          <dl class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+            <div>
+              <dt class="text-charcoal/50">Era</dt>
+              <dd class="font-medium">{item.era}</dd>
+            </div>
+            <div>
+              <dt class="text-charcoal/50">Period</dt>
+              <dd class="font-medium">{item.period}</dd>
+            </div>
+            <div>
+              <dt class="text-charcoal/50">Origin</dt>
+              <dd class="font-medium">{item.origin}</dd>
+            </div>
+            <div>
+              <dt class="text-charcoal/50">Material</dt>
+              <dd class="font-medium capitalize">{item.material}</dd>
+            </div>
+            {item.weight && (
+              <div>
+                <dt class="text-charcoal/50">Weight</dt>
+                <dd class="font-medium">{item.weight}</dd>
+              </div>
+            )}
+            {item.dimensions && (
+              <div>
+                <dt class="text-charcoal/50">Dimensions</dt>
+                <dd class="font-medium">{item.dimensions}</dd>
+              </div>
+            )}
+            {item.condition && (
+              <div class="col-span-2">
+                <dt class="text-charcoal/50">Condition</dt>
+                <dd class="font-medium">{item.condition}</dd>
+              </div>
+            )}
+          </dl>
+        </div>
+
+        {item.tags.length > 0 && (
+          <div class="border-t border-charcoal/10 pt-8 mt-8">
+            <h2 class="text-xs uppercase tracking-widest text-charcoal/50 mb-4">Tags</h2>
+            <div class="flex flex-wrap gap-2">
+              {item.tags.map((tag) => (
+                <span class="px-3 py-1 bg-charcoal/5 rounded text-sm text-charcoal/70">
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+
+    <nav class="flex justify-between items-center mt-20 pt-8 border-t border-charcoal/10" data-pagefind-ignore>
+      {prevItem ? (
+        <a href={`${import.meta.env.BASE_URL}/item/${prevItem.id}`} class="group">
+          <span class="text-xs uppercase tracking-widest text-charcoal/50">Previous</span>
+          <p class="font-serif text-lg group-hover:text-gold transition-colors">{prevItem.name}</p>
+        </a>
+      ) : <div />}
+      {nextItem ? (
+        <a href={`${import.meta.env.BASE_URL}/item/${nextItem.id}`} class="group text-right">
+          <span class="text-xs uppercase tracking-widest text-charcoal/50">Next</span>
+          <p class="font-serif text-lg group-hover:text-gold transition-colors">{nextItem.name}</p>
+        </a>
+      ) : <div />}
+    </nav>
+  </article>
+</BaseLayout>

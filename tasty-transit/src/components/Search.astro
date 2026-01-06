@@ -1,0 +1,61 @@
+---
+const base = import.meta.env.BASE_URL || '/';
+---
+
+<div id="search" class="search-container" data-base-url={base}></div>
+
+<script>
+  async function initPagefind() {
+    const container = document.getElementById('search');
+    if (!container) return;
+
+    const baseUrl = container.dataset.baseUrl || '/';
+
+    try {
+      // @ts-ignore - Pagefind is loaded at runtime
+      const { PagefindUI } = await import('@pagefind/default-ui');
+      new PagefindUI({
+        element: '#search',
+        showSubResults: true,
+        showImages: false,
+        baseUrl: baseUrl,
+        bundlePath: `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}pagefind/`,
+      });
+    } catch (e) {
+      console.error('Pagefind error:', e);
+      container.innerHTML = '<p class="text-charcoal/50 text-sm">Search available after build</p>';
+    }
+  }
+
+  initPagefind();
+</script>
+
+<style is:global>
+  .search-container {
+    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-primary: #b8860b;
+    --pagefind-ui-text: #2c3e50;
+    --pagefind-ui-background: #fdfbf7;
+    --pagefind-ui-border: #2c3e5010;
+    --pagefind-ui-border-width: 1px;
+    --pagefind-ui-border-radius: 4px;
+    --pagefind-ui-font: system-ui, -apple-system, sans-serif;
+  }
+
+  .pagefind-ui__search-input {
+    font-size: 14px !important;
+    padding: 10px 14px !important;
+  }
+
+  .pagefind-ui__search-clear {
+    color: var(--pagefind-ui-text) !important;
+  }
+
+  .pagefind-ui__result-link {
+    font-family: 'Playfair Display', Georgia, serif !important;
+  }
+
+  .pagefind-ui__result-excerpt {
+    font-size: 13px !important;
+  }
+</style>
