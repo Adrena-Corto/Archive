@@ -36,9 +36,27 @@ const base = import.meta.env.BASE_URL;
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
+
+const itemStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": item.name,
+  "description": item.description,
+  "category": categoryLabels[item.category],
+  "material": item.material,
+  "image": item.images.length > 0 ? `${Astro.site || ''}${url(`/images/items/${item.id}/${item.images[0]}`)}` : undefined,
+  "additionalProperty": [
+    { "@type": "PropertyValue", "name": "Era", "value": item.era },
+    { "@type": "PropertyValue", "name": "Period", "value": item.period },
+    { "@type": "PropertyValue", "name": "Origin", "value": item.origin },
+    ...(item.weight ? [{ "@type": "PropertyValue", "name": "Weight", "value": item.weight }] : []),
+    ...(item.dimensions ? [{ "@type": "PropertyValue", "name": "Dimensions", "value": item.dimensions }] : []),
+    ...(item.condition ? [{ "@type": "PropertyValue", "name": "Condition", "value": item.condition }] : [])
+  ]
+};
 ---
 
-<BaseLayout title={`${item.name} | Archive`} description={item.description}>
+<BaseLayout title={`${item.name} | Archive`} description={item.description} structuredData={itemStructuredData}>
   <article class="relative py-16" data-pagefind-body>
     <div class="absolute inset-0 bg-gradient-to-b from-surface/30 to-void pointer-events-none" />
 
@@ -52,10 +70,37 @@ function url(path: string): string {
       </div>
 
       <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
-        <div x-data="{ activeImage: 0 }" class="space-y-4">
+        <div x-data={`{
+          activeImage: 0,
+          lightboxOpen: false,
+          totalImages: ${item.images.length},
+          openLightbox(index) {
+            this.activeImage = index;
+            this.lightboxOpen = true;
+            document.body.style.overflow = 'hidden';
+          },
+          closeLightbox() {
+            this.lightboxOpen = false;
+            document.body.style.overflow = '';
+          },
+          nextImage() {
+            this.activeImage = (this.activeImage + 1) % this.totalImages;
+          },
+          prevImage() {
+            this.activeImage = (this.activeImage - 1 + this.totalImages) % this.totalImages;
+          }
+        }`}
+        @keydown.arrow-left.window="if(lightboxOpen) prevImage(); else if(totalImages > 1) { activeImage = (activeImage - 1 + totalImages) % totalImages }"
+        @keydown.arrow-right.window="if(lightboxOpen) nextImage(); else if(totalImages > 1) { activeImage = (activeImage + 1) % totalImages }"
+        @keydown.escape.window="closeLightbox()"
+        class="space-y-4">
           {item.images.length > 0 ? (
             <>
-              <div class="glass-panel overflow-hidden">
+              <button
+                @click="openLightbox(activeImage)"
+                class="glass-panel overflow-hidden w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-void rounded-lg"
+                aria-label="Open image in lightbox"
+              >
                 {item.images.map((image, index) => (
                   <img
                     x-show={`activeImage === ${index}`}
@@ -68,7 +113,7 @@ function url(path: string): string {
                     loading={index === 0 ? 'eager' : 'lazy'}
                   />
                 ))}
-              </div>
+              </button>
               {item.images.length > 1 && (
                 <div class="flex gap-2 overflow-x-auto pb-2">
                   {item.images.map((image, index) => (
@@ -96,6 +141,87 @@ function url(path: string): string {
               <span class="font-mono text-xs text-text-dim uppercase tracking-wider">No image available</span>
             </div>
           )}
+
+          <!-- Lightbox Overlay -->
+          <div
+            x-show="lightboxOpen"
+            x-cloak
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100"
+            x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100"
+            x-transition:leave-end="opacity-0"
+            class="fixed inset-0 z-[100] bg-void/95 backdrop-blur-xl flex items-center justify-center"
+            @click.self="closeLightbox()"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Image lightbox"
+          >
+            <!-- Close button -->
+            <button
+              @click="closeLightbox()"
+              class="absolute top-4 right-4 p-2 text-text-muted hover:text-accent transition-colors z-10"
+              aria-label="Close lightbox"
+            >
+              <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+
+            <!-- Previous button -->
+            {item.images.length > 1 && (
+              <button
+                @click="prevImage()"
+                class="absolute left-4 top-1/2 -translate-y-1/2 p-3 text-text-muted hover:text-accent transition-colors z-10"
+                aria-label="Previous image"
+              >
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+            )}
+
+            <!-- Next button -->
+            {item.images.length > 1 && (
+              <button
+                @click="nextImage()"
+                class="absolute right-4 top-1/2 -translate-y-1/2 p-3 text-text-muted hover:text-accent transition-colors z-10"
+                aria-label="Next image"
+              >
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            )}
+
+            <!-- Image container -->
+            <div class="max-w-[90vw] max-h-[90vh] relative">
+              {item.images.map((image, index) => (
+                <img
+                  x-show={`activeImage === ${index}`}
+                  x-transition:enter="transition ease-out duration-300"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  src={url(`/images/items/${item.id}/${image}`)}
+                  alt={`${item.name} - Image ${index + 1}`}
+                  class="max-w-full max-h-[85vh] object-contain"
+                />
+              ))}
+            </div>
+
+            <!-- Image counter -->
+            {item.images.length > 1 && (
+              <div class="absolute bottom-4 left-1/2 -translate-x-1/2 font-mono text-sm text-text-muted">
+                <span x-text="activeImage + 1"></span> / {item.images.length}
+              </div>
+            )}
+
+            <!-- Keyboard hint -->
+            <div class="absolute bottom-4 right-4 font-mono text-xs text-text-dim hidden md:block">
+              ← → navigate · ESC close
+            </div>
+          </div>
         </div>
 
         <div class="lg:sticky lg:top-24 lg:self-start">

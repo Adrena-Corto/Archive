@@ -1,5 +1,24 @@
 ---
+import { getAllItems, getAllCategories } from '../lib/items';
+
 const base = import.meta.env.BASE_URL || '/';
+const items = getAllItems();
+const categories = getAllCategories();
+
+const categoryLabels: Record<string, string> = {
+  coin: 'Coins',
+  jewelry: 'Jewelry',
+  ring: 'Rings',
+  seal: 'Seals',
+  misc: 'Miscellaneous',
+};
+
+const popularTags = ['roman', 'greek', 'silver', 'gold', 'ancient'];
+const recentItems = items.slice(0, 3);
+
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
 ---
 
 <div id="search-wrapper" class="search-wrapper">
@@ -10,6 +29,60 @@ const base = import.meta.env.BASE_URL || '/';
     </div>
   </div>
   <div id="search" class="search-container" data-base-url={base}></div>
+
+  <!-- Search suggestions (shown when search is empty) -->
+  <div id="search-suggestions" class="mt-8 space-y-8">
+    <!-- Browse by category -->
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Browse by Category</h3>
+      <div class="flex flex-wrap gap-2">
+        {categories.map((cat) => (
+          <a
+            href={url(`/collection?category=${cat}`)}
+            class="px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
+          >
+            {categoryLabels[cat]}
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- Popular searches -->
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Popular Searches</h3>
+      <div class="flex flex-wrap gap-2">
+        {popularTags.map((tag) => (
+          <button
+            class="search-suggestion-tag px-3 py-1.5 bg-surface border border-border rounded font-mono text-xs text-text-dim hover:border-accent hover:text-accent transition-all duration-200"
+            data-search-term={tag}
+          >
+            {tag}
+          </button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Recent items -->
+    <div>
+      <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Recent Items</h3>
+      <div class="grid sm:grid-cols-3 gap-4">
+        {recentItems.map((item) => (
+          <a
+            href={url(`/item/${item.id}`)}
+            class="glass-panel p-4 hover:border-accent/50 transition-all duration-200 group"
+          >
+            <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+              {categoryLabels[item.category]}
+            </span>
+            <p class="text-text group-hover:text-accent transition-colors mt-1">
+              {item.name}
+            </p>
+            <p class="font-mono text-xs text-text-dim mt-1">{item.era}</p>
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -18,6 +91,7 @@ const base = import.meta.env.BASE_URL || '/';
   async function initPagefind() {
     const container = document.getElementById('search');
     const loading = document.getElementById('search-loading');
+    const suggestions = document.getElementById('search-suggestions');
     if (!container) return;
 
     // Skip if already initialized on this container
@@ -37,6 +111,16 @@ const base = import.meta.env.BASE_URL || '/';
       });
       container.dataset.initialized = 'true';
       if (loading) loading.style.display = 'none';
+
+      // Watch for search input to toggle suggestions visibility
+      setTimeout(() => {
+        const searchInput = container.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
+        if (searchInput && suggestions) {
+          searchInput.addEventListener('input', () => {
+            suggestions.style.display = searchInput.value.length > 0 ? 'none' : 'block';
+          });
+        }
+      }, 100);
     } catch (e) {
       console.error('Pagefind error:', e);
       if (loading) loading.style.display = 'none';
@@ -53,8 +137,26 @@ const base = import.meta.env.BASE_URL || '/';
     }
   }
 
+  function setupSuggestionTags() {
+    const tags = document.querySelectorAll('.search-suggestion-tag');
+    tags.forEach(tag => {
+      tag.addEventListener('click', () => {
+        const term = (tag as HTMLElement).dataset.searchTerm;
+        const searchInput = document.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
+        if (searchInput && term) {
+          searchInput.value = term;
+          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
+          searchInput.focus();
+        }
+      });
+    });
+  }
+
   // Initialize on first load and after View Transitions navigation
-  document.addEventListener('astro:page-load', initPagefind);
+  document.addEventListener('astro:page-load', () => {
+    initPagefind();
+    setupSuggestionTags();
+  });
 </script>
 
 <style is:global>
