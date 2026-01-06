@@ -12,7 +12,7 @@ export default {
         'border-light': '#3a3a4a',
         text: '#e4e4e7',
         'text-muted': '#a1a1aa',  // Improved contrast (was #71717a)
-        'text-dim': '#71717a',    // Improved contrast (was #52525b)
+        'text-dim': '#8a8a99',    // Improved contrast for WCAG AA (was #71717a ~4.5:1, now ~5.5:1)
         accent: '#22d3ee',
         'accent-glow': 'rgba(34, 211, 238, 0.5)',
         gold: '#fbbf24',

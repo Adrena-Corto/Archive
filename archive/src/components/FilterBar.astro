@@ -58,19 +58,29 @@ const periodOptions = [
       const newURL = params.toString() ? '?' + params.toString() : window.location.pathname;
       window.history.replaceState({}, '', newURL);
     },
+    filtering: false,
     filterItems() {
-      const items = document.querySelectorAll('[data-category]');
-      let count = 0;
-      items.forEach(item => {
-        const matchCategory = this.category === 'all' || item.dataset.category === this.category;
-        const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
-        const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
-        const visible = matchCategory && matchMaterial && matchPeriod;
-        item.style.display = visible ? '' : 'none';
-        if (visible) count++;
+      this.filtering = true;
+      const grid = document.getElementById('item-grid');
+      if (grid) grid.style.opacity = '0.5';
+
+      requestAnimationFrame(() => {
+        const items = document.querySelectorAll('[data-category]');
+        let count = 0;
+        items.forEach(item => {
+          const matchCategory = this.category === 'all' || item.dataset.category === this.category;
+          const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
+          const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
+          const visible = matchCategory && matchMaterial && matchPeriod;
+          item.style.display = visible ? '' : 'none';
+          if (visible) count++;
+        });
+        this.visibleCount = count;
+        this.updateURL();
+
+        if (grid) grid.style.opacity = '1';
+        this.filtering = false;
       });
-      this.visibleCount = count;
-      this.updateURL();
     },
     clearFilters() {
       this.category = 'all';

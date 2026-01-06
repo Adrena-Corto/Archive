@@ -62,7 +62,7 @@ function url(path: string): string {
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    src={`/images/items/${item.id}/${image}`}
+                    src={url(`/images/items/${item.id}/${image}`)}
                     alt={`${item.name} - Image ${index + 1}`}
                     class="w-full h-auto"
                     loading={index === 0 ? 'eager' : 'lazy'}
@@ -75,10 +75,10 @@ function url(path: string): string {
                     <button
                       @click={`activeImage = ${index}`}
                       :class={`activeImage === ${index} ? 'ring-2 ring-accent' : 'opacity-60 hover:opacity-100'`}
-                      class="flex-shrink-0 w-20 h-20 rounded overflow-hidden transition-all duration-200"
+                      class="flex-shrink-0 w-24 h-24 min-w-[44px] min-h-[44px] rounded overflow-hidden transition-all duration-200"
                     >
                       <img
-                        src={`/images/items/${item.id}/${image}`}
+                        src={url(`/images/items/${item.id}/${image}`)}
                         alt={`Thumbnail ${index + 1}`}
                         class="w-full h-full object-cover"
                         loading="lazy"

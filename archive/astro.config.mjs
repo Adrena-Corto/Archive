@@ -8,6 +8,6 @@ export default defineConfig({
     tailwind(),
     alpinejs(),
   ],
-  site: 'https://yourusername.github.io',
-  base: '/',
+  site: 'https://adrena-corto.github.io',
+  base: '/Archive',
 });
