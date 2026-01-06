@@ -119,7 +119,7 @@
   }
 
   .data-label {
-    @apply font-mono text-xs uppercase tracking-wider text-text-dim;
+    @apply font-mono text-xs tracking-wide text-text-dim;
   }
 
   .data-value {

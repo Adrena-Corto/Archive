@@ -4,12 +4,22 @@ import { ViewTransitions } from 'astro:transitions';
 interface Props {
   title?: string;
   description?: string;
+  structuredData?: object;
 }
 
 const {
   title = 'Collection',
-  description = 'A curated collection of coins, jewelry, rings, cylinder seals, and small antiques.'
+  description = 'A curated collection of coins, jewelry, rings, cylinder seals, and small antiques.',
+  structuredData
 } = Astro.props;
+
+const defaultStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "The Archive",
+  "description": description,
+  "url": Astro.url.href
+};
 
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
@@ -63,6 +73,7 @@ function isActive(path: string): boolean {
       }
     `} />
     <title>{title}</title>
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData || defaultStructuredData)} />
     <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col bg-void">
@@ -194,7 +205,7 @@ function isActive(path: string): boolean {
 
     <footer class="border-t border-white/5 mt-20">
       <div class="container-narrow py-8 flex flex-col md:flex-row items-center justify-between gap-4">
-        <p class="font-mono text-xs text-text-dim uppercase tracking-wider">
+        <p class="font-mono text-xs text-text-dim tracking-wide">
           <span class="text-accent">></span> Personal Collection Display
         </p>
         <p class="font-mono text-xs text-text-dim">

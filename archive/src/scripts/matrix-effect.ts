@@ -345,10 +345,9 @@ class MatrixEffect {
 }
 
 let instance: MatrixEffect | null = null;
+let eventsRegistered = false;
 
-export async function initMatrixEffect() {
-  if (typeof window === 'undefined') return;
-
+function createAndStartEffect() {
   const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   if (prefersReducedMotion) return;
 
@@ -357,18 +356,30 @@ export async function initMatrixEffect() {
 
   if (instance) {
     instance.destroy();
+    instance = null;
   }
 
   instance = new MatrixEffect(canvas);
   instance.start();
+}
 
-  document.addEventListener('astro:before-swap', () => {
-    instance?.pause();
-  });
+export async function initMatrixEffect() {
+  if (typeof window === 'undefined') return;
 
-  document.addEventListener('astro:page-load', () => {
-    if (instance) {
-      instance.start();
-    }
-  });
+  // Create initial effect
+  createAndStartEffect();
+
+  // Only register View Transition event listeners once
+  if (!eventsRegistered) {
+    eventsRegistered = true;
+
+    document.addEventListener('astro:before-swap', () => {
+      instance?.pause();
+    });
+
+    document.addEventListener('astro:page-load', () => {
+      // Reinitialize with new canvas after page transition
+      createAndStartEffect();
+    });
+  }
 }
