@@ -23,7 +23,7 @@ const timelinePeriods = [
         <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
           // Temporal Index
         </p>
-        <h1 class="font-serif text-4xl md:text-5xl text-text mb-4">Timeline</h1>
+        <h1 class="text-4xl md:text-5xl text-text mb-4">Timeline</h1>
         <p class="text-text-muted text-lg">
           Explore the collection through the ages.
         </p>
@@ -38,7 +38,7 @@ const timelinePeriods = [
 
             <div class={`ml-12 md:ml-0 ${index % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}>
               <p class="font-mono text-xs uppercase tracking-widest text-accent mb-1">{period.range}</p>
-              <h2 class="font-serif text-2xl text-text mb-4">{period.name}</h2>
+              <h2 class="text-2xl text-text mb-4">{period.name}</h2>
 
               <div class={`grid gap-3 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
                 {period.items.map((item) => (
@@ -46,7 +46,7 @@ const timelinePeriods = [
                     href={`${import.meta.env.BASE_URL}/item/${item.id}`}
                     class="block glass-panel p-4 card-hover max-w-sm"
                   >
-                    <p class="font-serif text-lg text-text group-hover:text-accent transition-colors">{item.name}</p>
+                    <p class="text-lg text-text group-hover:text-accent transition-colors">{item.name}</p>
                     <p class="font-mono text-xs text-text-dim mt-1">{item.era}</p>
                   </a>
                 ))}

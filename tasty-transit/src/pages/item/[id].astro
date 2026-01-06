@@ -105,7 +105,7 @@ const base = import.meta.env.BASE_URL;
             </span>
           </div>
 
-          <h1 class="font-serif text-3xl md:text-4xl text-text mb-6" data-pagefind-meta="title">{item.name}</h1>
+          <h1 class="text-3xl md:text-4xl text-text mb-6" data-pagefind-meta="title">{item.name}</h1>
           <span data-pagefind-meta={`category:${categoryLabels[item.category]}`} class="hidden"></span>
           <span data-pagefind-meta={`period:${item.period}`} class="hidden"></span>
           <span data-pagefind-meta={`origin:${item.origin}`} class="hidden"></span>
@@ -192,7 +192,7 @@ const base = import.meta.env.BASE_URL;
                     {related.period}
                   </span>
                 </div>
-                <h3 class="font-serif text-lg text-text group-hover:text-accent transition-colors">
+                <h3 class="text-lg text-text group-hover:text-accent transition-colors">
                   {related.name}
                 </h3>
                 <p class="font-mono text-xs text-text-dim mt-1">{related.era}</p>
@@ -206,13 +206,13 @@ const base = import.meta.env.BASE_URL;
         {prevItem ? (
           <a href={`${base}/item/${prevItem.id}`} class="group">
             <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Previous</span>
-            <p class="font-serif text-lg text-text group-hover:text-accent transition-colors">{prevItem.name}</p>
+            <p class="text-lg text-text group-hover:text-accent transition-colors">{prevItem.name}</p>
           </a>
         ) : <div />}
         {nextItem ? (
           <a href={`${base}/item/${nextItem.id}`} class="group text-right">
             <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Next</span>
-            <p class="font-serif text-lg text-text group-hover:text-accent transition-colors">{nextItem.name}</p>
+            <p class="text-lg text-text group-hover:text-accent transition-colors">{nextItem.name}</p>
           </a>
         ) : <div />}
       </nav>
