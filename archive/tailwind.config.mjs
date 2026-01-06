@@ -21,6 +21,7 @@ export default {
       fontFamily: {
         sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+        cuneiform: ['Noto Sans Cuneiform', 'serif'],
       },
       spacing: {
         '128': '32rem',
