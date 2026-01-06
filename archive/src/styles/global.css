@@ -13,6 +13,18 @@
     @apply bg-void text-text font-sans antialiased;
   }
 
+  #matrix-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  body > *:not(#matrix-bg) {
+    position: relative;
+    z-index: 1;
+  }
+
 
   ::selection {
     @apply bg-accent/30 text-white;
@@ -88,7 +100,7 @@
   }
 
   .glass-panel {
-    @apply bg-surface/80 backdrop-blur-xl;
+    @apply bg-surface/40 backdrop-blur-md;
     @apply border border-white/10 rounded-lg;
   }
 
@@ -122,6 +134,7 @@
     @apply transition-all duration-300;
     @apply hover:border-accent/50 hover:shadow-glow-cyan;
   }
+
 }
 
 @layer utilities {
@@ -170,5 +183,140 @@
 
   .img-fade-in.loaded {
     @apply opacity-90;
+  }
+}
+
+/* View Transitions - Clean crossfade */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 150ms;
+  animation-timing-function: ease-in-out;
+}
+
+/* Persist header during transitions */
+::view-transition-old(header),
+::view-transition-new(header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+/* Decipher button - cuneiform to English on hover */
+.decipher-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  overflow: visible;
+}
+
+/* Elegant soft glow - subtle and refined */
+.decipher-btn::before {
+  content: '';
+  position: absolute;
+  inset: -60px -80px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse 50% 40% at 50% 50%, rgba(34, 211, 238, 0.035) 0%, transparent 70%);
+  z-index: -2;
+  pointer-events: none;
+  opacity: 1;
+  filter: blur(30px);
+  animation: gentle-breathe 12s ease-in-out infinite;
+  transition: opacity 0.6s ease;
+}
+
+.decipher-btn:hover::before {
+  opacity: 1;
+  animation: gentle-breathe-hover 10s ease-in-out infinite;
+}
+
+/* Gentle breathing animation - very slow, barely perceptible */
+@keyframes gentle-breathe {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.03);
+    opacity: 0.8;
+  }
+}
+
+@keyframes gentle-breathe-hover {
+  0%, 100% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+}
+
+.decipher-text {
+  display: inline-flex;
+}
+
+.decipher-char {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.85em;
+  height: 1.4em;
+}
+
+.decipher-char.space {
+  width: 0.5em;
+}
+
+.decipher-char .char-cuneiform {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Noto Sans Cuneiform', serif;
+  font-size: 0.9em;
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  transition-delay: var(--delay, 0ms);
+}
+
+.decipher-char .char-english {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1em;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 150ms ease-out, transform 150ms ease-out;
+  transition-delay: var(--delay, 0ms);
+}
+
+.decipher-btn:hover .char-cuneiform {
+  opacity: 0;
+  transform: translateY(-4px);
+}
+
+.decipher-btn:hover .char-english {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decipher-btn {
+    animation: none;
+  }
+  .decipher-btn::before {
+    animation: none;
+    opacity: 0.3;
+  }
+  .decipher-char .char-cuneiform,
+  .decipher-char .char-english {
+    transition-delay: 0ms !important;
+    transition-duration: 0ms !important;
   }
 }

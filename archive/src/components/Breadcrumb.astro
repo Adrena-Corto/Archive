@@ -10,12 +10,16 @@ interface Props {
 
 const { items } = Astro.props;
 const base = import.meta.env.BASE_URL;
+
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
 ---
 
 <nav aria-label="Breadcrumb" class="mb-6">
   <ol class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider">
     <li>
-      <a href={base} class="text-text-dim hover:text-accent transition-colors">
+      <a href={url('/')} class="text-text-dim hover:text-accent transition-colors">
         <span class="text-accent">//</span> Archive
       </a>
     </li>

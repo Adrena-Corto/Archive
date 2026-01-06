@@ -13,10 +13,15 @@ const base = import.meta.env.BASE_URL || '/';
 </div>
 
 <script>
+  let pagefindInitialized = false;
+
   async function initPagefind() {
     const container = document.getElementById('search');
     const loading = document.getElementById('search-loading');
     if (!container) return;
+
+    // Skip if already initialized on this container
+    if (container.dataset.initialized === 'true') return;
 
     const baseUrl = container.dataset.baseUrl || '/';
 
@@ -30,6 +35,7 @@ const base = import.meta.env.BASE_URL || '/';
         baseUrl: baseUrl,
         bundlePath: `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}pagefind/`,
       });
+      container.dataset.initialized = 'true';
       if (loading) loading.style.display = 'none';
     } catch (e) {
       console.error('Pagefind error:', e);
@@ -47,7 +53,8 @@ const base = import.meta.env.BASE_URL || '/';
     }
   }
 
-  initPagefind();
+  // Initialize on first load and after View Transitions navigation
+  document.addEventListener('astro:page-load', initPagefind);
 </script>
 
 <style is:global>

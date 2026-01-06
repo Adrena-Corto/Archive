@@ -15,10 +15,15 @@ const categoryLabels: Record<Item['category'], string> = {
   seal: 'SEAL',
   misc: 'MISC',
 };
+
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
 ---
 
 <a
-  href={`${import.meta.env.BASE_URL}/item/${item.id}`}
+  href={url(`/item/${item.id}`)}
   class="group block glass-panel-solid overflow-hidden card-hover"
   data-category={item.category}
   data-material={item.material}

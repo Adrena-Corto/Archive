@@ -13,6 +13,21 @@ const categoryLabels: Record<string, string> = {
   seal: 'Seals',
   misc: 'Misc',
 };
+
+const categoryOptions = [
+  { value: 'all', label: 'All Categories' },
+  ...categories.map(cat => ({ value: cat, label: categoryLabels[cat] || cat }))
+];
+
+const materialOptions = [
+  { value: 'all', label: 'All Materials' },
+  ...materials.map(mat => ({ value: mat, label: mat.charAt(0).toUpperCase() + mat.slice(1) }))
+];
+
+const periodOptions = [
+  { value: 'all', label: 'All Periods' },
+  ...periods.map(p => ({ value: p, label: p }))
+];
 ---
 
 <div
@@ -20,10 +35,15 @@ const categoryLabels: Record<string, string> = {
     category: 'all',
     material: 'all',
     period: 'all',
+    categoryOpen: false,
+    materialOpen: false,
+    periodOpen: false,
     visibleCount: ${totalItems},
     totalItems: ${totalItems},
+    categoryOptions: ${JSON.stringify(categoryOptions)},
+    materialOptions: ${JSON.stringify(materialOptions)},
+    periodOptions: ${JSON.stringify(periodOptions)},
     init() {
-      // Read initial filter state from URL
       const params = new URLSearchParams(window.location.search);
       if (params.get('category')) this.category = params.get('category');
       if (params.get('material')) this.material = params.get('material');
@@ -60,55 +80,161 @@ const categoryLabels: Record<string, string> = {
     },
     hasActiveFilters() {
       return this.category !== 'all' || this.material !== 'all' || this.period !== 'all';
+    },
+    closeAll() {
+      this.categoryOpen = false;
+      this.materialOpen = false;
+      this.periodOpen = false;
+    },
+    getLabel(options, value) {
+      const opt = options.find(o => o.value === value);
+      return opt ? opt.label : value;
     }
   }`}
   x-init="init()"
-  class="glass-panel p-4 mb-8"
+  @keydown.escape.window="closeAll()"
+  class="glass-panel p-4 mb-8 overflow-visible relative z-50"
 >
   <div class="flex flex-wrap items-center gap-4 md:gap-6">
-    <div class="flex items-center gap-2">
-      <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Category</label>
-      <select
-        x-model="category"
-        @change="filterItems()"
-        class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors"
+    <!-- Category Dropdown -->
+    <div class="relative" @click.outside="categoryOpen = false">
+      <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Category</label>
+      <button
+        type="button"
+        @click="categoryOpen = !categoryOpen; materialOpen = false; periodOpen = false"
+        class="custom-select group"
+        :class="{ 'custom-select-active': category !== 'all', 'custom-select-open': categoryOpen }"
+        aria-haspopup="listbox"
+        :aria-expanded="categoryOpen"
       >
-        <option value="all">All</option>
-        {categories.map((cat) => (
-          <option value={cat}>{categoryLabels[cat] || cat}</option>
-        ))}
-      </select>
+        <span x-text="getLabel(categoryOptions, category)" class="truncate"></span>
+        <svg class="select-chevron" :class="{ 'rotate-180': categoryOpen }" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div
+        x-show="categoryOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="select-dropdown"
+        role="listbox"
+        x-cloak
+      >
+        <template x-for="option in categoryOptions" :key="option.value">
+          <button
+            type="button"
+            @click="category = option.value; categoryOpen = false; filterItems()"
+            class="select-option"
+            :class="{ 'select-option-selected': category === option.value }"
+            role="option"
+            :aria-selected="category === option.value"
+          >
+            <span x-text="option.label"></span>
+            <svg x-show="category === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </template>
+      </div>
     </div>
 
+    <!-- Material Dropdown -->
     {materials.length > 0 && (
-      <div class="flex items-center gap-2">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Material</label>
-        <select
-          x-model="material"
-          @change="filterItems()"
-          class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors capitalize"
+      <div class="relative" @click.outside="materialOpen = false">
+        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Material</label>
+        <button
+          type="button"
+          @click="materialOpen = !materialOpen; categoryOpen = false; periodOpen = false"
+          class="custom-select group"
+          :class="{ 'custom-select-active': material !== 'all', 'custom-select-open': materialOpen }"
+          aria-haspopup="listbox"
+          :aria-expanded="materialOpen"
         >
-          <option value="all">All</option>
-          {materials.map((mat) => (
-            <option value={mat} class="capitalize">{mat}</option>
-          ))}
-        </select>
+          <span x-text="getLabel(materialOptions, material)" class="truncate"></span>
+          <svg class="select-chevron" :class="{ 'rotate-180': materialOpen }" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div
+          x-show="materialOpen"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="select-dropdown"
+          role="listbox"
+          x-cloak
+        >
+          <template x-for="option in materialOptions" :key="option.value">
+            <button
+              type="button"
+              @click="material = option.value; materialOpen = false; filterItems()"
+              class="select-option"
+              :class="{ 'select-option-selected': material === option.value }"
+              role="option"
+              :aria-selected="material === option.value"
+            >
+              <span x-text="option.label"></span>
+              <svg x-show="material === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </template>
+        </div>
       </div>
     )}
 
+    <!-- Period Dropdown -->
     {periods.length > 0 && (
-      <div class="flex items-center gap-2">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Period</label>
-        <select
-          x-model="period"
-          @change="filterItems()"
-          class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors"
+      <div class="relative" @click.outside="periodOpen = false">
+        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Period</label>
+        <button
+          type="button"
+          @click="periodOpen = !periodOpen; categoryOpen = false; materialOpen = false"
+          class="custom-select group"
+          :class="{ 'custom-select-active': period !== 'all', 'custom-select-open': periodOpen }"
+          aria-haspopup="listbox"
+          :aria-expanded="periodOpen"
         >
-          <option value="all">All</option>
-          {periods.map((p) => (
-            <option value={p}>{p}</option>
-          ))}
-        </select>
+          <span x-text="getLabel(periodOptions, period)" class="truncate"></span>
+          <svg class="select-chevron" :class="{ 'rotate-180': periodOpen }" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div
+          x-show="periodOpen"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="select-dropdown"
+          role="listbox"
+          x-cloak
+        >
+          <template x-for="option in periodOptions" :key="option.value">
+            <button
+              type="button"
+              @click="period = option.value; periodOpen = false; filterItems()"
+              class="select-option"
+              :class="{ 'select-option-selected': period === option.value }"
+              role="option"
+              :aria-selected="period === option.value"
+            >
+              <span x-text="option.label"></span>
+              <svg x-show="period === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </template>
+        </div>
       </div>
     )}
 
@@ -145,3 +271,95 @@ const categoryLabels: Record<string, string> = {
     </button>
   </div>
 </div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const filterBar = document.querySelector('[x-data]');
+    if (filterBar && window.Alpine) {
+      const alpineData = window.Alpine.$data(filterBar);
+      if (alpineData && typeof alpineData.init === 'function') {
+        alpineData.init();
+      }
+    }
+  });
+</script>
+
+<style>
+  .custom-select {
+    @apply relative flex items-center justify-between gap-2;
+    @apply min-w-[140px] px-3 py-2;
+    @apply bg-surface-light/50 backdrop-blur-sm;
+    @apply border border-border rounded-lg;
+    @apply font-mono text-xs text-text;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer;
+  }
+
+  .custom-select:hover {
+    @apply bg-surface-light border-border-light;
+  }
+
+  .custom-select-open {
+    @apply border-accent/50 bg-surface-light;
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1), 0 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .custom-select-active {
+    @apply border-accent/30 text-accent;
+  }
+
+  .custom-select-active:hover {
+    @apply border-accent/50;
+  }
+
+  .select-chevron {
+    @apply w-4 h-4 text-text-dim transition-transform duration-200;
+  }
+
+  .custom-select:hover .select-chevron {
+    @apply text-text-muted;
+  }
+
+  .custom-select-active .select-chevron {
+    @apply text-accent/70;
+  }
+
+  .select-dropdown {
+    @apply absolute top-full left-0 mt-2;
+    @apply min-w-full w-max max-w-[280px];
+    @apply py-1.5;
+    @apply bg-surface-elevated backdrop-blur-xl;
+    @apply border border-border-light rounded-xl;
+    @apply overflow-hidden;
+    z-index: 9999;
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 4px 6px rgba(0, 0, 0, 0.3),
+      0 12px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  .select-option {
+    @apply w-full flex items-center justify-between gap-3;
+    @apply px-3.5 py-2.5;
+    @apply font-mono text-xs text-text-muted;
+    @apply transition-all duration-150;
+    @apply cursor-pointer;
+    @apply text-left;
+  }
+
+  .select-option:hover {
+    @apply bg-white/5 text-text;
+  }
+
+  .select-option-selected {
+    @apply text-accent bg-accent/5;
+  }
+
+  .select-option-selected:hover {
+    @apply bg-accent/10 text-accent;
+  }
+
+  .select-check {
+    @apply w-4 h-4 text-accent flex-shrink-0;
+  }
+</style>

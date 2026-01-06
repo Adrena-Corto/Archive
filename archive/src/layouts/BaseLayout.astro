@@ -1,4 +1,6 @@
 ---
+import { ViewTransitions } from 'astro:transitions';
+
 interface Props {
   title?: string;
   description?: string;
@@ -12,8 +14,12 @@ const {
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
 function isActive(path: string): boolean {
-  const fullPath = `${base}${path}`.replace(/\/+/g, '/');
+  const fullPath = url(path);
   return pathname === fullPath || pathname === fullPath + '/';
 }
 ---
@@ -28,35 +34,66 @@ function isActive(path: string): boolean {
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Cuneiform&display=swap" rel="stylesheet" />
+    <style>
+      @font-face {
+        font-family: 'Noto Sans Cuneiform';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/noto-sans-cuneiform.woff2') format('woff2');
+      }
+      @font-face {
+        font-family: 'Noto Sans Egyptian Hieroglyphs';
+        font-style: normal;
+        font-weight: 400;
+        font-display: swap;
+        src: url('/fonts/noto-sans-egyptian-hieroglyphs.woff2') format('woff2');
+      }
+    </style>
     <title>{title}</title>
+    <ViewTransitions />
   </head>
   <body class="min-h-screen flex flex-col bg-void">
-    <header class="sticky top-0 z-50 bg-void/80 backdrop-blur-xl border-b border-white/5">
+    <!-- Preload font glyphs for matrix effect (hidden) -->
+    <div aria-hidden="true" style="position:absolute;left:-9999px;font-size:1px;">
+      <span style="font-family:'Noto Sans Cuneiform'">𒀀𒀁𒀂𒀃𒀄𒀅𒁀𒁁𒁂𒁃𒂀𒂁𒃸𒄀𒄁𒄂𒅀𒅁𒆀𒆁𒇀𒇁</span>
+      <span style="font-family:'Noto Sans Egyptian Hieroglyphs'">𓀀𓀁𓀂𓀃𓁀𓁁𓁂𓁃𓂀𓂁𓂂𓃀𓃁𓃂𓄀𓄁𓅀𓅁𓆀𓆁𓇀𓇁𓈀𓈁𓉀𓊀𓋀𓌀𓍀𓎀𓏀</span>
+    </div>
+    <!-- Matrix background effect -->
+    <canvas id="matrix-bg" aria-hidden="true"></canvas>
+
+    <!-- Navigation progress bar -->
+    <div
+      id="nav-progress"
+      class="fixed top-0 left-0 h-0.5 bg-gradient-to-r from-accent to-cyan-300 z-[100] opacity-0"
+      style="width: 0%; transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease;"
+    ></div>
+
+    <header class="sticky top-0 z-50 bg-void/80 backdrop-blur-xl border-b border-white/5" transition:name="header" transition:animate="none">
       <nav class="container-narrow py-4 flex items-center justify-between" x-data="{ mobileMenuOpen: false }">
-        <a href={import.meta.env.BASE_URL} class="font-mono text-lg tracking-wider text-text hover:text-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
+        <a href={url('/')} class="font-mono text-lg tracking-wider text-text hover:text-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
           <span class="font-cuneiform text-accent">𒃸𒁀</span> ARCHIVE
         </a>
 
         <!-- Desktop Navigation -->
         <div class="hidden md:flex items-center gap-6">
           <a
-            href={`${import.meta.env.BASE_URL}/collection`}
+            href={url('/collection')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/collection') && "nav-link-active"]}
             aria-current={isActive('/collection') ? 'page' : undefined}
           >Browse</a>
           <a
-            href={`${import.meta.env.BASE_URL}/timeline`}
+            href={url('/timeline')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/timeline') && "nav-link-active"]}
             aria-current={isActive('/timeline') ? 'page' : undefined}
           >Timeline</a>
           <a
-            href={`${import.meta.env.BASE_URL}/about`}
+            href={url('/about')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
             aria-current={isActive('/about') ? 'page' : undefined}
           >About</a>
           <a
-            href={`${import.meta.env.BASE_URL}/search`}
+            href={url('/search')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest flex items-center gap-1.5", isActive('/search') && "nav-link-active"]}
             aria-label="Search"
             aria-current={isActive('/search') ? 'page' : undefined}
@@ -98,28 +135,28 @@ function isActive(path: string): boolean {
         >
           <div class="container-narrow py-4 flex flex-col gap-4">
             <a
-              href={`${import.meta.env.BASE_URL}/collection`}
+              href={url('/collection')}
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-2", isActive('/collection') && "text-accent"]}
               aria-current={isActive('/collection') ? 'page' : undefined}
             >
               <span class="text-accent mr-2">></span> Browse Collection
             </a>
             <a
-              href={`${import.meta.env.BASE_URL}/timeline`}
+              href={url('/timeline')}
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-2", isActive('/timeline') && "text-accent"]}
               aria-current={isActive('/timeline') ? 'page' : undefined}
             >
               <span class="text-accent mr-2">></span> Timeline
             </a>
             <a
-              href={`${import.meta.env.BASE_URL}/about`}
+              href={url('/about')}
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-2", isActive('/about') && "text-accent"]}
               aria-current={isActive('/about') ? 'page' : undefined}
             >
               <span class="text-accent mr-2">></span> About
             </a>
             <a
-              href={`${import.meta.env.BASE_URL}/search`}
+              href={url('/search')}
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-2 flex items-center gap-2", isActive('/search') && "text-accent"]}
               aria-current={isActive('/search') ? 'page' : undefined}
             >
@@ -144,10 +181,53 @@ function isActive(path: string): boolean {
           <span class="text-accent">></span> Personal Archive System
         </p>
         <p class="font-mono text-xs text-text-dim">
-          {new Date().getFullYear()}
+          Hong Kong, {new Date().getFullYear()}
         </p>
       </div>
     </footer>
+
+    <script>
+      // Navigation progress bar for View Transitions
+      document.addEventListener('astro:before-preparation', () => {
+        const bar = document.getElementById('nav-progress');
+        if (bar) {
+          bar.style.opacity = '1';
+          bar.style.width = '25%';
+        }
+      });
+
+      document.addEventListener('astro:after-preparation', () => {
+        const bar = document.getElementById('nav-progress');
+        if (bar) {
+          bar.style.width = '60%';
+        }
+      });
+
+      document.addEventListener('astro:before-swap', () => {
+        const bar = document.getElementById('nav-progress');
+        if (bar) {
+          bar.style.width = '85%';
+        }
+      });
+
+      document.addEventListener('astro:page-load', () => {
+        const bar = document.getElementById('nav-progress');
+        if (bar) {
+          bar.style.width = '100%';
+          setTimeout(() => {
+            bar.style.opacity = '0';
+            setTimeout(() => {
+              bar.style.width = '0%';
+            }, 200);
+          }, 150);
+        }
+      });
+    </script>
+
+    <script>
+      import { initMatrixEffect } from '../scripts/matrix-effect';
+      initMatrixEffect();
+    </script>
   </body>
 </html>
 

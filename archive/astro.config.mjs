@@ -9,5 +9,5 @@ export default defineConfig({
     alpinejs(),
   ],
   site: 'https://yourusername.github.io',
-  base: '/collection',
+  base: '/',
 });

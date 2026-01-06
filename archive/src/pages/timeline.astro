@@ -4,6 +4,11 @@ import { getAllItems } from '../lib/items';
 
 const items = getAllItems();
 
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
 const timelinePeriods = [
   { name: 'Ancient Near East', range: '3000 BC - 500 BC', items: items.filter(i => i.period.includes('Akkadian') || i.period.includes('Sumerian') || i.period.includes('Mesopotam')) },
   { name: 'Classical Greek', range: '500 BC - 323 BC', items: items.filter(i => i.period.includes('Greek') || i.period.includes('Helleni')) },
@@ -43,7 +48,7 @@ const timelinePeriods = [
               <div class={`grid gap-3 ${index % 2 === 0 ? 'md:justify-end' : ''}`}>
                 {period.items.map((item) => (
                   <a
-                    href={`${import.meta.env.BASE_URL}/item/${item.id}`}
+                    href={url(`/item/${item.id}`)}
                     class="block glass-panel p-4 card-hover max-w-sm"
                   >
                     <p class="text-lg text-text group-hover:text-accent transition-colors">{item.name}</p>
