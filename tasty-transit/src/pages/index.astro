@@ -8,52 +8,66 @@ const allItems = getAllItems();
 const displayItems = featuredItems.length > 0 ? featuredItems : allItems.slice(0, 6);
 ---
 
-<BaseLayout title="Collection | Antiques & Coins">
-  <section class="relative h-[60vh] min-h-[400px] flex items-center justify-center bg-charcoal/5">
-    <div class="text-center px-6">
-      <h1 class="font-serif text-5xl md:text-7xl tracking-tight mb-6">
-        The Collection
+<BaseLayout title="Archive | Historical Collection">
+  <section class="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 bg-gradient-to-b from-surface/50 via-void to-void" />
+    <div class="absolute inset-0 opacity-30">
+      <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent" />
+    </div>
+
+    <div class="relative text-center px-6 max-w-4xl mx-auto">
+      <p class="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-6">
+        // Personal Archive System v1.0
+      </p>
+      <h1 class="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tight text-text mb-8">
+        The Archive
       </h1>
-      <p class="text-lg md:text-xl text-charcoal/70 max-w-2xl mx-auto mb-10">
-        A curated selection of ancient coins, jewelry, cylinder seals, and historical artifacts spanning millennia of human civilization.
+      <p class="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-12 leading-relaxed">
+        A curated database of ancient coins, jewelry, cylinder seals, and historical artifacts spanning millennia of human civilization.
       </p>
       <a
-        href="/collection"
-        class="inline-block border border-charcoal px-8 py-3 text-sm uppercase tracking-widest hover:bg-charcoal hover:text-cream transition-colors duration-300"
+        href={`${import.meta.env.BASE_URL}/collection`}
+        class="inline-flex items-center gap-2 glass-panel px-8 py-3 font-mono text-sm uppercase tracking-wider text-text hover:text-accent hover:border-accent/50 hover:shadow-glow-cyan transition-all duration-300"
       >
-        Browse Collection
+        <span class="text-accent">></span> Browse Collection
       </a>
+    </div>
+
+    <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+      </svg>
     </div>
   </section>
 
   <section class="container-narrow py-20">
-    <div class="flex items-end justify-between mb-12">
+    <div class="flex items-end justify-between mb-10">
       <div>
-        <h2 class="font-serif text-3xl md:text-4xl">Featured Pieces</h2>
-        <p class="text-charcoal/60 mt-2">Highlights from the collection</p>
+        <p class="font-mono text-xs uppercase tracking-wider text-accent mb-2">// Featured</p>
+        <h2 class="font-serif text-3xl md:text-4xl text-text">Recent Acquisitions</h2>
       </div>
-      <a href="/collection" class="link-subtle text-sm uppercase tracking-widest">
-        View All →
+      <a href={`${import.meta.env.BASE_URL}/collection`} class="link-glow font-mono text-xs uppercase tracking-wider">
+        View All <span class="text-accent">→</span>
       </a>
     </div>
 
     <ItemGrid items={displayItems} columns={3} />
   </section>
 
-  <section class="bg-charcoal/5 py-20">
+  <section class="border-t border-white/5 py-20">
     <div class="container-narrow">
-      <div class="grid md:grid-cols-3 gap-12 text-center">
-        <div>
-          <p class="font-serif text-4xl text-gold mb-2">{allItems.length}</p>
-          <p class="text-sm uppercase tracking-widest text-charcoal/60">Items</p>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="glass-panel p-6 text-center">
+          <p class="font-mono text-4xl text-accent mb-2">{allItems.length}</p>
+          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Items Catalogued</p>
         </div>
-        <div>
-          <p class="font-serif text-4xl text-gold mb-2">5000+</p>
-          <p class="text-sm uppercase tracking-widest text-charcoal/60">Years of History</p>
+        <div class="glass-panel p-6 text-center">
+          <p class="font-mono text-4xl text-accent mb-2">5000+</p>
+          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Years of History</p>
         </div>
-        <div>
-          <p class="font-serif text-4xl text-gold mb-2">5</p>
-          <p class="text-sm uppercase tracking-widest text-charcoal/60">Categories</p>
+        <div class="glass-panel p-6 text-center">
+          <p class="font-mono text-4xl text-accent mb-2">5</p>
+          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Categories</p>
         </div>
       </div>
     </div>

@@ -3,16 +3,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import Search from '../components/Search.astro';
 ---
 
-<BaseLayout title="Search | Collection">
-  <section class="container-narrow py-16">
-    <div class="mb-8">
-      <h1 class="font-serif text-4xl md:text-5xl mb-4">Search</h1>
-      <p class="text-charcoal/60 text-lg">
-        Find items by name, description, material, origin, or any other detail.
-      </p>
-    </div>
+<BaseLayout title="Search | Archive">
+  <section class="relative py-16">
+    <div class="absolute inset-0 bg-gradient-to-b from-surface/30 to-void pointer-events-none" />
 
-    <Search />
+    <div class="container-narrow relative">
+      <div class="mb-8">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          // Search Index
+        </p>
+        <h1 class="font-serif text-4xl md:text-5xl text-text mb-4">Search</h1>
+        <p class="text-text-muted text-lg">
+          Find items by name, description, material, origin, or any other detail.
+        </p>
+      </div>
+
+      <Search />
+    </div>
   </section>
 </BaseLayout>
 

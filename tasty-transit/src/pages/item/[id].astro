@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getAllItems, getItemById } from '../../lib/items';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import { getAllItems, getItemById, getRelatedItems } from '../../lib/items';
 import type { Item } from '../../lib/items';
 
 export async function getStaticPaths() {
@@ -29,119 +30,192 @@ const allItems = getAllItems();
 const currentIndex = allItems.findIndex(i => i.id === item.id);
 const prevItem = currentIndex > 0 ? allItems[currentIndex - 1] : null;
 const nextItem = currentIndex < allItems.length - 1 ? allItems[currentIndex + 1] : null;
+const relatedItems = getRelatedItems(item, 3);
+const base = import.meta.env.BASE_URL;
 ---
 
-<BaseLayout title={`${item.name} | Collection`} description={item.description}>
-  <article class="container-narrow py-16" data-pagefind-body>
-    <nav class="mb-8" data-pagefind-ignore>
-      <a href={`${import.meta.env.BASE_URL}/collection`} class="link-subtle text-sm uppercase tracking-widest">
-        ← Back to Collection
-      </a>
-    </nav>
+<BaseLayout title={`${item.name} | Archive`} description={item.description}>
+  <article class="relative py-16" data-pagefind-body>
+    <div class="absolute inset-0 bg-gradient-to-b from-surface/30 to-void pointer-events-none" />
 
-    <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
-      <div class="space-y-4">
-        {item.images.map((image, index) => (
-          <div class="bg-neutral-100 rounded-sm overflow-hidden">
-            <img
-              src={`/images/items/${item.id}/${image}`}
-              alt={`${item.name} - Image ${index + 1}`}
-              class="w-full h-auto"
-              loading={index === 0 ? 'eager' : 'lazy'}
-            />
-          </div>
-        ))}
-        {item.images.length === 0 && (
-          <div class="aspect-square bg-neutral-100 flex items-center justify-center text-charcoal/30">
-            No image available
-          </div>
-        )}
+    <div class="container-narrow relative">
+      <div data-pagefind-ignore>
+        <Breadcrumb items={[
+          { label: 'Collection', href: `${import.meta.env.BASE_URL}/collection` },
+          { label: categoryLabels[item.category], href: `${import.meta.env.BASE_URL}/collection?category=${item.category}` },
+          { label: item.name }
+        ]} />
       </div>
 
-      <div class="lg:sticky lg:top-24 lg:self-start">
-        <p class="text-xs uppercase tracking-widest text-charcoal/50 mb-2">
-          {categoryLabels[item.category]} · {item.period}
-        </p>
-
-        <h1 class="font-serif text-3xl md:text-4xl mb-6" data-pagefind-meta="title">{item.name}</h1>
-        <span data-pagefind-meta={`category:${categoryLabels[item.category]}`} class="hidden"></span>
-        <span data-pagefind-meta={`period:${item.period}`} class="hidden"></span>
-        <span data-pagefind-meta={`origin:${item.origin}`} class="hidden"></span>
-        <span data-pagefind-meta={`material:${item.material}`} class="hidden"></span>
-
-        <div class="prose prose-charcoal mb-8">
-          <p class="text-charcoal/80 leading-relaxed">{item.description}</p>
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-16">
+        <div x-data="{ activeImage: 0 }" class="space-y-4">
+          {item.images.length > 0 ? (
+            <>
+              <div class="glass-panel overflow-hidden">
+                {item.images.map((image, index) => (
+                  <img
+                    x-show={`activeImage === ${index}`}
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0"
+                    x-transition:enter-end="opacity-100"
+                    src={`/images/items/${item.id}/${image}`}
+                    alt={`${item.name} - Image ${index + 1}`}
+                    class="w-full h-auto"
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                ))}
+              </div>
+              {item.images.length > 1 && (
+                <div class="flex gap-2 overflow-x-auto pb-2">
+                  {item.images.map((image, index) => (
+                    <button
+                      @click={`activeImage = ${index}`}
+                      :class={`activeImage === ${index} ? 'ring-2 ring-accent' : 'opacity-60 hover:opacity-100'`}
+                      class="flex-shrink-0 w-20 h-20 rounded overflow-hidden transition-all duration-200"
+                    >
+                      <img
+                        src={`/images/items/${item.id}/${image}`}
+                        alt={`Thumbnail ${index + 1}`}
+                        class="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div class="aspect-square glass-panel flex flex-col items-center justify-center gap-2">
+              <svg class="w-12 h-12 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <span class="font-mono text-xs text-text-dim uppercase tracking-wider">No image available</span>
+            </div>
+          )}
         </div>
 
-        <div class="border-t border-charcoal/10 pt-8 space-y-4">
-          <h2 class="text-xs uppercase tracking-widest text-charcoal/50 mb-4">Details</h2>
-
-          <dl class="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
-            <div>
-              <dt class="text-charcoal/50">Era</dt>
-              <dd class="font-medium">{item.era}</dd>
-            </div>
-            <div>
-              <dt class="text-charcoal/50">Period</dt>
-              <dd class="font-medium">{item.period}</dd>
-            </div>
-            <div>
-              <dt class="text-charcoal/50">Origin</dt>
-              <dd class="font-medium">{item.origin}</dd>
-            </div>
-            <div>
-              <dt class="text-charcoal/50">Material</dt>
-              <dd class="font-medium capitalize">{item.material}</dd>
-            </div>
-            {item.weight && (
-              <div>
-                <dt class="text-charcoal/50">Weight</dt>
-                <dd class="font-medium">{item.weight}</dd>
-              </div>
-            )}
-            {item.dimensions && (
-              <div>
-                <dt class="text-charcoal/50">Dimensions</dt>
-                <dd class="font-medium">{item.dimensions}</dd>
-              </div>
-            )}
-            {item.condition && (
-              <div class="col-span-2">
-                <dt class="text-charcoal/50">Condition</dt>
-                <dd class="font-medium">{item.condition}</dd>
-              </div>
-            )}
-          </dl>
-        </div>
-
-        {item.tags.length > 0 && (
-          <div class="border-t border-charcoal/10 pt-8 mt-8">
-            <h2 class="text-xs uppercase tracking-widest text-charcoal/50 mb-4">Tags</h2>
-            <div class="flex flex-wrap gap-2">
-              {item.tags.map((tag) => (
-                <span class="px-3 py-1 bg-charcoal/5 rounded text-sm text-charcoal/70">
-                  {tag}
-                </span>
-              ))}
-            </div>
+        <div class="lg:sticky lg:top-24 lg:self-start">
+          <div class="flex items-center gap-2 mb-4">
+            <span class="font-mono text-xs uppercase tracking-wider text-accent">
+              {categoryLabels[item.category]}
+            </span>
+            <span class="text-text-dim">·</span>
+            <span class="font-mono text-xs uppercase tracking-wider text-text-dim">
+              {item.period}
+            </span>
           </div>
-        )}
+
+          <h1 class="font-serif text-3xl md:text-4xl text-text mb-6" data-pagefind-meta="title">{item.name}</h1>
+          <span data-pagefind-meta={`category:${categoryLabels[item.category]}`} class="hidden"></span>
+          <span data-pagefind-meta={`period:${item.period}`} class="hidden"></span>
+          <span data-pagefind-meta={`origin:${item.origin}`} class="hidden"></span>
+          <span data-pagefind-meta={`material:${item.material}`} class="hidden"></span>
+
+          <div class="glass-panel p-6 mb-8">
+            <p class="text-text-muted leading-relaxed">{item.description}</p>
+          </div>
+
+          <div class="glass-panel p-6">
+            <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Details</h2>
+
+            <dl class="grid grid-cols-2 gap-y-3 gap-x-8">
+              <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                <dt class="data-label">Era</dt>
+                <dd class="data-value">{item.era}</dd>
+              </div>
+              <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                <dt class="data-label">Period</dt>
+                <dd class="data-value">{item.period}</dd>
+              </div>
+              <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                <dt class="data-label">Origin</dt>
+                <dd class="data-value">{item.origin}</dd>
+              </div>
+              <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                <dt class="data-label">Material</dt>
+                <dd class="data-value capitalize">{item.material}</dd>
+              </div>
+              {item.weight && (
+                <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                  <dt class="data-label">Weight</dt>
+                  <dd class="data-value">{item.weight}</dd>
+                </div>
+              )}
+              {item.dimensions && (
+                <div class="flex items-center justify-between col-span-2 sm:col-span-1">
+                  <dt class="data-label">Dimensions</dt>
+                  <dd class="data-value">{item.dimensions}</dd>
+                </div>
+              )}
+              {item.condition && (
+                <div class="flex items-center justify-between col-span-2">
+                  <dt class="data-label">Condition</dt>
+                  <dd class="data-value">{item.condition}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          {item.tags.length > 0 && (
+            <div class="glass-panel p-6 mt-4">
+              <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Tags</h2>
+              <div class="flex flex-wrap gap-2">
+                {item.tags.map((tag) => (
+                  <a
+                    href={`${base}/collection?tag=${encodeURIComponent(tag)}`}
+                    class="tag-chip px-3 py-1 bg-surface-light border border-border rounded font-mono text-xs text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
+                  >
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
       </div>
+
+      {relatedItems.length > 0 && (
+        <section class="mt-20 pt-8 border-t border-border" data-pagefind-ignore>
+          <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-6">// Related Items</h2>
+          <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedItems.map((related) => (
+              <a
+                href={`${base}/item/${related.id}`}
+                class="glass-panel p-4 card-hover group"
+              >
+                <div class="flex items-center gap-2 mb-2">
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+                    {categoryLabels[related.category]}
+                  </span>
+                  <span class="text-text-dim">·</span>
+                  <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim">
+                    {related.period}
+                  </span>
+                </div>
+                <h3 class="font-serif text-lg text-text group-hover:text-accent transition-colors">
+                  {related.name}
+                </h3>
+                <p class="font-mono text-xs text-text-dim mt-1">{related.era}</p>
+              </a>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <nav class="flex justify-between items-center mt-12 pt-8 border-t border-border" data-pagefind-ignore>
+        {prevItem ? (
+          <a href={`${base}/item/${prevItem.id}`} class="group">
+            <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Previous</span>
+            <p class="font-serif text-lg text-text group-hover:text-accent transition-colors">{prevItem.name}</p>
+          </a>
+        ) : <div />}
+        {nextItem ? (
+          <a href={`${base}/item/${nextItem.id}`} class="group text-right">
+            <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Next</span>
+            <p class="font-serif text-lg text-text group-hover:text-accent transition-colors">{nextItem.name}</p>
+          </a>
+        ) : <div />}
+      </nav>
     </div>
-
-    <nav class="flex justify-between items-center mt-20 pt-8 border-t border-charcoal/10" data-pagefind-ignore>
-      {prevItem ? (
-        <a href={`${import.meta.env.BASE_URL}/item/${prevItem.id}`} class="group">
-          <span class="text-xs uppercase tracking-widest text-charcoal/50">Previous</span>
-          <p class="font-serif text-lg group-hover:text-gold transition-colors">{prevItem.name}</p>
-        </a>
-      ) : <div />}
-      {nextItem ? (
-        <a href={`${import.meta.env.BASE_URL}/item/${nextItem.id}`} class="group text-right">
-          <span class="text-xs uppercase tracking-widest text-charcoal/50">Next</span>
-          <p class="font-serif text-lg group-hover:text-gold transition-colors">{nextItem.name}</p>
-        </a>
-      ) : <div />}
-    </nav>
   </article>
 </BaseLayout>

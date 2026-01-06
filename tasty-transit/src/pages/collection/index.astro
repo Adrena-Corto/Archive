@@ -7,17 +7,24 @@ import { getAllItems } from '../../lib/items';
 const items = getAllItems();
 ---
 
-<BaseLayout title="Browse Collection | Antiques & Coins">
-  <section class="container-narrow py-16">
-    <div class="mb-12">
-      <h1 class="font-serif text-4xl md:text-5xl mb-4">Browse Collection</h1>
-      <p class="text-charcoal/60 text-lg">
-        Explore {items.length} pieces spanning ancient civilizations to the modern era.
-      </p>
+<BaseLayout title="Browse Collection | Archive">
+  <section class="relative py-16">
+    <div class="absolute inset-0 bg-gradient-to-b from-surface/30 to-void pointer-events-none" />
+
+    <div class="container-narrow relative">
+      <div class="mb-12">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          // Database Query
+        </p>
+        <h1 class="font-serif text-4xl md:text-5xl text-text mb-4">Browse Collection</h1>
+        <p class="text-text-muted text-lg">
+          Explore <span class="text-accent font-mono">{items.length}</span> pieces spanning ancient civilizations to the modern era.
+        </p>
+      </div>
+
+      <FilterBar />
+
+      <ItemGrid items={items} columns={3} />
     </div>
-
-    <FilterBar />
-
-    <ItemGrid items={items} columns={3} />
   </section>
 </BaseLayout>

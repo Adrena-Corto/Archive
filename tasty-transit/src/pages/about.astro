@@ -2,39 +2,66 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="About | Collection">
-  <section class="container-narrow py-16 max-w-3xl">
-    <h1 class="font-serif text-4xl md:text-5xl mb-8">About the Collection</h1>
+<BaseLayout title="About | Archive">
+  <section class="relative py-16">
+    <div class="absolute inset-0 bg-gradient-to-b from-surface/30 to-void pointer-events-none" />
 
-    <div class="prose prose-lg prose-charcoal">
-      <p class="text-charcoal/80 leading-relaxed text-lg">
-        This collection represents a personal journey through human history, assembled over years of careful curation. Each piece tells a story—of ancient empires, skilled craftsmen, and the enduring human desire to create objects of beauty and meaning.
+    <div class="container-narrow relative max-w-3xl">
+      <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+        // System Information
       </p>
+      <h1 class="font-serif text-4xl md:text-5xl text-text mb-8">About the Collection</h1>
 
-      <h2 class="font-serif text-2xl mt-12 mb-4">Areas of Focus</h2>
+      <div class="space-y-8">
+        <div class="glass-panel p-6 md:p-8">
+          <p class="text-text-muted leading-relaxed text-lg">
+            This collection represents a personal journey through human history, assembled over years of careful curation. Each piece tells a story—of ancient empires, skilled craftsmen, and the enduring human desire to create objects of beauty and meaning.
+          </p>
+        </div>
 
-      <p class="text-charcoal/80 leading-relaxed">
-        The collection spans several categories, each chosen for their historical significance and artistic merit:
-      </p>
+        <div class="glass-panel p-6 md:p-8">
+          <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Areas of Focus</h2>
 
-      <ul class="space-y-3 text-charcoal/80">
-        <li><strong>Ancient Coins</strong> — Greek, Roman, Byzantine, and Near Eastern coinage</li>
-        <li><strong>Cylinder Seals</strong> — Mesopotamian administrative and artistic objects</li>
-        <li><strong>Jewelry & Rings</strong> — Wearable art from various periods and cultures</li>
-        <li><strong>Small Antiques</strong> — Curios and objects of historical interest</li>
-      </ul>
+          <p class="text-text-muted leading-relaxed mb-6">
+            The collection spans several categories, each chosen for their historical significance and artistic merit:
+          </p>
 
-      <h2 class="font-serif text-2xl mt-12 mb-4">Philosophy</h2>
+          <ul class="space-y-3">
+            <li class="flex items-start gap-3">
+              <span class="text-accent font-mono">›</span>
+              <span class="text-text"><strong class="text-text">Ancient Coins</strong> <span class="text-text-muted">— Greek, Roman, Byzantine, and Near Eastern coinage</span></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-accent font-mono">›</span>
+              <span class="text-text"><strong class="text-text">Cylinder Seals</strong> <span class="text-text-muted">— Mesopotamian administrative and artistic objects</span></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-accent font-mono">›</span>
+              <span class="text-text"><strong class="text-text">Jewelry & Rings</strong> <span class="text-text-muted">— Wearable art from various periods and cultures</span></span>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="text-accent font-mono">›</span>
+              <span class="text-text"><strong class="text-text">Small Antiques</strong> <span class="text-text-muted">— Curios and objects of historical interest</span></span>
+            </li>
+          </ul>
+        </div>
 
-      <p class="text-charcoal/80 leading-relaxed">
-        Quality over quantity guides every acquisition. Each item must meet strict criteria for authenticity, condition, and historical importance. Provenance and legal acquisition are paramount—every piece in this collection has been ethically sourced and can be traced to legitimate dealers and auction houses.
-      </p>
+        <div class="glass-panel p-6 md:p-8">
+          <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Philosophy</h2>
 
-      <h2 class="font-serif text-2xl mt-12 mb-4">Contact</h2>
+          <p class="text-text-muted leading-relaxed">
+            Quality over quantity guides every acquisition. Each item must meet strict criteria for authenticity, condition, and historical importance. Provenance and legal acquisition are paramount—every piece in this collection has been ethically sourced and can be traced to legitimate dealers and auction houses.
+          </p>
+        </div>
 
-      <p class="text-charcoal/80 leading-relaxed">
-        For inquiries about the collection, please reach out via email.
-      </p>
+        <div class="glass-panel p-6 md:p-8">
+          <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Contact</h2>
+
+          <p class="text-text-muted leading-relaxed">
+            For inquiries about the collection, please reach out via email.
+          </p>
+        </div>
+      </div>
     </div>
   </section>
 </BaseLayout>

@@ -4,17 +4,35 @@ export default {
   theme: {
     extend: {
       colors: {
-        cream: '#FAF9F6',
-        charcoal: '#36454F',
-        gold: '#D4AF37',
-        bronze: '#CD7F32',
+        void: '#0a0a0f',
+        surface: '#12121a',
+        'surface-light': '#1a1a24',
+        'surface-elevated': '#22222e',
+        border: '#2a2a3a',
+        'border-light': '#3a3a4a',
+        text: '#e4e4e7',
+        'text-muted': '#a1a1aa',  // Improved contrast (was #71717a)
+        'text-dim': '#71717a',    // Improved contrast (was #52525b)
+        accent: '#22d3ee',
+        'accent-glow': 'rgba(34, 211, 238, 0.5)',
+        gold: '#fbbf24',
+        'gold-glow': 'rgba(251, 191, 36, 0.5)',
       },
       fontFamily: {
         serif: ['Cormorant Garamond', 'Georgia', 'serif'],
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
       },
       spacing: {
         '128': '32rem',
+      },
+      boxShadow: {
+        'glow-cyan': '0 0 20px rgba(34, 211, 238, 0.15)',
+        'glow-gold': '0 0 20px rgba(251, 191, 36, 0.15)',
+        'glow-cyan-lg': '0 0 40px rgba(34, 211, 238, 0.2)',
+      },
+      backdropBlur: {
+        xs: '2px',
       },
     },
   },

@@ -2,11 +2,20 @@
 const base = import.meta.env.BASE_URL || '/';
 ---
 
-<div id="search" class="search-container" data-base-url={base}></div>
+<div id="search-wrapper" class="search-wrapper">
+  <div id="search-loading" class="search-loading">
+    <div class="flex items-center gap-3">
+      <div class="search-spinner"></div>
+      <span class="font-mono text-sm text-text-muted">// Initializing search index...</span>
+    </div>
+  </div>
+  <div id="search" class="search-container" data-base-url={base}></div>
+</div>
 
 <script>
   async function initPagefind() {
     const container = document.getElementById('search');
+    const loading = document.getElementById('search-loading');
     if (!container) return;
 
     const baseUrl = container.dataset.baseUrl || '/';
@@ -21,9 +30,20 @@ const base = import.meta.env.BASE_URL || '/';
         baseUrl: baseUrl,
         bundlePath: `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}pagefind/`,
       });
+      if (loading) loading.style.display = 'none';
     } catch (e) {
       console.error('Pagefind error:', e);
-      container.innerHTML = '<p class="text-charcoal/50 text-sm">Search available after build</p>';
+      if (loading) loading.style.display = 'none';
+      container.innerHTML = `
+        <div class="glass-panel p-6 text-center">
+          <p class="font-mono text-sm text-text-muted mb-2">
+            <span class="text-accent">//</span> Search index not available
+          </p>
+          <p class="text-xs text-text-dim">
+            Run <code class="bg-surface-light px-2 py-1 rounded">pnpm build</code> to generate the search index.
+          </p>
+        </div>
+      `;
     }
   }
 
@@ -31,31 +51,92 @@ const base = import.meta.env.BASE_URL || '/';
 </script>
 
 <style is:global>
+  .search-loading {
+    padding: 1rem;
+  }
+
+  .search-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(34, 211, 238, 0.2);
+    border-top-color: #22d3ee;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+
+  @keyframes spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
   .search-container {
     --pagefind-ui-scale: 0.9;
-    --pagefind-ui-primary: #b8860b;
-    --pagefind-ui-text: #2c3e50;
-    --pagefind-ui-background: #fdfbf7;
-    --pagefind-ui-border: #2c3e5010;
+    --pagefind-ui-primary: #22d3ee;
+    --pagefind-ui-text: #e4e4e7;
+    --pagefind-ui-background: #12121a;
+    --pagefind-ui-border: rgba(255, 255, 255, 0.1);
     --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 4px;
-    --pagefind-ui-font: system-ui, -apple-system, sans-serif;
+    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-font: 'JetBrains Mono', 'Fira Code', monospace;
   }
 
   .pagefind-ui__search-input {
     font-size: 14px !important;
-    padding: 10px 14px !important;
+    padding: 12px 16px !important;
+    background: rgba(18, 18, 26, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  }
+
+  .pagefind-ui__search-input:focus {
+    border-color: rgba(34, 211, 238, 0.5) !important;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.15) !important;
+    outline: none !important;
   }
 
   .pagefind-ui__search-clear {
-    color: var(--pagefind-ui-text) !important;
+    color: #71717a !important;
+  }
+
+  .pagefind-ui__search-clear:hover {
+    color: #22d3ee !important;
+  }
+
+  .pagefind-ui__result {
+    padding: 16px !important;
+    background: rgba(18, 18, 26, 0.8) !important;
+    backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    margin-bottom: 8px !important;
+  }
+
+  .pagefind-ui__result:hover {
+    border-color: rgba(34, 211, 238, 0.5) !important;
   }
 
   .pagefind-ui__result-link {
-    font-family: 'Playfair Display', Georgia, serif !important;
+    font-family: 'Cormorant Garamond', Georgia, serif !important;
+    color: #e4e4e7 !important;
+  }
+
+  .pagefind-ui__result-link:hover {
+    color: #22d3ee !important;
   }
 
   .pagefind-ui__result-excerpt {
     font-size: 13px !important;
+    color: #71717a !important;
+    font-family: 'Inter', system-ui, sans-serif !important;
+  }
+
+  .pagefind-ui__result-title {
+    font-weight: 500 !important;
+  }
+
+  .pagefind-ui__message {
+    color: #52525b !important;
+    font-family: 'JetBrains Mono', monospace !important;
   }
 </style>

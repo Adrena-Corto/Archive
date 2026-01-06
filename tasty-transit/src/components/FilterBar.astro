@@ -1,87 +1,147 @@
 ---
-import { getAllCategories, getAllMaterials, getAllPeriods } from '../lib/items';
+import { getAllCategories, getAllMaterials, getAllPeriods, getAllItems } from '../lib/items';
 
 const categories = getAllCategories();
 const materials = getAllMaterials();
 const periods = getAllPeriods();
+const totalItems = getAllItems().length;
 
 const categoryLabels: Record<string, string> = {
   coin: 'Coins',
   jewelry: 'Jewelry',
   ring: 'Rings',
   seal: 'Seals',
-  misc: 'Miscellaneous',
+  misc: 'Misc',
 };
 ---
 
 <div
-  x-data="{
+  x-data={`{
     category: 'all',
     material: 'all',
     period: 'all',
+    visibleCount: ${totalItems},
+    totalItems: ${totalItems},
+    init() {
+      // Read initial filter state from URL
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('category')) this.category = params.get('category');
+      if (params.get('material')) this.material = params.get('material');
+      if (params.get('period')) this.period = params.get('period');
+      this.filterItems();
+    },
+    updateURL() {
+      const params = new URLSearchParams();
+      if (this.category !== 'all') params.set('category', this.category);
+      if (this.material !== 'all') params.set('material', this.material);
+      if (this.period !== 'all') params.set('period', this.period);
+      const newURL = params.toString() ? '?' + params.toString() : window.location.pathname;
+      window.history.replaceState({}, '', newURL);
+    },
     filterItems() {
       const items = document.querySelectorAll('[data-category]');
+      let count = 0;
       items.forEach(item => {
         const matchCategory = this.category === 'all' || item.dataset.category === this.category;
         const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
         const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
-        item.style.display = (matchCategory && matchMaterial && matchPeriod) ? '' : 'none';
+        const visible = matchCategory && matchMaterial && matchPeriod;
+        item.style.display = visible ? '' : 'none';
+        if (visible) count++;
       });
+      this.visibleCount = count;
+      this.updateURL();
+    },
+    clearFilters() {
+      this.category = 'all';
+      this.material = 'all';
+      this.period = 'all';
+      this.filterItems();
+    },
+    hasActiveFilters() {
+      return this.category !== 'all' || this.material !== 'all' || this.period !== 'all';
     }
-  }"
-  x-init="filterItems()"
-  class="flex flex-wrap items-center gap-6 mb-12 pb-6 border-b border-charcoal/10"
+  }`}
+  x-init="init()"
+  class="glass-panel p-4 mb-8"
 >
-  <div class="flex items-center gap-2">
-    <label class="text-xs uppercase tracking-widest text-charcoal/50">Category</label>
-    <select
-      x-model="category"
-      @change="filterItems()"
-      class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold"
-    >
-      <option value="all">All</option>
-      {categories.map((cat) => (
-        <option value={cat}>{categoryLabels[cat] || cat}</option>
-      ))}
-    </select>
+  <div class="flex flex-wrap items-center gap-4 md:gap-6">
+    <div class="flex items-center gap-2">
+      <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Category</label>
+      <select
+        x-model="category"
+        @change="filterItems()"
+        class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors"
+      >
+        <option value="all">All</option>
+        {categories.map((cat) => (
+          <option value={cat}>{categoryLabels[cat] || cat}</option>
+        ))}
+      </select>
+    </div>
+
+    {materials.length > 0 && (
+      <div class="flex items-center gap-2">
+        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Material</label>
+        <select
+          x-model="material"
+          @change="filterItems()"
+          class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors capitalize"
+        >
+          <option value="all">All</option>
+          {materials.map((mat) => (
+            <option value={mat} class="capitalize">{mat}</option>
+          ))}
+        </select>
+      </div>
+    )}
+
+    {periods.length > 0 && (
+      <div class="flex items-center gap-2">
+        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim">Period</label>
+        <select
+          x-model="period"
+          @change="filterItems()"
+          class="bg-surface-light border border-border rounded px-3 py-1.5 font-mono text-xs text-text focus:outline-none focus:border-accent transition-colors"
+        >
+          <option value="all">All</option>
+          {periods.map((p) => (
+            <option value={p}>{p}</option>
+          ))}
+        </select>
+      </div>
+    )}
+
+    <div class="flex items-center gap-4 ml-auto">
+      <span class="font-mono text-xs text-text-muted" role="status" aria-live="polite">
+        <span class="text-accent">></span>
+        <span x-text="visibleCount"></span> items
+      </span>
+      <button
+        x-show="hasActiveFilters()"
+        @click="clearFilters()"
+        class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
+      >
+        [Clear]
+      </button>
+    </div>
   </div>
 
-  {materials.length > 0 && (
-    <div class="flex items-center gap-2">
-      <label class="text-xs uppercase tracking-widest text-charcoal/50">Material</label>
-      <select
-        x-model="material"
-        @change="filterItems()"
-        class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold capitalize"
-      >
-        <option value="all">All</option>
-        {materials.map((mat) => (
-          <option value={mat} class="capitalize">{mat}</option>
-        ))}
-      </select>
-    </div>
-  )}
-
-  {periods.length > 0 && (
-    <div class="flex items-center gap-2">
-      <label class="text-xs uppercase tracking-widest text-charcoal/50">Period</label>
-      <select
-        x-model="period"
-        @change="filterItems()"
-        class="bg-transparent border border-charcoal/20 rounded px-3 py-1.5 text-sm focus:outline-none focus:border-gold"
-      >
-        <option value="all">All</option>
-        {periods.map((p) => (
-          <option value={p}>{p}</option>
-        ))}
-      </select>
-    </div>
-  )}
-
-  <button
-    @click="category = 'all'; material = 'all'; period = 'all'; filterItems()"
-    class="text-xs uppercase tracking-widest text-charcoal/50 hover:text-charcoal transition-colors ml-auto"
+  <!-- Empty state message -->
+  <div
+    x-show="visibleCount === 0"
+    x-cloak
+    class="mt-4 p-4 border border-border-light rounded-lg text-center"
+    role="status"
   >
-    Clear Filters
-  </button>
+    <p class="font-mono text-sm text-text-muted">
+      <span class="text-accent">//</span> No items match your filters
+    </p>
+    <button
+      @click="clearFilters()"
+      class="mt-2 font-mono text-xs text-accent hover:underline"
+    >
+      Clear all filters
+    </button>
+  </div>
 </div>

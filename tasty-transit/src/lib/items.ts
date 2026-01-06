@@ -62,3 +62,23 @@ export function getAllPeriods(): string[] {
   const periods = new Set(items.map(item => item.period));
   return Array.from(periods).sort();
 }
+
+export function getRelatedItems(currentItem: Item, limit: number = 3): Item[] {
+  const allItems = getAllItems().filter(item => item.id !== currentItem.id);
+
+  const scored = allItems.map(item => {
+    let score = 0;
+    if (item.category === currentItem.category) score += 3;
+    if (item.period === currentItem.period) score += 2;
+    if (item.material === currentItem.material) score += 2;
+    const sharedTags = item.tags.filter(tag => currentItem.tags.includes(tag));
+    score += sharedTags.length;
+    return { item, score };
+  });
+
+  return scored
+    .filter(s => s.score > 0)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, limit)
+    .map(s => s.item);
+}
