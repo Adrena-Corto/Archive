@@ -1,0 +1,38 @@
+---
+---
+
+<div class="absolute bottom-4 right-4 z-20 flex flex-col gap-2">
+  <button
+    @click="zoomIn()"
+    :disabled="zoomLevel >= 4"
+    class="glass-panel w-10 h-10 flex items-center justify-center text-text hover:text-accent hover:border-accent/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+    title="Zoom in (+)"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="12" y1="5" x2="12" y2="19"></line>
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <button
+    @click="zoomOut()"
+    :disabled="zoomLevel <= 1"
+    class="glass-panel w-10 h-10 flex items-center justify-center text-text hover:text-accent hover:border-accent/50 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+    title="Zoom out (-)"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <line x1="5" y1="12" x2="19" y2="12"></line>
+    </svg>
+  </button>
+
+  <button
+    @click="setZoomLevel(2); panOffset = clampPan(-containerWidth * zoom / 2 + containerWidth / 2)"
+    class="glass-panel w-10 h-10 flex items-center justify-center text-text hover:text-accent hover:border-accent/50 transition-all"
+    title="Reset view"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M12 2v2m0 16v2M2 12h2m16 0h2"></path>
+    </svg>
+  </button>
+</div>

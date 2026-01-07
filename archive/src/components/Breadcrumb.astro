@@ -17,9 +17,9 @@ function url(path: string): string {
 ---
 
 <nav aria-label="Breadcrumb" class="mb-6">
-  <ol class="flex items-center gap-2 font-mono text-xs uppercase tracking-wider">
-    <li>
-      <a href={url('/')} class="text-text-dim hover:text-accent transition-colors">
+  <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs uppercase tracking-wider">
+    <li class="flex items-center">
+      <a href={url('/')} class="text-text-dim hover:text-accent transition-colors whitespace-nowrap">
         <span class="text-accent">//</span> Archive
       </a>
     </li>
@@ -27,11 +27,11 @@ function url(path: string): string {
       <li class="flex items-center gap-2">
         <span class="text-text-dim">/</span>
         {item.href ? (
-          <a href={item.href} class="text-text-dim hover:text-accent transition-colors">
+          <a href={item.href} class="text-text-dim hover:text-accent transition-colors whitespace-nowrap">
             {item.label}
           </a>
         ) : (
-          <span class="text-text-muted">{item.label}</span>
+          <span class="text-text-muted break-words">{item.label}</span>
         )}
       </li>
     ))}
