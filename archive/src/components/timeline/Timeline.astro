@@ -1,0 +1,253 @@
+---
+import { getTimelineItems, getTimelineLandmarks } from '../../lib/timeline';
+import yaml from 'yaml';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const landmarksPath = path.join(process.cwd(), 'src/data/landmarks.yaml');
+const landmarksFile = fs.readFileSync(landmarksPath, 'utf-8');
+const rawLandmarks = yaml.parse(landmarksFile) as any[];
+
+const items = getTimelineItems();
+const landmarks = getTimelineLandmarks(rawLandmarks);
+
+const itemsJson = JSON.stringify(items);
+const landmarksJson = JSON.stringify(landmarks);
+
+const base = import.meta.env.BASE_URL || '/Archive';
+---
+
+<div
+  id="timeline-container"
+  class="relative w-full h-[55vh] min-h-[380px] rounded-lg border border-border overflow-hidden"
+>
+  <canvas id="timeline-canvas" class="w-full h-full"></canvas>
+
+  <!-- Info Panel (DOM overlay) -->
+  <div id="timeline-info" class="absolute top-4 left-4 z-20 glass-panel px-4 py-3 min-w-[220px] pointer-events-none">
+    <div class="flex items-center gap-2 mb-1">
+      <span id="zoom-level" class="text-accent font-mono text-sm font-medium">PERIOD</span>
+      <span class="text-text-dim">·</span>
+      <span id="era-name" class="font-mono text-xs text-text-muted">Classical World</span>
+    </div>
+    <p id="year-range" class="font-mono text-xs text-text-dim">500 BC - 100 AD</p>
+    <div class="flex items-center gap-4 mt-2 pt-2 border-t border-border/50 flex-wrap">
+      <span class="flex items-center gap-1.5">
+        <span class="w-2 h-2 rotate-45 bg-accent"></span>
+        <span id="item-count" class="font-mono text-[10px] text-text-dim">0 items</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-2.5 h-0.5 bg-gold"></span>
+        <span id="landmark-count" class="font-mono text-[10px] text-text-dim">0 landmarks</span>
+      </span>
+      <span class="flex items-center gap-1.5">
+        <span class="w-0.5 h-2.5 bg-purple-500"></span>
+        <span class="font-mono text-[10px] text-text-dim">people</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Minimap -->
+  <div id="timeline-minimap" class="absolute bottom-4 left-4 z-20 glass-panel p-2 w-[200px]">
+    <div class="relative h-6 bg-surface-light/30 rounded overflow-hidden">
+      <!-- Density bars will be rendered here -->
+      <div id="minimap-bars" class="absolute inset-0 flex items-end gap-px px-1"></div>
+      <!-- Viewport indicator -->
+      <div id="minimap-viewport" class="absolute top-0 bottom-0 bg-accent/20 border-x border-accent/50 transition-all duration-150"></div>
+    </div>
+    <div class="flex justify-between mt-1 text-[8px] font-mono text-text-dim/50">
+      <span>4500 BC</span>
+      <span>1500 AD</span>
+    </div>
+  </div>
+
+  <!-- Zoom Controls -->
+  <div class="absolute bottom-4 right-4 z-20 flex gap-2">
+    <button
+      id="zoom-out-btn"
+      class="w-10 h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
+      aria-label="Zoom out"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
+      </svg>
+    </button>
+    <button
+      id="zoom-in-btn"
+      class="w-10 h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
+      aria-label="Zoom in"
+    >
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script define:vars={{ itemsJson, landmarksJson, base }}>
+  window.__TIMELINE_DATA__ = {
+    items: JSON.parse(itemsJson),
+    landmarks: JSON.parse(landmarksJson),
+    baseUrl: base,
+  };
+</script>
+
+<script>
+  import { PixiTimeline } from '../../lib/timeline/pixi-timeline';
+
+  const ERA_BANDS = [
+    { name: 'Ancient Near East', startYear: -4500, endYear: -330 },
+    { name: 'Classical World', startYear: -500, endYear: 476 },
+    { name: 'Medieval', startYear: 476, endYear: 1500 },
+  ];
+
+  const ZOOM_NAMES: Record<number, string> = {
+    1: 'ERA',
+    2: 'PERIOD',
+    3: 'CENTURY',
+    4: 'DECADE',
+  };
+
+  function formatYear(year: number): string {
+    if (year === 0) return '1 AD';
+    if (year < 0) return `${Math.abs(year)} BC`;
+    return `${year} AD`;
+  }
+
+  function getEraName(centerYear: number): string {
+    for (const era of ERA_BANDS) {
+      if (centerYear >= era.startYear && centerYear <= era.endYear) {
+        return era.name;
+      }
+    }
+    return '';
+  }
+
+  async function initTimeline() {
+    const canvas = document.getElementById('timeline-canvas') as HTMLCanvasElement;
+    if (!canvas) return;
+
+    const data = (window as any).__TIMELINE_DATA__;
+    if (!data) return;
+
+    const timeline = new PixiTimeline(
+      canvas,
+      data.items,
+      data.landmarks,
+      data.baseUrl
+    );
+
+    await timeline.init();
+
+    // Build minimap density bars
+    buildMinimap(data.items);
+
+    // Zoom controls
+    const zoomInBtn = document.getElementById('zoom-in-btn');
+    const zoomOutBtn = document.getElementById('zoom-out-btn');
+
+    zoomInBtn?.addEventListener('click', () => {
+      timeline.zoomIn();
+    });
+
+    zoomOutBtn?.addEventListener('click', () => {
+      timeline.zoomOut();
+    });
+
+    // Update info panel on state change
+    const updateInfo = () => {
+      const state = timeline.getState();
+
+      const zoomLevelEl = document.getElementById('zoom-level');
+      const eraNameEl = document.getElementById('era-name');
+      const yearRangeEl = document.getElementById('year-range');
+      const itemCountEl = document.getElementById('item-count');
+      const landmarkCountEl = document.getElementById('landmark-count');
+      const minimapViewport = document.getElementById('minimap-viewport');
+
+      if (zoomLevelEl) {
+        zoomLevelEl.textContent = ZOOM_NAMES[state.zoomLevel] || 'PERIOD';
+      }
+
+      const centerYear = (state.viewportStart + state.viewportEnd) / 2;
+      if (eraNameEl) {
+        eraNameEl.textContent = getEraName(centerYear);
+      }
+
+      if (yearRangeEl) {
+        yearRangeEl.textContent = `${formatYear(Math.round(state.viewportStart))} - ${formatYear(Math.round(state.viewportEnd))}`;
+      }
+
+      if (itemCountEl) {
+        itemCountEl.textContent = `${state.visibleItems} items`;
+      }
+
+      if (landmarkCountEl) {
+        landmarkCountEl.textContent = `${state.visibleLandmarks} landmarks`;
+      }
+
+      // Update minimap viewport indicator
+      if (minimapViewport) {
+        const totalSpan = 1500 - (-4500); // 6000 years
+        const leftPercent = ((state.viewportStart - (-4500)) / totalSpan) * 100;
+        const widthPercent = ((state.viewportEnd - state.viewportStart) / totalSpan) * 100;
+        minimapViewport.style.left = `${Math.max(0, leftPercent)}%`;
+        minimapViewport.style.width = `${Math.min(100, widthPercent)}%`;
+      }
+
+      requestAnimationFrame(updateInfo);
+    };
+
+    requestAnimationFrame(updateInfo);
+  }
+
+  function buildMinimap(items: any[]) {
+    const minimapBars = document.getElementById('minimap-bars');
+    if (!minimapBars) return;
+
+    const totalSpan = 1500 - (-4500);
+    const bucketCount = 50;
+    const bucketSize = totalSpan / bucketCount;
+    const buckets = new Array(bucketCount).fill(0);
+
+    // Count items in each bucket
+    for (const item of items) {
+      const bucketIndex = Math.floor((item.yearMidpoint - (-4500)) / bucketSize);
+      if (bucketIndex >= 0 && bucketIndex < bucketCount) {
+        buckets[bucketIndex]++;
+      }
+    }
+
+    const maxCount = Math.max(...buckets, 1);
+
+    // Create bars
+    minimapBars.innerHTML = '';
+    for (let i = 0; i < bucketCount; i++) {
+      const height = (buckets[i] / maxCount) * 100;
+      const bar = document.createElement('div');
+      bar.className = 'flex-1 bg-accent/40 rounded-t';
+      bar.style.height = `${Math.max(height, 2)}%`;
+      minimapBars.appendChild(bar);
+    }
+  }
+
+  // Support both initial load and Astro View Transitions
+  function init() {
+    // Check if canvas exists and hasn't been initialized
+    const canvas = document.getElementById('timeline-canvas') as HTMLCanvasElement;
+    if (canvas && !canvas.dataset.initialized) {
+      canvas.dataset.initialized = 'true';
+      initTimeline();
+    }
+  }
+
+  // Initial load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Astro View Transitions - re-initialize on page navigation
+  document.addEventListener('astro:page-load', init);
+</script>

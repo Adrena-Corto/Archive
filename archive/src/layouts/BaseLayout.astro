@@ -174,6 +174,7 @@ function isActive(path: string): boolean {
           <div class="container-narrow py-6 flex flex-col gap-2">
             <a
               href={url('/collection')}
+              @click="mobileMenuOpen = false"
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/collection') && "text-accent border-accent"]}
               aria-current={isActive('/collection') ? 'page' : undefined}
             >
@@ -181,6 +182,7 @@ function isActive(path: string): boolean {
             </a>
             <a
               href={url('/timeline')}
+              @click="mobileMenuOpen = false"
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/timeline') && "text-accent border-accent"]}
               aria-current={isActive('/timeline') ? 'page' : undefined}
             >
@@ -188,6 +190,7 @@ function isActive(path: string): boolean {
             </a>
             <a
               href={url('/about')}
+              @click="mobileMenuOpen = false"
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/about') && "text-accent border-accent"]}
               aria-current={isActive('/about') ? 'page' : undefined}
             >
@@ -195,6 +198,7 @@ function isActive(path: string): boolean {
             </a>
             <a
               href={url('/search')}
+              @click="mobileMenuOpen = false"
               class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3 flex items-center", isActive('/search') && "text-accent border-accent"]}
               aria-current={isActive('/search') ? 'page' : undefined}
             >

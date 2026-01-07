@@ -114,12 +114,12 @@ const itemStructuredData = {
                 ))}
               </button>
               {item.images.length > 1 && (
-                <div class="flex gap-2 overflow-x-auto pb-2">
+                <div class="flex gap-3 overflow-x-auto pb-2">
                   {item.images.map((image, index) => (
                     <button
                       @click={`activeImage = ${index}`}
-                      :class={`activeImage === ${index} ? 'ring-2 ring-accent' : 'opacity-60 hover:opacity-100'`}
-                      class="flex-shrink-0 w-24 h-24 min-w-[44px] min-h-[44px] rounded overflow-hidden transition-all duration-200"
+                      :class={`activeImage === ${index} ? 'border-accent' : 'border-transparent opacity-60 hover:opacity-100'`}
+                      class="flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-lg overflow-hidden transition-all duration-200 border-2"
                     >
                       <img
                         src={url(`/images/items/${item.id}/${image}`)}

@@ -1,0 +1,304 @@
+# Historical Landmarks for Timeline
+# Types: civilization_start, civilization, civilization_end, major_event, person
+
+# Early Mesopotamia & Egypt (4500 BC - 2000 BC)
+- id: sumerian-rise
+  name: "Rise of Sumer"
+  type: civilization_start
+  year: -4500
+  description: "First urban civilization emerges in southern Mesopotamia"
+
+- id: egyptian-unification
+  name: "Unification of Egypt"
+  type: civilization_start
+  year: -3100
+  description: "Upper and Lower Egypt united under first pharaoh"
+
+- id: old-kingdom-egypt
+  name: "Egyptian Old Kingdom"
+  type: civilization
+  yearStart: -2686
+  yearEnd: -2181
+  description: "Age of pyramid building"
+
+- id: akkadian-empire
+  name: "Akkadian Empire"
+  type: civilization
+  yearStart: -2334
+  yearEnd: -2154
+  description: "First empire in history under Sargon of Akkad"
+
+- id: ur-third-dynasty
+  name: "Third Dynasty of Ur"
+  type: civilization
+  yearStart: -2112
+  yearEnd: -2004
+  description: "Sumerian renaissance and the Code of Ur-Nammu"
+
+# Middle Period (2000 BC - 1000 BC)
+- id: babylonian-empire
+  name: "Old Babylonian Period"
+  type: civilization
+  yearStart: -1894
+  yearEnd: -1595
+  description: "Hammurabi's code and Babylonian dominance"
+
+- id: hammurabi
+  name: "Hammurabi"
+  type: person
+  yearStart: -1810
+  yearEnd: -1750
+  description: "King of Babylon, created first written law code"
+
+- id: new-kingdom-egypt
+  name: "Egyptian New Kingdom"
+  type: civilization
+  yearStart: -1550
+  yearEnd: -1077
+  description: "Egypt's imperial age - Tutankhamun, Ramesses"
+
+- id: ramesses-ii
+  name: "Ramesses II"
+  type: person
+  yearStart: -1303
+  yearEnd: -1213
+  description: "Greatest pharaoh of ancient Egypt"
+
+- id: bronze-age-collapse
+  name: "Bronze Age Collapse"
+  type: major_event
+  yearStart: -1200
+  yearEnd: -1150
+  description: "Collapse of major civilizations across the Mediterranean"
+
+# Iron Age & Classical (1000 BC - 300 BC)
+- id: assyrian-empire
+  name: "Neo-Assyrian Empire"
+  type: civilization
+  yearStart: -911
+  yearEnd: -609
+  description: "Military superpower of the ancient Near East"
+
+- id: homer
+  name: "Homer"
+  type: person
+  yearStart: -800
+  yearEnd: -701
+  description: "Author of the Iliad and Odyssey"
+
+- id: neo-babylonian
+  name: "Neo-Babylonian Empire"
+  type: civilization
+  yearStart: -626
+  yearEnd: -539
+  description: "Nebuchadnezzar II and the Hanging Gardens"
+
+- id: nebuchadnezzar
+  name: "Nebuchadnezzar II"
+  type: person
+  yearStart: -634
+  yearEnd: -562
+  description: "Greatest king of Babylon, built Hanging Gardens"
+
+- id: persian-empire
+  name: "Achaemenid Persian Empire"
+  type: civilization
+  yearStart: -550
+  yearEnd: -330
+  description: "Largest empire the world had yet seen"
+
+- id: cyrus-great
+  name: "Cyrus the Great"
+  type: person
+  yearStart: -600
+  yearEnd: -530
+  description: "Founder of the Persian Empire"
+
+- id: confucius
+  name: "Confucius"
+  type: person
+  yearStart: -551
+  yearEnd: -479
+  description: "Chinese philosopher, founder of Confucianism"
+
+- id: buddha
+  name: "Buddha"
+  type: person
+  yearStart: -563
+  yearEnd: -483
+  description: "Founder of Buddhism"
+
+- id: greek-city-states
+  name: "Greek Classical Period"
+  type: civilization
+  yearStart: -500
+  yearEnd: -323
+  description: "Golden age of Athens, philosophy, and democracy"
+
+- id: socrates
+  name: "Socrates"
+  type: person
+  yearStart: -470
+  yearEnd: -399
+  description: "Father of Western philosophy"
+
+- id: plato
+  name: "Plato"
+  type: person
+  yearStart: -428
+  yearEnd: -348
+  description: "Student of Socrates, founded the Academy"
+
+- id: aristotle
+  name: "Aristotle"
+  type: person
+  yearStart: -384
+  yearEnd: -322
+  description: "Philosopher, tutor of Alexander the Great"
+
+- id: alexander-great
+  name: "Alexander the Great"
+  type: person
+  yearStart: -356
+  yearEnd: -323
+  description: "Conquered from Greece to India"
+
+- id: alexander-conquests
+  name: "Alexander's Conquests"
+  type: major_event
+  yearStart: -336
+  yearEnd: -323
+  description: "Macedonian conquest of the Persian Empire"
+
+# Roman Era
+- id: roman-republic
+  name: "Roman Republic"
+  type: civilization
+  yearStart: -509
+  yearEnd: -27
+  description: "From city-state to Mediterranean power"
+
+- id: julius-caesar
+  name: "Julius Caesar"
+  type: person
+  yearStart: -100
+  yearEnd: -44
+  description: "Roman general and dictator"
+
+- id: cleopatra
+  name: "Cleopatra VII"
+  type: person
+  yearStart: -69
+  yearEnd: -30
+  description: "Last active pharaoh of Egypt"
+
+- id: roman-empire
+  name: "Roman Empire"
+  type: civilization
+  yearStart: -27
+  yearEnd: 476
+  description: "Pax Romana and imperial expansion"
+
+- id: augustus
+  name: "Augustus"
+  type: person
+  yearStart: -63
+  yearEnd: 14
+  description: "First Roman Emperor"
+
+- id: jesus
+  name: "Jesus of Nazareth"
+  type: person
+  yearStart: -4
+  yearEnd: 30
+  description: "Central figure of Christianity"
+
+- id: nero
+  name: "Nero"
+  type: person
+  yearStart: 37
+  yearEnd: 68
+  description: "Roman Emperor, persecutor of Christians"
+
+- id: marcus-aurelius
+  name: "Marcus Aurelius"
+  type: person
+  yearStart: 121
+  yearEnd: 180
+  description: "Philosopher Emperor, Stoic author"
+
+- id: constantine
+  name: "Constantine the Great"
+  type: person
+  yearStart: 272
+  yearEnd: 337
+  description: "First Christian Roman Emperor"
+
+- id: fall-of-rome
+  name: "Fall of Western Rome"
+  type: civilization_end
+  year: 476
+  description: "End of the Western Roman Empire"
+
+# Byzantine & Medieval
+- id: byzantine-empire
+  name: "Byzantine Empire"
+  type: civilization
+  yearStart: 330
+  yearEnd: 1453
+  description: "Eastern continuation of Roman civilization"
+
+- id: justinian
+  name: "Justinian I"
+  type: person
+  yearStart: 482
+  yearEnd: 565
+  description: "Byzantine Emperor, codified Roman law"
+
+- id: muhammad
+  name: "Muhammad"
+  type: person
+  yearStart: 570
+  yearEnd: 632
+  description: "Prophet and founder of Islam"
+
+- id: charlemagne
+  name: "Charlemagne"
+  type: person
+  yearStart: 742
+  yearEnd: 814
+  description: "First Holy Roman Emperor"
+
+- id: islamic-golden-age
+  name: "Islamic Golden Age"
+  type: civilization
+  yearStart: 750
+  yearEnd: 1258
+  description: "Flourishing of science, art, and culture"
+
+- id: genghis-khan
+  name: "Genghis Khan"
+  type: person
+  yearStart: 1162
+  yearEnd: 1227
+  description: "Founder of the Mongol Empire"
+
+- id: crusades
+  name: "The Crusades"
+  type: major_event
+  yearStart: 1095
+  yearEnd: 1291
+  description: "Religious wars for control of the Holy Land"
+
+- id: marco-polo
+  name: "Marco Polo"
+  type: person
+  yearStart: 1254
+  yearEnd: 1324
+  description: "Venetian explorer who traveled to China"
+
+- id: fall-of-constantinople
+  name: "Fall of Constantinople"
+  type: civilization_end
+  year: 1453
+  description: "End of the Byzantine Empire"

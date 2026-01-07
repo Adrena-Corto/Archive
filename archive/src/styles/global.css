@@ -6,11 +6,11 @@
 
 @layer base {
   html {
-    @apply scroll-smooth;
+    @apply scroll-smooth overflow-x-hidden;
   }
 
   body {
-    @apply bg-void text-text font-sans antialiased;
+    @apply bg-void text-text font-sans antialiased overflow-x-hidden;
   }
 
   #matrix-bg {
