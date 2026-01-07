@@ -112,13 +112,32 @@ function url(path: string): string {
       container.dataset.initialized = 'true';
       if (loading) loading.style.display = 'none';
 
-      // Watch for search input to toggle suggestions visibility
+      // Watch for search input to toggle suggestions and clear button visibility
       setTimeout(() => {
         const searchInput = container.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
-        if (searchInput && suggestions) {
-          searchInput.addEventListener('input', () => {
+        const clearButton = container.querySelector('.pagefind-ui__search-clear') as HTMLButtonElement;
+
+        const updateClearVisibility = () => {
+          if (clearButton) {
+            clearButton.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+          }
+          if (suggestions) {
             suggestions.style.display = searchInput.value.length > 0 ? 'none' : 'block';
+          }
+        };
+
+        if (searchInput) {
+          searchInput.addEventListener('input', updateClearVisibility);
+          // Also observe for clear button appearing (Pagefind may add it dynamically)
+          const observer = new MutationObserver(() => {
+            const btn = container.querySelector('.pagefind-ui__search-clear') as HTMLButtonElement;
+            if (btn) {
+              btn.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
+            }
           });
+          observer.observe(container, { childList: true, subtree: true });
+          // Initial state
+          updateClearVisibility();
         }
       }, 100);
     } catch (e) {
@@ -180,72 +199,200 @@ function url(path: string): string {
   }
 
   .search-container {
-    --pagefind-ui-scale: 0.9;
+    --pagefind-ui-scale: 1;
     --pagefind-ui-primary: #22d3ee;
     --pagefind-ui-text: #e4e4e7;
     --pagefind-ui-background: #12121a;
     --pagefind-ui-border: rgba(255, 255, 255, 0.1);
     --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 8px;
+    --pagefind-ui-border-radius: 12px;
     --pagefind-ui-font: 'JetBrains Mono', 'Fira Code', monospace;
   }
 
+  /* Search form container */
+  .pagefind-ui__form {
+    position: relative;
+  }
+
+  /* Search input wrapper */
+  .pagefind-ui__search-input-wrapper {
+    position: relative;
+  }
+
+  /* Search input */
   .pagefind-ui__search-input {
-    font-size: 14px !important;
-    padding: 12px 16px !important;
-    background: rgba(18, 18, 26, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
+    width: 100% !important;
+    font-size: 15px !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    padding: 16px 120px 16px 48px !important;
+    background: rgba(18, 18, 26, 0.9) !important;
+    backdrop-filter: blur(20px) !important;
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: 12px !important;
+    color: #e4e4e7 !important;
+    transition: all 0.3s ease !important;
+  }
+
+  .pagefind-ui__search-input::placeholder {
+    color: #52525b !important;
+    font-family: 'JetBrains Mono', monospace !important;
   }
 
   .pagefind-ui__search-input:focus {
     border-color: rgba(34, 211, 238, 0.5) !important;
-    box-shadow: 0 0 20px rgba(34, 211, 238, 0.15) !important;
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1), 0 0 30px rgba(34, 211, 238, 0.15) !important;
     outline: none !important;
+    background: rgba(18, 18, 26, 0.95) !important;
   }
 
+  /* Custom search icon */
+  .pagefind-ui__form::before {
+    content: '';
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2322d3ee' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+    pointer-events: none;
+    opacity: 0.7;
+  }
+
+  /* Clear button styling */
   .pagefind-ui__search-clear {
-    color: #71717a !important;
+    position: absolute !important;
+    right: 12px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 8px 16px !important;
+    background: rgba(34, 211, 238, 0.1) !important;
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+    border-radius: 8px !important;
+    color: #22d3ee !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
   }
 
   .pagefind-ui__search-clear:hover {
-    color: #22d3ee !important;
+    background: rgba(34, 211, 238, 0.2) !important;
+    border-color: rgba(34, 211, 238, 0.5) !important;
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2) !important;
   }
 
+  /* Hide default clear text, show custom */
+  .pagefind-ui__search-clear {
+    font-size: 0 !important;
+  }
+
+  .pagefind-ui__search-clear::after {
+    content: '× Clear';
+    font-size: 11px !important;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* Results container */
+  .pagefind-ui__results-area {
+    margin-top: 16px !important;
+  }
+
+  /* Individual result */
   .pagefind-ui__result {
-    padding: 16px !important;
+    padding: 20px !important;
     background: rgba(18, 18, 26, 0.8) !important;
     backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 8px !important;
-    margin-bottom: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 12px !important;
+    margin-bottom: 12px !important;
+    transition: all 0.2s ease !important;
   }
 
   .pagefind-ui__result:hover {
-    border-color: rgba(34, 211, 238, 0.5) !important;
+    border-color: rgba(34, 211, 238, 0.4) !important;
+    background: rgba(18, 18, 26, 0.9) !important;
+    box-shadow: 0 0 20px rgba(34, 211, 238, 0.1) !important;
   }
 
   .pagefind-ui__result-link {
-    font-family: 'Cormorant Garamond', Georgia, serif !important;
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    font-size: 18px !important;
+    font-weight: 500 !important;
     color: #e4e4e7 !important;
+    text-decoration: none !important;
+    transition: color 0.2s ease !important;
   }
 
   .pagefind-ui__result-link:hover {
     color: #22d3ee !important;
   }
 
-  .pagefind-ui__result-excerpt {
-    font-size: 13px !important;
-    color: #71717a !important;
-    font-family: 'Inter', system-ui, sans-serif !important;
-  }
-
   .pagefind-ui__result-title {
     font-weight: 500 !important;
+    margin-bottom: 8px !important;
   }
 
+  .pagefind-ui__result-excerpt {
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #8a8a99 !important;
+    font-family: 'Space Grotesk', system-ui, sans-serif !important;
+  }
+
+  .pagefind-ui__result-excerpt mark {
+    background: rgba(34, 211, 238, 0.2) !important;
+    color: #22d3ee !important;
+    padding: 1px 4px !important;
+    border-radius: 3px !important;
+  }
+
+  /* Message styling */
   .pagefind-ui__message {
-    color: #52525b !important;
+    color: #8a8a99 !important;
     font-family: 'JetBrains Mono', monospace !important;
+    font-size: 13px !important;
+    padding: 16px !important;
+    text-align: center !important;
+  }
+
+  /* Results count */
+  .pagefind-ui__results-area > p {
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+    color: #8a8a99 !important;
+    margin-bottom: 16px !important;
+    padding-left: 4px !important;
+  }
+
+  .pagefind-ui__results-area > p::before {
+    content: '// ';
+    color: #22d3ee;
+  }
+
+  /* Suppress default button styling */
+  .pagefind-ui__button {
+    background: rgba(34, 211, 238, 0.1) !important;
+    border: 1px solid rgba(34, 211, 238, 0.3) !important;
+    border-radius: 8px !important;
+    color: #22d3ee !important;
+    font-family: 'JetBrains Mono', monospace !important;
+    font-size: 12px !important;
+    padding: 10px 20px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+
+  .pagefind-ui__button:hover {
+    background: rgba(34, 211, 238, 0.2) !important;
+    border-color: rgba(34, 211, 238, 0.5) !important;
   }
 </style>
