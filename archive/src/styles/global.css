@@ -324,3 +324,52 @@
     transition-duration: 0ms !important;
   }
 }
+
+/* Touch device auto-animation - cycles between cuneiform and English */
+@media (hover: none) and (pointer: coarse) {
+  .decipher-char .char-cuneiform {
+    animation: decipher-cuneiform-cycle 6s ease-in-out infinite;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  .decipher-char .char-english {
+    animation: decipher-english-cycle 6s ease-in-out infinite;
+    animation-delay: var(--delay, 0ms);
+  }
+
+  @keyframes decipher-cuneiform-cycle {
+    0%, 35% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    45%, 85% {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+    95%, 100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes decipher-english-cycle {
+    0%, 35% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    45%, 85% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    95%, 100% {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+  }
+
+  /* Disable hover effects on touch since we have auto-animation */
+  .decipher-btn:hover .char-cuneiform,
+  .decipher-btn:hover .char-english {
+    animation-play-state: running;
+  }
+}

@@ -63,13 +63,13 @@ const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
 
   </section>
 
-  <section class="container-narrow py-20">
-    <div class="flex items-end justify-between mb-10">
+  <section class="container-narrow py-16 md:py-20">
+    <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
       <div>
         <p class="font-mono text-xs uppercase tracking-wider text-accent mb-2">// Featured</p>
-        <h2 class="text-3xl md:text-4xl text-text">Recent Acquisitions</h2>
+        <h2 class="text-2xl sm:text-3xl md:text-4xl text-text">Recent Acquisitions</h2>
       </div>
-      <a href={url('/collection')} class="link-glow font-mono text-xs uppercase tracking-wider">
+      <a href={url('/collection')} class="link-glow font-mono text-xs uppercase tracking-wider shrink-0">
         View All <span class="text-accent">→</span>
       </a>
     </div>
@@ -77,20 +77,20 @@ const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
     <ItemGrid items={displayItems} columns={3} />
   </section>
 
-  <section class="border-t border-white/5 py-20">
+  <section class="border-t border-white/5 py-12 md:py-20">
     <div class="container-narrow">
-      <div class="grid md:grid-cols-3 gap-8">
-        <div class="glass-panel p-6 text-center">
-          <p class="font-mono text-4xl text-accent mb-2">{allItems.length}</p>
-          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Items Catalogued</p>
+      <div class="grid grid-cols-3 gap-3 sm:gap-6 md:gap-8">
+        <div class="glass-panel p-4 sm:p-6 text-center">
+          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{allItems.length}</p>
+          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Items</p>
         </div>
-        <div class="glass-panel p-6 text-center">
-          <p class="font-mono text-4xl text-accent mb-2">5000+</p>
-          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Years of History</p>
+        <div class="glass-panel p-4 sm:p-6 text-center">
+          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">5000+</p>
+          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Years</p>
         </div>
-        <div class="glass-panel p-6 text-center">
-          <p class="font-mono text-4xl text-accent mb-2">5</p>
-          <p class="font-mono text-xs uppercase tracking-wider text-text-dim">Categories</p>
+        <div class="glass-panel p-4 sm:p-6 text-center">
+          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">5</p>
+          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Categories</p>
         </div>
       </div>
     </div>

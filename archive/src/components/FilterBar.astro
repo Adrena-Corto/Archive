@@ -103,9 +103,9 @@ const periodOptions = [
   }`}
   x-init="init()"
   @keydown.escape.window="closeAll()"
-  class="glass-panel p-4 mb-8 overflow-visible relative z-50"
+  class="glass-panel p-4 mb-8 overflow-visible relative z-40"
 >
-  <div class="flex flex-wrap items-center gap-4 md:gap-6">
+  <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 md:gap-6">
     <!-- Category Dropdown -->
     <div class="relative" @click.outside="categoryOpen = false">
       <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Category</label>
@@ -248,7 +248,7 @@ const periodOptions = [
       </div>
     )}
 
-    <div class="flex items-center gap-4 ml-auto">
+    <div class="flex items-center gap-4 sm:ml-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
       <span class="font-mono text-xs text-text-muted" role="status" aria-live="polite">
         <span class="text-accent">></span>
         <span x-text="visibleCount"></span> items
