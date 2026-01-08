@@ -2,17 +2,40 @@
 # Types: civilization_start, civilization, civilization_end, major_event, person
 
 # Early Mesopotamia & Egypt (4500 BC - 2000 BC)
-- id: sumerian-rise
-  name: "Rise of Sumer"
-  type: civilization_start
-  year: -4500
-  description: "First urban civilization emerges in southern Mesopotamia"
+- id: sumerian-civilization
+  name: "Sumerian Civilization"
+  type: civilization
+  yearStart: -4500
+  yearEnd: -2000
+  description: "First urban civilization, invented writing, mathematics, and the wheel"
 
-- id: egyptian-unification
-  name: "Unification of Egypt"
-  type: civilization_start
-  year: -3100
-  description: "Upper and Lower Egypt united under first pharaoh"
+- id: uruk-period
+  name: "Uruk Period"
+  type: civilization
+  yearStart: -4000
+  yearEnd: -3100
+  description: "First cities emerge, birth of writing (cuneiform)"
+
+- id: ancient-egypt
+  name: "Ancient Egypt"
+  type: civilization
+  yearStart: -3100
+  yearEnd: -30
+  description: "One of the longest-lasting civilizations in history"
+
+- id: sumerian-early-dynastic
+  name: "Early Dynastic Sumer"
+  type: civilization
+  yearStart: -2900
+  yearEnd: -2334
+  description: "City-states of Ur, Uruk, Lagash compete for dominance"
+
+- id: gilgamesh
+  name: "Gilgamesh"
+  type: person
+  yearStart: -2700
+  yearEnd: -2600
+  description: "Legendary king of Uruk, hero of the oldest epic"
 
 - id: old-kingdom-egypt
   name: "Egyptian Old Kingdom"
@@ -28,6 +51,13 @@
   yearEnd: -2154
   description: "First empire in history under Sargon of Akkad"
 
+- id: sargon-akkad
+  name: "Sargon of Akkad"
+  type: person
+  yearStart: -2334
+  yearEnd: -2279
+  description: "First emperor in history, united Mesopotamia"
+
 - id: ur-third-dynasty
   name: "Third Dynasty of Ur"
   type: civilization
@@ -36,6 +66,13 @@
   description: "Sumerian renaissance and the Code of Ur-Nammu"
 
 # Middle Period (2000 BC - 1000 BC)
+- id: minoan-civilization
+  name: "Minoan Civilization"
+  type: civilization
+  yearStart: -2700
+  yearEnd: -1450
+  description: "Bronze Age Aegean civilization on Crete"
+
 - id: babylonian-empire
   name: "Old Babylonian Period"
   type: civilization
@@ -50,12 +87,33 @@
   yearEnd: -1750
   description: "King of Babylon, created first written law code"
 
+- id: hittite-empire
+  name: "Hittite Empire"
+  type: civilization
+  yearStart: -1600
+  yearEnd: -1178
+  description: "Major Anatolian power, rivals of Egypt"
+
 - id: new-kingdom-egypt
   name: "Egyptian New Kingdom"
   type: civilization
   yearStart: -1550
   yearEnd: -1077
   description: "Egypt's imperial age - Tutankhamun, Ramesses"
+
+- id: mycenaean-greece
+  name: "Mycenaean Greece"
+  type: civilization
+  yearStart: -1600
+  yearEnd: -1100
+  description: "Bronze Age Greek civilization, era of the Trojan War"
+
+- id: phoenician-city-states
+  name: "Phoenician City-States"
+  type: civilization
+  yearStart: -1500
+  yearEnd: -300
+  description: "Master traders and inventors of the alphabet"
 
 - id: ramesses-ii
   name: "Ramesses II"
@@ -66,12 +124,19 @@
 
 - id: bronze-age-collapse
   name: "Bronze Age Collapse"
-  type: major_event
+  type: civilization
   yearStart: -1200
   yearEnd: -1150
   description: "Collapse of major civilizations across the Mediterranean"
 
 # Iron Age & Classical (1000 BC - 300 BC)
+- id: zhou-dynasty
+  name: "Zhou Dynasty"
+  type: civilization
+  yearStart: -1046
+  yearEnd: -256
+  description: "Longest Chinese dynasty, age of Confucius"
+
 - id: assyrian-empire
   name: "Neo-Assyrian Empire"
   type: civilization
@@ -163,12 +228,12 @@
   yearEnd: -323
   description: "Conquered from Greece to India"
 
-- id: alexander-conquests
-  name: "Alexander's Conquests"
-  type: major_event
-  yearStart: -336
-  yearEnd: -323
-  description: "Macedonian conquest of the Persian Empire"
+- id: maurya-empire
+  name: "Maurya Empire"
+  type: civilization
+  yearStart: -322
+  yearEnd: -185
+  description: "First pan-Indian empire under Chandragupta"
 
 # Roman Era
 - id: roman-republic
@@ -177,6 +242,20 @@
   yearStart: -509
   yearEnd: -27
   description: "From city-state to Mediterranean power"
+
+- id: parthian-empire
+  name: "Parthian Empire"
+  type: civilization
+  yearStart: -247
+  yearEnd: 224
+  description: "Persian empire, rival of Rome in the east"
+
+- id: han-dynasty
+  name: "Han Dynasty"
+  type: civilization
+  yearStart: -206
+  yearEnd: 220
+  description: "Golden age of China, contemporary with Rome"
 
 - id: julius-caesar
   name: "Julius Caesar"
@@ -234,11 +313,12 @@
   yearEnd: 337
   description: "First Christian Roman Emperor"
 
-- id: fall-of-rome
-  name: "Fall of Western Rome"
-  type: civilization_end
-  year: 476
-  description: "End of the Western Roman Empire"
+- id: sassanid-empire
+  name: "Sassanid Empire"
+  type: civilization
+  yearStart: 224
+  yearEnd: 651
+  description: "Last pre-Islamic Persian empire"
 
 # Byzantine & Medieval
 - id: byzantine-empire
@@ -297,8 +377,16 @@
   yearEnd: 1324
   description: "Venetian explorer who traveled to China"
 
-- id: fall-of-constantinople
-  name: "Fall of Constantinople"
-  type: civilization_end
-  year: 1453
-  description: "End of the Byzantine Empire"
+- id: mongol-empire
+  name: "Mongol Empire"
+  type: civilization
+  yearStart: 1206
+  yearEnd: 1368
+  description: "Largest contiguous land empire in history"
+
+- id: ottoman-empire
+  name: "Ottoman Empire"
+  type: civilization
+  yearStart: 1299
+  yearEnd: 1500
+  description: "Turkish empire that conquered Byzantium"

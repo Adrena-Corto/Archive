@@ -373,3 +373,30 @@
     animation-play-state: running;
   }
 }
+
+/* Cuneiform Loading Animation */
+.cuneiform-loader .cuneiform-char {
+  animation: cuneiform-pulse 1.5s ease-in-out infinite;
+  animation-delay: calc(var(--i) * 0.15s);
+  opacity: 0.3;
+}
+
+@keyframes cuneiform-pulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-4px) scale(1.1);
+  }
+}
+
+#timeline-loading {
+  transition: opacity 0.3s ease-out;
+}
+
+#timeline-loading.hidden {
+  opacity: 0;
+  pointer-events: none;
+}

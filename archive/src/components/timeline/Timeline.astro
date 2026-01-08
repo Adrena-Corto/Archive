@@ -21,17 +21,29 @@ const base = import.meta.env.BASE_URL || '/Archive';
   id="timeline-container"
   class="relative w-full h-[55vh] min-h-[380px] rounded-lg border border-border overflow-hidden"
 >
+  <!-- Loading State -->
+  <div id="timeline-loading" class="absolute inset-0 z-30 flex flex-col items-center justify-center bg-surface gap-4">
+    <div class="cuneiform-loader flex gap-1">
+      <span class="cuneiform-char font-cuneiform text-2xl text-accent" style="--i: 0">𒀭</span>
+      <span class="cuneiform-char font-cuneiform text-2xl text-accent" style="--i: 1">𒁀</span>
+      <span class="cuneiform-char font-cuneiform text-2xl text-accent" style="--i: 2">𒂊</span>
+      <span class="cuneiform-char font-cuneiform text-2xl text-accent" style="--i: 3">𒃸</span>
+      <span class="cuneiform-char font-cuneiform text-2xl text-accent" style="--i: 4">𒄿</span>
+    </div>
+    <p class="font-mono text-xs text-text-dim">Deciphering timeline...</p>
+  </div>
+
   <canvas id="timeline-canvas" class="w-full h-full"></canvas>
 
-  <!-- Info Panel (DOM overlay) -->
-  <div id="timeline-info" class="absolute top-4 left-4 z-20 glass-panel px-4 py-3 min-w-[220px] pointer-events-none">
-    <div class="flex items-center gap-2 mb-1">
-      <span id="zoom-level" class="text-accent font-mono text-sm font-medium">PERIOD</span>
-      <span class="text-text-dim">·</span>
-      <span id="era-name" class="font-mono text-xs text-text-muted">Classical World</span>
+  <!-- Info Panel (DOM overlay) - Compact on mobile -->
+  <div id="timeline-info" class="absolute top-2 left-2 sm:top-4 sm:left-4 z-20 glass-panel px-2 py-1.5 sm:px-4 sm:py-3 pointer-events-none">
+    <div class="flex items-center gap-1.5 sm:gap-2">
+      <span id="zoom-level" class="text-accent font-mono text-xs sm:text-sm font-medium">PERIOD</span>
+      <span class="text-text-dim hidden sm:inline">·</span>
+      <span id="era-name" class="font-mono text-[10px] sm:text-xs text-text-muted hidden sm:inline">Classical World</span>
     </div>
-    <p id="year-range" class="font-mono text-xs text-text-dim">500 BC - 100 AD</p>
-    <div class="flex items-center gap-4 mt-2 pt-2 border-t border-border/50 flex-wrap">
+    <p id="year-range" class="font-mono text-[10px] sm:text-xs text-text-dim">500 BC - 100 AD</p>
+    <div class="hidden sm:flex items-center gap-4 mt-2 pt-2 border-t border-border/50 flex-wrap">
       <span class="flex items-center gap-1.5">
         <span class="w-2 h-2 rotate-45 bg-accent"></span>
         <span id="item-count" class="font-mono text-[10px] text-text-dim">0 items</span>
@@ -47,8 +59,8 @@ const base = import.meta.env.BASE_URL || '/Archive';
     </div>
   </div>
 
-  <!-- Minimap -->
-  <div id="timeline-minimap" class="absolute bottom-4 left-4 z-20 glass-panel p-2 w-[200px]">
+  <!-- Minimap - Hidden on mobile -->
+  <div id="timeline-minimap" class="hidden sm:block absolute bottom-4 left-4 z-20 glass-panel p-2 w-[200px]">
     <div class="relative h-6 bg-surface-light/30 rounded overflow-hidden">
       <!-- Density bars will be rendered here -->
       <div id="minimap-bars" class="absolute inset-0 flex items-end gap-px px-1"></div>
@@ -61,23 +73,23 @@ const base = import.meta.env.BASE_URL || '/Archive';
     </div>
   </div>
 
-  <!-- Zoom Controls -->
-  <div class="absolute bottom-4 right-4 z-20 flex gap-2">
+  <!-- Zoom Controls - Smaller on mobile -->
+  <div class="absolute bottom-2 right-2 sm:bottom-4 sm:right-4 z-20 flex gap-1 sm:gap-2">
     <button
       id="zoom-out-btn"
-      class="w-10 h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
+      class="w-8 h-8 sm:w-10 sm:h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
       aria-label="Zoom out"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4" />
       </svg>
     </button>
     <button
       id="zoom-in-btn"
-      class="w-10 h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
+      class="w-8 h-8 sm:w-10 sm:h-10 glass-panel flex items-center justify-center text-text-muted hover:text-accent hover:border-accent transition-colors"
       aria-label="Zoom in"
     >
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
       </svg>
     </button>
@@ -138,6 +150,13 @@ const base = import.meta.env.BASE_URL || '/Archive';
     );
 
     await timeline.init();
+
+    // Hide loading state
+    const loadingEl = document.getElementById('timeline-loading');
+    if (loadingEl) {
+      loadingEl.classList.add('hidden');
+      setTimeout(() => loadingEl.remove(), 300);
+    }
 
     // Build minimap density bars
     buildMinimap(data.items);
