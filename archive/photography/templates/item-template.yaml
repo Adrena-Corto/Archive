@@ -1,0 +1,26 @@
+# Item Template - Copy and fill in for new items
+# Required fields marked with *
+
+id: item-slug-here              # * lowercase, hyphens only
+name: "Item Display Name"       # * The title shown on the site
+category: coin                  # * coin | jewelry | ring | seal | misc
+era: "300-200 BC"               # * Date range
+period: "Hellenistic"           # Historical period name
+origin: "Greece"                # Geographic origin
+material: silver                # Primary material
+weight: "17.2g"                 # Weight with unit
+dimensions: "25mm diameter"     # Size description
+condition: "Very Fine"          # Condition grade
+description: |
+  Detailed description of the item.
+  Can span multiple lines.
+  Include historical context, iconography,
+  and any notable features.
+images:                         # * List of image filenames
+  - image-1.jpg
+  - image-2.jpg
+tags:                           # For filtering/search
+  - ancient
+  - greek
+  - silver
+featured: false                 # Show on homepage?
