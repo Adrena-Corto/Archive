@@ -1,0 +1,17 @@
+id: bronze-signet-ring
+name: "Bronze Portrait Signet Ring"
+category: ring
+era: "c. 200-400 CE"
+period: "Roman Imperial or Sasanian"
+origin: "Eastern Mediterranean or Persia"
+material: bronze
+weight: ""
+dimensions: ""
+condition: "Good - stable patina, engraving visible"
+description: "Bronze signet ring with an oval bezel featuring an engraved portrait bust in profile facing right. The figure displays elaborate wavy hair or headdress rendered with fine parallel lines, and detailed drapery on the shoulders executed in a crosshatch pattern. The style suggests either late Roman provincial or Sasanian Persian craftsmanship. Such rings served as personal seals for authenticating documents and marking property, with the engraved image pressed into wax or clay to leave an impression."
+images:
+  - 01.jpg
+  - 02.jpg
+  - 03.jpg
+tags: [bronze, ring, signet, portrait, roman, sasanian, seal]
+featured: false
