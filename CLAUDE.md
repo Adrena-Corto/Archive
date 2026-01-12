@@ -96,34 +96,47 @@ archive/photography/
 
 **Requires:** `brew install imagemagick`
 
-Process raw photos with center crop and optimization:
+#### Default: Simple Resize (recommended)
+
+Use this for most photos - preserves original framing, no artifacts:
 
 ```bash
-# Standard processing: center crop 50%, resize 1400px, 85% quality
 ITEM_ID="item-name"
 mkdir -p archive/public/images/items/$ITEM_ID
 
 for img in ~/Desktop/"folder-name"/*.JPG; do
   OUTPUT="archive/public/images/items/$ITEM_ID/$(basename "$img" | tr '[:upper:]' '[:lower:]')"
   magick "$img" \
-    -gravity center -crop 50%x50%+0+0 +repage \
     -resize 1400x1400 \
     -quality 85 \
     "$OUTPUT"
 done
+```
 
-# Rotate image 180° if needed (e.g., seal bases with hieroglyphs)
+#### Alternative: Center Crop (only for well-centered shots)
+
+Only use if object is centered in frame - off-center objects get cut off:
+
+```bash
+magick "$img" \
+  -gravity center -crop 50%x50%+0+0 +repage \
+  -resize 1400x1400 \
+  -quality 85 \
+  "$OUTPUT"
+```
+
+**Note:** Auto-centering via trim+extend doesn't work well - lightbox gradient creates visible seams. If object is off-center, either retake the photo or use simple resize.
+
+#### Other Operations
+
+```bash
+# Rotate 180° (e.g., seal bases with hieroglyphs)
 magick image.jpg -rotate 180 image.jpg
-
-# Backup originals
-mkdir -p archive/photography/archive/$ITEM_ID
-cp ~/Desktop/"folder-name"/*.JPG archive/photography/archive/$ITEM_ID/
 ```
 
 **Key settings:**
 - Max dimension: 1400px
 - Quality: 85%
-- Center crop: 50% (adjust if object not centered)
 - Format: JPEG
 
 **For seal/scarab bases:** Check hieroglyph orientation - may need 180° rotation for correct reading direction (right to left).

@@ -107,10 +107,15 @@ function isActive(path: string): boolean {
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-6">
             <a
-              href={url('/collection')}
-              class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/collection') && "nav-link-active"]}
-              aria-current={isActive('/collection') ? 'page' : undefined}
-            >Browse</a>
+              href={url('/artifacts')}
+              class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/artifacts') && "nav-link-active"]}
+              aria-current={isActive('/artifacts') ? 'page' : undefined}
+            >Artifacts</a>
+            <a
+              href={url('/coins')}
+              class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/coins') && "nav-link-active"]}
+              aria-current={isActive('/coins') ? 'page' : undefined}
+            >Coins</a>
             <a
               href={url('/timeline')}
               class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/timeline') && "nav-link-active"]}
@@ -173,12 +178,20 @@ function isActive(path: string): boolean {
         >
           <div class="container-narrow py-6 flex flex-col gap-2">
             <a
-              href={url('/collection')}
+              href={url('/artifacts')}
               @click="mobileMenuOpen = false"
-              class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/collection') && "text-accent border-accent"]}
-              aria-current={isActive('/collection') ? 'page' : undefined}
+              class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/artifacts') && "text-accent border-accent"]}
+              aria-current={isActive('/artifacts') ? 'page' : undefined}
             >
-              <span class="text-accent mr-2">></span> Browse Collection
+              <span class="text-accent mr-2">></span> Artifacts
+            </a>
+            <a
+              href={url('/coins')}
+              @click="mobileMenuOpen = false"
+              class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/coins') && "text-accent border-accent"]}
+              aria-current={isActive('/coins') ? 'page' : undefined}
+            >
+              <span class="text-accent mr-2">></span> Coins
             </a>
             <a
               href={url('/timeline')}

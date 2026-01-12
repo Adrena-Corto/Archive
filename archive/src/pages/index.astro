@@ -1,10 +1,12 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ItemGrid from '../components/ItemGrid.astro';
-import { getFeaturedItems, getAllItems } from '../lib/items';
+import { getFeaturedItems, getAllItems, getCoins, getArtifacts } from '../lib/items';
 
 const featuredItems = getFeaturedItems();
 const allItems = getAllItems();
+const coins = getCoins();
+const artifacts = getArtifacts();
 const displayItems = featuredItems.length > 0 ? featuredItems : allItems.slice(0, 6);
 
 const base = import.meta.env.BASE_URL;
@@ -12,23 +14,40 @@ function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 
-const buttonText = "Browse Collection";
+// Artifacts button - Cuneiform/Sumerian
+const artifactsText = "Browse Artifacts";
 const cuneiformMap: Record<string, string> = {
   'B': '𒁀', 'R': '𒊑', 'O': '𒌋', 'W': '𒉿', 'S': '𒊓', 'E': '𒂊',
-  'C': '𒋻', 'L': '𒇷', 'T': '𒌅', 'I': '𒄿', 'N': '𒈾',
-  'b': '𒁀', 'r': '𒊑', 'o': '𒌋', 'w': '𒉿', 's': '𒊓', 'e': '𒂊',
-  'c': '𒋻', 'l': '𒇷', 't': '𒌅', 'i': '𒄿', 'n': '𒈾',
-  ' ': ' '
+  'C': '𒋻', 'L': '𒇷', 'T': '𒌅', 'I': '𒄿', 'N': '𒈾', 'A': '𒀀',
+  'F': '𒆳', 'b': '𒁀', 'r': '𒊑', 'o': '𒌋', 'w': '𒉿', 's': '𒊓',
+  'e': '𒂊', 'c': '𒋻', 'l': '𒇷', 't': '𒌅', 'i': '𒄿', 'n': '𒈾',
+  'a': '𒀀', 'f': '𒆳', ' ': ' '
 };
 
-const characters = buttonText.split('').map(char => ({
+const artifactsChars = artifactsText.split('').map(char => ({
   en: char,
-  cu: cuneiformMap[char] || char
+  ancient: cuneiformMap[char] || char
 }));
 
-const shuffledIndices = [...Array(characters.length).keys()]
-  .sort(() => Math.random() - 0.5);
-const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
+const artifactsShuffled = [...Array(artifactsChars.length).keys()].sort(() => Math.random() - 0.5);
+const artifactsDelayMap = artifactsShuffled.map((_, i) => artifactsShuffled.indexOf(i) * 50);
+
+// Coins button - Greek letters
+const coinsText = "Browse Coins";
+const greekMap: Record<string, string> = {
+  'B': 'Β', 'R': 'Ρ', 'O': 'Ο', 'W': 'Ω', 'S': 'Σ', 'E': 'Ε',
+  'C': 'Χ', 'L': 'Λ', 'I': 'Ι', 'N': 'Ν', 'A': 'Α',
+  'b': 'β', 'r': 'ρ', 'o': 'ο', 'w': 'ω', 's': 'σ', 'e': 'ε',
+  'c': 'χ', 'l': 'λ', 'i': 'ι', 'n': 'ν', 'a': 'α', ' ': ' '
+};
+
+const coinsChars = coinsText.split('').map(char => ({
+  en: char,
+  ancient: greekMap[char] || char
+}));
+
+const coinsShuffled = [...Array(coinsChars.length).keys()].sort(() => Math.random() - 0.5);
+const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50);
 ---
 
 <BaseLayout title="Archive | Historical Collection">
@@ -43,22 +62,40 @@ const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
       <p class="text-lg md:text-xl text-text-muted max-w-2xl mx-auto mb-16 leading-relaxed">
         Coins that changed hands in forgotten markets. Rings worn by the nameless. Seals pressed into clay before writing had a name. An archive of the intimately ancient.
       </p>
-      <a
-        href={url('/collection')}
-        class="decipher-btn glass-panel-solid px-10 py-4 font-mono text-base uppercase tracking-wider text-text hover:text-accent hover:border-accent/50 transition-all duration-300"
-        aria-label="Browse Collection"
-        data-matrix-light="1"
-      >
-        <span class="text-accent">></span>
-        <span class="decipher-text">
-          {characters.map((char, i) => (
-            <span class={`decipher-char${char.en === ' ' ? ' space' : ''}`} style={`--delay: ${delayMap[i]}ms`}>
-              <span class="char-cuneiform">{char.cu}</span>
-              <span class="char-english">{char.en}</span>
-            </span>
-          ))}
-        </span>
-      </a>
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <a
+          href={url('/artifacts')}
+          class="decipher-btn glass-panel-solid px-10 py-4 font-mono text-base uppercase tracking-wider text-text hover:text-accent hover:border-accent/50 transition-all duration-300"
+          aria-label="Browse Artifacts"
+          data-matrix-light="1"
+        >
+          <span class="text-accent">></span>
+          <span class="decipher-text">
+            {artifactsChars.map((char, i) => (
+              <span class={`decipher-char${char.en === ' ' ? ' space' : ''}`} style={`--delay: ${artifactsDelayMap[i]}ms`}>
+                <span class="char-cuneiform">{char.ancient}</span>
+                <span class="char-english">{char.en}</span>
+              </span>
+            ))}
+          </span>
+        </a>
+        <a
+          href={url('/coins')}
+          class="decipher-btn glass-panel-solid px-10 py-4 font-mono text-base uppercase tracking-wider text-text hover:text-accent hover:border-accent/50 transition-all duration-300"
+          aria-label="Browse Coins"
+          data-matrix-light="1"
+        >
+          <span class="text-accent">></span>
+          <span class="decipher-text">
+            {coinsChars.map((char, i) => (
+              <span class={`decipher-char${char.en === ' ' ? ' space' : ''}`} style={`--delay: ${coinsDelayMap[i]}ms`}>
+                <span class="char-greek">{char.ancient}</span>
+                <span class="char-english">{char.en}</span>
+              </span>
+            ))}
+          </span>
+        </a>
+      </div>
     </div>
 
   </section>
@@ -69,9 +106,14 @@ const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
         <p class="font-mono text-xs uppercase tracking-wider text-accent mb-2">// Featured</p>
         <h2 class="text-2xl sm:text-3xl md:text-4xl text-text">Recent Acquisitions</h2>
       </div>
-      <a href={url('/collection')} class="link-glow font-mono text-xs uppercase tracking-wider shrink-0">
-        View All <span class="text-accent">→</span>
-      </a>
+      <div class="flex gap-4">
+        <a href={url('/artifacts')} class="link-glow font-mono text-xs uppercase tracking-wider shrink-0">
+          Artifacts <span class="text-accent">→</span>
+        </a>
+        <a href={url('/coins')} class="link-glow font-mono text-xs uppercase tracking-wider shrink-0">
+          Coins <span class="text-accent">→</span>
+        </a>
+      </div>
     </div>
 
     <ItemGrid items={displayItems} columns={3} />
@@ -81,16 +123,16 @@ const delayMap = shuffledIndices.map((_, i) => shuffledIndices.indexOf(i) * 50);
     <div class="container-narrow">
       <div class="grid grid-cols-3 gap-3 sm:gap-6 md:gap-8">
         <div class="glass-panel p-4 sm:p-6 text-center">
-          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{allItems.length}</p>
-          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Items</p>
+          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{artifacts.length}</p>
+          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Artifacts</p>
+        </div>
+        <div class="glass-panel p-4 sm:p-6 text-center">
+          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{coins.length}</p>
+          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Coins</p>
         </div>
         <div class="glass-panel p-4 sm:p-6 text-center">
           <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">5000+</p>
           <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Years</p>
-        </div>
-        <div class="glass-panel p-4 sm:p-6 text-center">
-          <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">5</p>
-          <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Categories</p>
         </div>
       </div>
     </div>

@@ -1,0 +1,21 @@
+id: marcus-aurelius-denarius-01
+name: "Marcus Aurelius Denarius"
+category: coin
+era: "161-166 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+weight: ""
+dimensions: ""
+condition: "VF"
+description: "Silver denarius of Emperor Marcus Aurelius. Obverse features laureate bust right with legend M ANTONINVS AVG. Reverse depicts Concordia seated left, holding patera, with legend CONCORD AVG TR P XVI COS III."
+images:
+  - dscf4431.jpg
+  - dscf4432.jpg
+  - dscf4433.jpg
+tags:
+  - roman
+  - denarius
+  - marcus aurelius
+  - antonine
+  - silver

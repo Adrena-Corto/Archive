@@ -273,18 +273,27 @@
   width: 0.5em;
 }
 
-.decipher-char .char-cuneiform {
+.decipher-char .char-cuneiform,
+.decipher-char .char-greek {
   position: absolute;
   inset: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'Noto Sans Cuneiform', serif;
   font-size: 0.9em;
   opacity: 1;
   transform: translateY(0);
   transition: opacity 150ms ease-out, transform 150ms ease-out;
   transition-delay: var(--delay, 0ms);
+}
+
+.decipher-char .char-cuneiform {
+  font-family: 'Noto Sans Cuneiform', serif;
+}
+
+.decipher-char .char-greek {
+  font-family: 'Times New Roman', 'Noto Serif', serif;
+  font-weight: 500;
 }
 
 .decipher-char .char-english {
@@ -300,7 +309,8 @@
   transition-delay: var(--delay, 0ms);
 }
 
-.decipher-btn:hover .char-cuneiform {
+.decipher-btn:hover .char-cuneiform,
+.decipher-btn:hover .char-greek {
   opacity: 0;
   transform: translateY(-4px);
 }
@@ -319,15 +329,17 @@
     opacity: 0.3;
   }
   .decipher-char .char-cuneiform,
+  .decipher-char .char-greek,
   .decipher-char .char-english {
     transition-delay: 0ms !important;
     transition-duration: 0ms !important;
   }
 }
 
-/* Touch device auto-animation - cycles between cuneiform and English */
+/* Touch device auto-animation - cycles between cuneiform/greek and English */
 @media (hover: none) and (pointer: coarse) {
-  .decipher-char .char-cuneiform {
+  .decipher-char .char-cuneiform,
+  .decipher-char .char-greek {
     animation: decipher-cuneiform-cycle 6s ease-in-out infinite;
     animation-delay: var(--delay, 0ms);
   }
@@ -369,6 +381,7 @@
 
   /* Disable hover effects on touch since we have auto-animation */
   .decipher-btn:hover .char-cuneiform,
+  .decipher-btn:hover .char-greek,
   .decipher-btn:hover .char-english {
     animation-play-state: running;
   }

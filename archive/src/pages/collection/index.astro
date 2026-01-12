@@ -1,29 +1,7 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import ItemGrid from '../../components/ItemGrid.astro';
-import FilterBar from '../../components/FilterBar.astro';
-import { getAllItems } from '../../lib/items';
-
-const items = getAllItems();
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+return Astro.redirect(url('/artifacts'), 301);
 ---
-
-<BaseLayout title="Browse Collection | Archive">
-  <section class="relative py-16 min-h-screen">
-
-    <div class="container-narrow relative">
-      <div class="mb-12">
-        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
-          // Database Query
-        </p>
-        <h1 class="text-4xl md:text-5xl text-text mb-4">Browse Collection</h1>
-        <p class="text-text-muted text-lg">
-          Explore <span class="text-accent font-mono">{items.length}</span> pieces spanning ancient civilizations to the modern era.
-        </p>
-      </div>
-
-      <FilterBar />
-
-      <ItemGrid items={items} columns={3} />
-    </div>
-  </section>
-</BaseLayout>

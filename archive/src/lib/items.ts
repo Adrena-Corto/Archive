@@ -17,7 +17,24 @@ export interface Item {
   images: string[];
   tags: string[];
   featured?: boolean;
+  // Coin-specific fields
+  denomination?: string;
+  ruler?: string;
+  obverse?: string;
+  reverse?: string;
 }
+
+export type CoinItem = Item & {
+  category: 'coin';
+  denomination?: string;
+  ruler?: string;
+  obverse?: string;
+  reverse?: string;
+};
+
+export type ArtifactItem = Item & {
+  category: Exclude<Item['category'], 'coin'>;
+};
 
 const itemsDir = path.join(process.cwd(), 'src/data/items');
 
@@ -61,6 +78,30 @@ export function getAllPeriods(): string[] {
   const items = getAllItems();
   const periods = new Set(items.map(item => item.period));
   return Array.from(periods).sort();
+}
+
+export function getCoins(): CoinItem[] {
+  return getAllItems().filter((item): item is CoinItem => item.category === 'coin');
+}
+
+export function getArtifacts(): ArtifactItem[] {
+  return getAllItems().filter((item): item is ArtifactItem => item.category !== 'coin');
+}
+
+export function getAllRulers(): string[] {
+  const coins = getCoins();
+  const rulers = new Set(coins.map(coin => coin.ruler).filter((r): r is string => !!r));
+  return Array.from(rulers).sort();
+}
+
+export function getAllDenominations(): string[] {
+  const coins = getCoins();
+  const denominations = new Set(coins.map(coin => coin.denomination).filter((d): d is string => !!d));
+  return Array.from(denominations).sort();
+}
+
+export function getArtifactCategories(): Exclude<Item['category'], 'coin'>[] {
+  return ['jewelry', 'ring', 'seal', 'misc'];
 }
 
 export function getRelatedItems(currentItem: Item, limit: number = 3): Item[] {

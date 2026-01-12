@@ -1,0 +1,103 @@
+---
+import type { CoinItem } from '../lib/items';
+
+interface Props {
+  coin: CoinItem;
+}
+
+const { coin } = Astro.props;
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+const imagePath = coin.images[0] ? url(`/images/items/${coin.id}/${coin.images[0]}`) : null;
+---
+
+<a
+  href={url(`/item/${coin.id}`)}
+  class="group block glass-panel-solid overflow-hidden card-hover"
+  data-coin-item
+  data-ruler={coin.ruler || ''}
+  data-denomination={coin.denomination || ''}
+  data-material={coin.material}
+  data-period={coin.period}
+>
+  <div class="aspect-square bg-surface-light overflow-hidden relative">
+    {imagePath ? (
+      <div class="relative w-full h-full">
+        <div class="absolute inset-0 skeleton-pulse"></div>
+        <img
+          src={imagePath}
+          alt={coin.name}
+          width="400"
+          height="400"
+          class="img-fade-in w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-[filter] duration-300"
+          loading="lazy"
+          onload="this.classList.add('loaded')"
+          onerror="this.parentElement.innerHTML = '<div class=\'w-full h-full flex flex-col items-center justify-center gap-2\'><svg class=\'w-8 h-8 text-text-dim\' fill=\'none\' stroke=\'currentColor\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' stroke-width=\'1.5\' d=\'M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z\'/></svg><span class=\'font-mono text-[10px] text-text-dim uppercase tracking-wider\'>Image unavailable</span></div>'"
+        />
+      </div>
+    ) : (
+      <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface">
+        <svg class="w-8 h-8 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="font-mono text-[10px] text-text-dim uppercase tracking-wider">No Image</span>
+      </div>
+    )}
+    <div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+  </div>
+
+  <div class="p-4 space-y-3">
+    <div class="flex items-center gap-2">
+      {coin.denomination && (
+        <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+          {coin.denomination}
+        </span>
+      )}
+      {coin.denomination && coin.ruler && <span class="text-text-dim">·</span>}
+      {coin.ruler && (
+        <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim truncate">
+          {coin.ruler}
+        </span>
+      )}
+      {!coin.denomination && !coin.ruler && (
+        <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+          COIN
+        </span>
+      )}
+    </div>
+
+    <div class="border-t border-border pt-3">
+      <h3 class="text-lg text-text leading-tight group-hover:text-accent transition-colors duration-300 line-clamp-2">
+        {coin.name}
+      </h3>
+    </div>
+
+    <div class="space-y-1.5 pt-2">
+      <div class="flex items-center justify-between">
+        <span class="data-label">Era</span>
+        <span class="data-value">{coin.era}</span>
+      </div>
+      <div class="flex items-center justify-between">
+        <span class="data-label">Material</span>
+        <span class="data-value capitalize">{coin.material}</span>
+      </div>
+      {coin.weight && (
+        <div class="flex items-center justify-between">
+          <span class="data-label">Weight</span>
+          <span class="data-value">{coin.weight}</span>
+        </div>
+      )}
+    </div>
+  </div>
+</a>
+
+<style>
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>
