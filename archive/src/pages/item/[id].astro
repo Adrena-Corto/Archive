@@ -76,6 +76,8 @@ const itemStructuredData = {
           activeImage: 0,
           lightboxOpen: false,
           totalImages: ${item.images.length},
+          magnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 150 },
+          lbMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 3, size: 200 },
           openLightbox(index) {
             this.activeImage = index;
             this.lightboxOpen = true;
@@ -90,6 +92,50 @@ const itemStructuredData = {
           },
           prevImage() {
             this.activeImage = (this.activeImage - 1 + this.totalImages) % this.totalImages;
+          },
+          handleMagnifier(e) {
+            const img = e.target;
+            const rect = img.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const zoom = this.magnifier.zoom;
+            const size = this.magnifier.size;
+            this.magnifier.x = e.clientX - size / 2;
+            this.magnifier.y = e.clientY - size / 2;
+            this.magnifier.bgX = -(x * zoom - size / 2);
+            this.magnifier.bgY = -(y * zoom - size / 2);
+            this.magnifier.bgW = rect.width * zoom;
+            this.magnifier.bgH = rect.height * zoom;
+            this.magnifier.imgSrc = img.src;
+          },
+          showMagnifier(e) {
+            this.magnifier.active = true;
+            this.handleMagnifier(e);
+          },
+          hideMagnifier() {
+            this.magnifier.active = false;
+          },
+          handleLbMagnifier(e) {
+            const img = e.target;
+            const rect = img.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const zoom = this.lbMagnifier.zoom;
+            const size = this.lbMagnifier.size;
+            this.lbMagnifier.x = e.clientX - size / 2;
+            this.lbMagnifier.y = e.clientY - size / 2;
+            this.lbMagnifier.bgX = -(x * zoom - size / 2);
+            this.lbMagnifier.bgY = -(y * zoom - size / 2);
+            this.lbMagnifier.bgW = rect.width * zoom;
+            this.lbMagnifier.bgH = rect.height * zoom;
+            this.lbMagnifier.imgSrc = img.src;
+          },
+          showLbMagnifier(e) {
+            this.lbMagnifier.active = true;
+            this.handleLbMagnifier(e);
+          },
+          hideLbMagnifier() {
+            this.lbMagnifier.active = false;
           }
         }`}
         @keydown.arrow-left.window="if(lightboxOpen) prevImage(); else if(totalImages > 1) { activeImage = (activeImage - 1 + totalImages) % totalImages }"
@@ -98,10 +144,8 @@ const itemStructuredData = {
         class="space-y-4">
           {item.images.length > 0 ? (
             <>
-              <button
-                @click="openLightbox(activeImage)"
-                class="glass-panel overflow-hidden w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-accent focus:ring-offset-2 focus:ring-offset-void rounded-lg"
-                aria-label="Open image in lightbox"
+              <div
+                class="glass-panel overflow-hidden w-full rounded-lg relative"
               >
                 {item.images.map((image, index) => (
                   <img
@@ -109,13 +153,25 @@ const itemStructuredData = {
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
+                    @mouseenter="showMagnifier($event)"
+                    @mousemove="handleMagnifier($event)"
+                    @mouseleave="hideMagnifier()"
+                    @click="openLightbox(activeImage)"
                     src={url(`/images/items/${item.id}/${image}`)}
                     alt={`${item.name} - Image ${index + 1}`}
-                    class="w-full h-auto"
+                    class="w-full h-auto cursor-zoom-in"
                     loading={index === 0 ? 'eager' : 'lazy'}
                   />
                 ))}
-              </button>
+              </div>
+
+              <!-- Magnifier Lens -->
+              <div
+                x-show="magnifier.active"
+                x-cloak
+                class="pointer-events-none fixed rounded-full border-2 border-accent/50 shadow-lg shadow-accent/20 z-50 hidden md:block"
+                :style="`left: ${magnifier.x}px; top: ${magnifier.y}px; width: ${magnifier.size}px; height: ${magnifier.size}px; background-image: url('${magnifier.imgSrc}'); background-size: ${magnifier.bgW}px ${magnifier.bgH}px; background-position: ${magnifier.bgX}px ${magnifier.bgY}px;`"
+              ></div>
               {item.images.length > 1 && (
                 <div
                   x-ref="thumbnailStrip"
@@ -209,12 +265,23 @@ const itemStructuredData = {
                   x-transition:enter="transition ease-out duration-300"
                   x-transition:enter-start="opacity-0 scale-95"
                   x-transition:enter-end="opacity-100 scale-100"
+                  @mouseenter="showLbMagnifier($event)"
+                  @mousemove="handleLbMagnifier($event)"
+                  @mouseleave="hideLbMagnifier()"
                   src={url(`/images/items/${item.id}/${image}`)}
                   alt={`${item.name} - Image ${index + 1}`}
-                  class="max-w-full max-h-[85vh] object-contain"
+                  class="max-w-full max-h-[85vh] object-contain cursor-crosshair"
                 />
               ))}
             </div>
+
+            <!-- Lightbox Magnifier Lens -->
+            <div
+              x-show="lbMagnifier.active"
+              x-cloak
+              class="pointer-events-none fixed rounded-full border-2 border-accent/50 shadow-lg shadow-accent/20 z-[110] hidden md:block"
+              :style="`left: ${lbMagnifier.x}px; top: ${lbMagnifier.y}px; width: ${lbMagnifier.size}px; height: ${lbMagnifier.size}px; background-image: url('${lbMagnifier.imgSrc}'); background-size: ${lbMagnifier.bgW}px ${lbMagnifier.bgH}px; background-position: ${lbMagnifier.bgX}px ${lbMagnifier.bgY}px;`"
+            ></div>
 
             <!-- Image counter -->
             {item.images.length > 1 && (

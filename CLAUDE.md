@@ -107,25 +107,16 @@ mkdir -p archive/public/images/items/$ITEM_ID
 for img in ~/Desktop/"folder-name"/*.JPG; do
   OUTPUT="archive/public/images/items/$ITEM_ID/$(basename "$img" | tr '[:upper:]' '[:lower:]')"
   magick "$img" \
-    -resize 1400x1400 \
+    -resize 2800x2800 \
     -quality 85 \
     "$OUTPUT"
 done
 ```
 
-#### Alternative: Center Crop (only for well-centered shots)
-
-Only use if object is centered in frame - off-center objects get cut off:
-
-```bash
-magick "$img" \
-  -gravity center -crop 50%x50%+0+0 +repage \
-  -resize 1400x1400 \
-  -quality 85 \
-  "$OUTPUT"
-```
-
-**Note:** Auto-centering via trim+extend doesn't work well - lightbox gradient creates visible seams. If object is off-center, either retake the photo or use simple resize.
+**Key settings:**
+- Max dimension: 2800px (supports magnifier zoom)
+- Quality: 85%
+- Format: JPEG
 
 #### Other Operations
 
@@ -133,11 +124,6 @@ magick "$img" \
 # Rotate 180° (e.g., seal bases with hieroglyphs)
 magick image.jpg -rotate 180 image.jpg
 ```
-
-**Key settings:**
-- Max dimension: 1400px
-- Quality: 85%
-- Format: JPEG
 
 **For seal/scarab bases:** Check hieroglyph orientation - may need 180° rotation for correct reading direction (right to left).
 
