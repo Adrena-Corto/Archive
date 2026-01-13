@@ -59,6 +59,15 @@ const base = import.meta.env.BASE_URL || '/Archive';
     </div>
   </div>
 
+  <!-- Category Filter Toggles -->
+  <div id="timeline-filters" class="absolute top-2 right-12 sm:top-3 sm:right-14 z-20 flex gap-0.5 opacity-50 hover:opacity-90 transition-opacity">
+    <button data-category="coin" class="category-toggle active">Coins</button>
+    <button data-category="jewelry" class="category-toggle active">Jewelry</button>
+    <button data-category="ring" class="category-toggle active">Rings</button>
+    <button data-category="seal" class="category-toggle active">Seals</button>
+    <button data-category="misc" class="category-toggle active">Misc</button>
+  </div>
+
   <!-- Minimap - Hidden on mobile -->
   <div id="timeline-minimap" class="hidden sm:block absolute bottom-4 left-4 z-20 glass-panel p-2 w-[200px]">
     <div class="relative h-6 bg-surface-light/30 rounded overflow-hidden">
@@ -159,6 +168,13 @@ const base = import.meta.env.BASE_URL || '/Archive';
     const data = (window as any).__TIMELINE_DATA__;
     if (!data) return;
 
+    // Wait for canvas to have valid dimensions (layout must be complete)
+    if (canvas.clientWidth === 0 || canvas.clientHeight === 0) {
+      // Try again on next frame when layout should be ready
+      requestAnimationFrame(() => initTimeline());
+      return;
+    }
+
     const timeline = new PixiTimeline(
       canvas,
       data.items,
@@ -167,6 +183,9 @@ const base = import.meta.env.BASE_URL || '/Archive';
     );
 
     await timeline.init();
+
+    // Mark as fully initialized
+    canvas.dataset.initialized = 'true';
 
     // Hide loading state
     const loadingEl = document.getElementById('timeline-loading');
@@ -191,6 +210,18 @@ const base = import.meta.env.BASE_URL || '/Archive';
 
     zoomOutBtn?.addEventListener('click', () => {
       timeline.zoomOut();
+    });
+
+    // Category filter toggles
+    const filterButtons = document.querySelectorAll('.category-toggle');
+    filterButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const category = (btn as HTMLElement).dataset.category;
+        if (!category) return;
+
+        timeline.toggleCategory(category);
+        btn.classList.toggle('active');
+      });
     });
 
     // Update info panel on state change
@@ -364,7 +395,8 @@ const base = import.meta.env.BASE_URL || '/Archive';
     // Check if canvas exists and hasn't been initialized
     const canvas = document.getElementById('timeline-canvas') as HTMLCanvasElement;
     if (canvas && !canvas.dataset.initialized) {
-      canvas.dataset.initialized = 'true';
+      // Mark as initializing (not initialized) to prevent duplicate calls
+      canvas.dataset.initialized = 'pending';
       initTimeline();
     }
   }
@@ -379,3 +411,15 @@ const base = import.meta.env.BASE_URL || '/Archive';
   // Astro View Transitions - re-initialize on page navigation
   document.addEventListener('astro:page-load', init);
 </script>
+
+<style>
+  .category-toggle {
+    @apply px-1.5 py-0.5 text-[8px] font-mono rounded transition-all duration-150;
+    @apply bg-transparent text-text-dim/60;
+    @apply hover:text-text-muted;
+  }
+
+  .category-toggle.active {
+    @apply text-accent/80;
+  }
+</style>

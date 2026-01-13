@@ -56,7 +56,7 @@ const itemStructuredData = {
 };
 ---
 
-<BaseLayout title={`${item.name} | Archive`} description={item.description} structuredData={itemStructuredData}>
+<BaseLayout title={`${item.name} | Archive`} description={item.description} structuredData={itemStructuredData} image={item.images.length > 0 ? url(`/images/items/${item.id}/${item.images[0]}`) : undefined}>
   <article class="relative py-16 min-h-screen" data-pagefind-body>
 
     <div class="container-narrow relative">
@@ -330,7 +330,7 @@ const itemStructuredData = {
               <div class="flex flex-wrap gap-2">
                 {item.tags.map((tag) => (
                   <a
-                    href={url(`/collection?tag=${encodeURIComponent(tag)}`)}
+                    href={url(`${item.category === 'coin' ? '/coins' : '/artifacts'}?tag=${encodeURIComponent(tag)}`)}
                     class="tag-chip px-3 py-1 bg-surface-light border border-border rounded font-mono text-xs text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
                   >
                     {tag}

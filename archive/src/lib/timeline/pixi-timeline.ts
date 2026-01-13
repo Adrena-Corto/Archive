@@ -135,6 +135,9 @@ export class PixiTimeline {
   // Track if thumbnails are currently being shown
   private thumbnailsVisible: boolean = false;
 
+  // Category filtering
+  private activeCategories: Set<string> = new Set(['coin', 'jewelry', 'ring', 'seal', 'misc']);
+
   // Config
   private baseUrl: string;
   private readonly AXIS_Y_RATIO = 0.88;        // Axis position (near bottom, with bottom padding)
@@ -759,6 +762,22 @@ export class PixiTimeline {
     this.onItemSelect = handler;
   }
 
+  setActiveCategories(categories: string[]): void {
+    this.activeCategories = new Set(categories);
+  }
+
+  getActiveCategories(): string[] {
+    return Array.from(this.activeCategories);
+  }
+
+  toggleCategory(category: string): void {
+    if (this.activeCategories.has(category)) {
+      this.activeCategories.delete(category);
+    } else {
+      this.activeCategories.add(category);
+    }
+  }
+
   private truncateName(name: string, maxLength: number): string {
     if (name.length <= maxLength) return name;
     return name.substring(0, maxLength - 1) + '…';
@@ -815,11 +834,17 @@ export class PixiTimeline {
     const zoomLevel = this.getZoomLevel();
     const showLabels = zoomLevel >= 2;
 
-    // Update dot positions first
+    // Update dot positions first (only for active categories)
     for (let i = 0; i < this.dots.length; i++) {
       const dot = this.dots[i];
-      dot.x = this.yearToPixel(dot.item.yearMidpoint);
-      dot.y = this.calculateDensityY(dot, i);
+      const isActiveCategory = this.activeCategories.has(dot.item.category);
+      if (isActiveCategory) {
+        dot.x = this.yearToPixel(dot.item.yearMidpoint);
+        dot.y = this.calculateDensityY(dot, i);
+      } else {
+        // Move off-screen when category is hidden
+        dot.x = -1000;
+      }
     }
 
     // Update floating thumbnails (this populates clusteredDotIds)

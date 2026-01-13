@@ -17,6 +17,7 @@ export interface Item {
   images: string[];
   tags: string[];
   featured?: boolean;
+  dateAdded?: string;
   // Coin-specific fields
   denomination?: string;
   ruler?: string;
@@ -122,4 +123,19 @@ export function getRelatedItems(currentItem: Item, limit: number = 3): Item[] {
     .sort((a, b) => b.score - a.score)
     .slice(0, limit)
     .map(s => s.item);
+}
+
+export function getAllTags(): string[] {
+  const items = getAllItems();
+  const tags = new Set<string>();
+  items.forEach(item => item.tags.forEach(tag => tags.add(tag)));
+  return Array.from(tags).sort();
+}
+
+export function parseYearFromEra(era: string): number {
+  const match = era.match(/(\d+)\s*(BC|AD|BCE|CE)?/i);
+  if (!match) return 0;
+  const year = parseInt(match[1], 10);
+  const suffix = (match[2] || 'AD').toUpperCase();
+  return (suffix === 'BC' || suffix === 'BCE') ? -year : year;
 }

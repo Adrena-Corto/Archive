@@ -1,5 +1,6 @@
 ---
 import { ViewTransitions } from 'astro:transitions';
+import SearchModal from '../components/SearchModal.astro';
 
 interface Props {
   title?: string;
@@ -46,7 +47,10 @@ function isActive(path: string): boolean {
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0f" />
     <link rel="canonical" href={canonicalURL} />
-    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+    <link rel="icon" type="image/png" sizes="32x32" href={url('/favicon-32.png')} />
+    <link rel="icon" type="image/png" sizes="16x16" href={url('/favicon-16.png')} />
+    <link rel="apple-touch-icon" sizes="180x180" href={url('/apple-touch-icon.png')} />
+    <link rel="alternate" type="application/rss+xml" title="The Archive Articles" href={url('/rss.xml')} />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -150,17 +154,17 @@ function isActive(path: string): boolean {
               class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
               aria-current={isActive('/about') ? 'page' : undefined}
             >About</a>
-            <a
-              href={url('/search')}
-              class:list={["nav-link font-mono text-xs uppercase tracking-widest flex items-center gap-1.5", isActive('/search') && "nav-link-active"]}
-              aria-label="Search"
-              aria-current={isActive('/search') ? 'page' : undefined}
+            <button
+              @click="window.dispatchEvent(new CustomEvent('toggle-search'))"
+              class="nav-link font-mono text-xs uppercase tracking-widest flex items-center gap-1.5"
+              aria-label="Search (Cmd+K)"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
               <span>Search</span>
-            </a>
+              <kbd class="ml-1 px-1.5 py-0.5 text-[9px] bg-surface-light/50 rounded border border-border text-text-dim">⌘K</kbd>
+            </button>
           </div>
 
           <!-- Mobile Menu Button -->
@@ -312,6 +316,9 @@ function isActive(path: string): boolean {
         </p>
       </div>
     </footer>
+
+    <!-- Global Search Modal (⌘K) -->
+    <SearchModal />
 
     <script>
       // Navigation progress bar for View Transitions

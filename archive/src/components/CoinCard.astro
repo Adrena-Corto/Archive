@@ -1,5 +1,6 @@
 ---
 import type { CoinItem } from '../lib/items';
+import { parseYearFromEra } from '../lib/items';
 
 interface Props {
   coin: CoinItem;
@@ -11,6 +12,7 @@ function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 const imagePath = coin.images[0] ? url(`/images/items/${coin.id}/${coin.images[0]}`) : null;
+const yearStart = parseYearFromEra(coin.era);
 ---
 
 <a
@@ -21,6 +23,10 @@ const imagePath = coin.images[0] ? url(`/images/items/${coin.id}/${coin.images[0
   data-denomination={coin.denomination || ''}
   data-material={coin.material}
   data-period={coin.period}
+  data-name={coin.name}
+  data-year={yearStart}
+  data-date-added={coin.dateAdded || ''}
+  data-tags={coin.tags.join(',')}
 >
   <div class="aspect-square bg-surface-light overflow-hidden relative">
     {imagePath ? (

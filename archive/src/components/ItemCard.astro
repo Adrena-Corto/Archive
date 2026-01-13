@@ -1,5 +1,6 @@
 ---
 import type { Item } from '../lib/items';
+import { parseYearFromEra } from '../lib/items';
 
 interface Props {
   item: Item;
@@ -11,6 +12,7 @@ function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 const imagePath = item.images[0] ? url(`/images/items/${item.id}/${item.images[0]}`) : null;
+const yearStart = parseYearFromEra(item.era);
 
 const categoryLabels: Record<Item['category'], string> = {
   coin: 'COIN',
@@ -27,6 +29,10 @@ const categoryLabels: Record<Item['category'], string> = {
   data-category={item.category}
   data-material={item.material}
   data-period={item.period}
+  data-name={item.name}
+  data-year={yearStart}
+  data-date-added={item.dateAdded || ''}
+  data-tags={item.tags.join(',')}
 >
   <div class="aspect-[4/3] bg-surface-light overflow-hidden relative">
     {imagePath ? (

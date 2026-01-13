@@ -1,10 +1,11 @@
 ---
-import { getArtifacts, getArtifactCategories } from '../lib/items';
+import { getArtifacts, getArtifactCategories, getAllTags } from '../lib/items';
 
 const artifacts = getArtifacts();
 const categories = getArtifactCategories();
 const materials = [...new Set(artifacts.map(a => a.material))].sort();
 const periods = [...new Set(artifacts.map(a => a.period))].sort();
+const tags = [...new Set(artifacts.flatMap(a => a.tags))].sort();
 const totalArtifacts = artifacts.length;
 
 const categoryLabels: Record<string, string> = {
@@ -28,6 +29,18 @@ const periodOptions = [
   { value: 'all', label: 'All Periods' },
   ...periods.map(p => ({ value: p, label: p }))
 ];
+
+const tagOptions = [
+  { value: 'all', label: 'All Tags' },
+  ...tags.map(t => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))
+];
+
+const sortOptions = [
+  { value: 'name', label: 'Name A-Z' },
+  { value: 'era-oldest', label: 'Era (Oldest)' },
+  { value: 'era-newest', label: 'Era (Newest)' },
+  { value: 'recent', label: 'Recently Added' },
+];
 ---
 
 <div
@@ -35,46 +48,80 @@ const periodOptions = [
     category: 'all',
     material: 'all',
     period: 'all',
+    tag: 'all',
+    sort: 'name',
     categoryOpen: false,
     materialOpen: false,
     periodOpen: false,
+    tagOpen: false,
+    sortOpen: false,
     visibleCount: ${totalArtifacts},
     totalItems: ${totalArtifacts},
     categoryOptions: ${JSON.stringify(categoryOptions)},
     materialOptions: ${JSON.stringify(materialOptions)},
     periodOptions: ${JSON.stringify(periodOptions)},
+    tagOptions: ${JSON.stringify(tagOptions)},
+    sortOptions: ${JSON.stringify(sortOptions)},
     init() {
       const params = new URLSearchParams(window.location.search);
       if (params.get('category')) this.category = params.get('category');
       if (params.get('material')) this.material = params.get('material');
       if (params.get('period')) this.period = params.get('period');
-      this.filterItems();
+      if (params.get('tag')) this.tag = params.get('tag');
+      if (params.get('sort')) this.sort = params.get('sort');
+      this.filterAndSort();
     },
     updateURL() {
       const params = new URLSearchParams();
       if (this.category !== 'all') params.set('category', this.category);
       if (this.material !== 'all') params.set('material', this.material);
       if (this.period !== 'all') params.set('period', this.period);
+      if (this.tag !== 'all') params.set('tag', this.tag);
+      if (this.sort !== 'name') params.set('sort', this.sort);
       const newURL = params.toString() ? '?' + params.toString() : window.location.pathname;
       window.history.replaceState({}, '', newURL);
     },
     filtering: false,
-    filterItems() {
+    filterAndSort() {
       this.filtering = true;
       const grid = document.getElementById('artifact-grid');
       if (grid) grid.style.opacity = '0.5';
 
       requestAnimationFrame(() => {
-        const items = document.querySelectorAll('[data-category]');
+        const items = Array.from(document.querySelectorAll('[data-category]'));
         let count = 0;
+
         items.forEach(item => {
           const matchCategory = this.category === 'all' || item.dataset.category === this.category;
           const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
           const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
-          const visible = matchCategory && matchMaterial && matchPeriod;
+          const matchTag = this.tag === 'all' || (item.dataset.tags && item.dataset.tags.split(',').includes(this.tag));
+          const visible = matchCategory && matchMaterial && matchPeriod && matchTag;
           item.style.display = visible ? '' : 'none';
           if (visible) count++;
         });
+
+        const visibleItems = items.filter(item => item.style.display !== 'none');
+        visibleItems.sort((a, b) => {
+          if (this.sort === 'name') {
+            return (a.dataset.name || '').localeCompare(b.dataset.name || '');
+          } else if (this.sort === 'era-oldest') {
+            return parseInt(a.dataset.year || '0') - parseInt(b.dataset.year || '0');
+          } else if (this.sort === 'era-newest') {
+            return parseInt(b.dataset.year || '0') - parseInt(a.dataset.year || '0');
+          } else if (this.sort === 'recent') {
+            const dateA = a.dataset.dateAdded || '1970-01-01';
+            const dateB = b.dataset.dateAdded || '1970-01-01';
+            return dateB.localeCompare(dateA);
+          }
+          return 0;
+        });
+
+        const gridEl = document.getElementById('item-grid');
+        if (gridEl) {
+          visibleItems.forEach(item => gridEl.appendChild(item));
+        }
+
         this.visibleCount = count;
         this.updateURL();
 
@@ -86,15 +133,18 @@ const periodOptions = [
       this.category = 'all';
       this.material = 'all';
       this.period = 'all';
-      this.filterItems();
+      this.tag = 'all';
+      this.filterAndSort();
     },
     hasActiveFilters() {
-      return this.category !== 'all' || this.material !== 'all' || this.period !== 'all';
+      return this.category !== 'all' || this.material !== 'all' || this.period !== 'all' || this.tag !== 'all';
     },
     closeAll() {
       this.categoryOpen = false;
       this.materialOpen = false;
       this.periodOpen = false;
+      this.tagOpen = false;
+      this.sortOpen = false;
     },
     getLabel(options, value) {
       const opt = options.find(o => o.value === value);
@@ -137,7 +187,7 @@ const periodOptions = [
         <template x-for="option in categoryOptions" :key="option.value">
           <button
             type="button"
-            @click="category = option.value; categoryOpen = false; filterItems()"
+            @click="category = option.value; categoryOpen = false; filterAndSort()"
             class="select-option"
             :class="{ 'select-option-selected': category === option.value }"
             role="option"
@@ -184,7 +234,7 @@ const periodOptions = [
           <template x-for="option in materialOptions" :key="option.value">
             <button
               type="button"
-              @click="material = option.value; materialOpen = false; filterItems()"
+              @click="material = option.value; materialOpen = false; filterAndSort()"
               class="select-option"
               :class="{ 'select-option-selected': material === option.value }"
               role="option"
@@ -206,7 +256,7 @@ const periodOptions = [
         <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Period</label>
         <button
           type="button"
-          @click="periodOpen = !periodOpen; categoryOpen = false; materialOpen = false"
+          @click="periodOpen = !periodOpen; closeAll(); periodOpen = true"
           class="custom-select group"
           :class="{ 'custom-select-active': period !== 'all', 'custom-select-open': periodOpen }"
           aria-haspopup="listbox"
@@ -232,7 +282,7 @@ const periodOptions = [
           <template x-for="option in periodOptions" :key="option.value">
             <button
               type="button"
-              @click="period = option.value; periodOpen = false; filterItems()"
+              @click="period = option.value; periodOpen = false; filterAndSort()"
               class="select-option"
               :class="{ 'select-option-selected': period === option.value }"
               role="option"
@@ -247,6 +297,100 @@ const periodOptions = [
         </div>
       </div>
     )}
+
+    <!-- Tag Dropdown -->
+    {tags.length > 0 && (
+      <div class="relative" @click.outside="tagOpen = false">
+        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Tag</label>
+        <button
+          type="button"
+          @click="closeAll(); tagOpen = !tagOpen"
+          class="custom-select group"
+          :class="{ 'custom-select-active': tag !== 'all', 'custom-select-open': tagOpen }"
+          aria-haspopup="listbox"
+          :aria-expanded="tagOpen"
+        >
+          <span x-text="getLabel(tagOptions, tag)" class="truncate"></span>
+          <svg class="select-chevron" :class="{ 'rotate-180': tagOpen }" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+          </svg>
+        </button>
+        <div
+          x-show="tagOpen"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="select-dropdown max-h-64 overflow-y-auto"
+          role="listbox"
+          x-cloak
+        >
+          <template x-for="option in tagOptions" :key="option.value">
+            <button
+              type="button"
+              @click="tag = option.value; tagOpen = false; filterAndSort()"
+              class="select-option"
+              :class="{ 'select-option-selected': tag === option.value }"
+              role="option"
+              :aria-selected="tag === option.value"
+            >
+              <span x-text="option.label"></span>
+              <svg x-show="tag === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+              </svg>
+            </button>
+          </template>
+        </div>
+      </div>
+    )}
+
+    <!-- Sort Dropdown -->
+    <div class="relative" @click.outside="sortOpen = false">
+      <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Sort</label>
+      <button
+        type="button"
+        @click="closeAll(); sortOpen = !sortOpen"
+        class="custom-select group"
+        :class="{ 'custom-select-active': sort !== 'name', 'custom-select-open': sortOpen }"
+        aria-haspopup="listbox"
+        :aria-expanded="sortOpen"
+      >
+        <span x-text="getLabel(sortOptions, sort)" class="truncate"></span>
+        <svg class="select-chevron" :class="{ 'rotate-180': sortOpen }" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
+        </svg>
+      </button>
+      <div
+        x-show="sortOpen"
+        x-transition:enter="transition ease-out duration-200"
+        x-transition:enter-start="opacity-0 -translate-y-2"
+        x-transition:enter-end="opacity-100 translate-y-0"
+        x-transition:leave="transition ease-in duration-150"
+        x-transition:leave-start="opacity-100 translate-y-0"
+        x-transition:leave-end="opacity-0 -translate-y-2"
+        class="select-dropdown"
+        role="listbox"
+        x-cloak
+      >
+        <template x-for="option in sortOptions" :key="option.value">
+          <button
+            type="button"
+            @click="sort = option.value; sortOpen = false; filterAndSort()"
+            class="select-option"
+            :class="{ 'select-option-selected': sort === option.value }"
+            role="option"
+            :aria-selected="sort === option.value"
+          >
+            <span x-text="option.label"></span>
+            <svg x-show="sort === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
+            </svg>
+          </button>
+        </template>
+      </div>
+    </div>
 
     <div class="flex items-center gap-4 sm:ml-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
       <span class="font-mono text-xs text-text-muted" role="status" aria-live="polite">

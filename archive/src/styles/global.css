@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @layer base {
   html {
     @apply scroll-smooth overflow-x-hidden;
@@ -446,4 +456,99 @@
 #item-popup.visible #item-popup-content {
   opacity: 1;
   transform: scale(1) translateY(0);
+}
+
+/* Print Styles */
+@media print {
+  /* Hide decorative and interactive elements */
+  #matrix-bg,
+  header,
+  footer,
+  nav,
+  .glass-panel,
+  .glass-panel-solid,
+  #search-modal,
+  button,
+  [x-data],
+  [data-pagefind-ignore] {
+    display: none !important;
+  }
+
+  /* Reset background and colors for printing */
+  html, body {
+    background: white !important;
+    color: black !important;
+    font-size: 12pt;
+  }
+
+  body > *:not(#matrix-bg) {
+    position: static;
+  }
+
+  main {
+    position: static !important;
+  }
+
+  main > div {
+    background: none !important;
+  }
+
+  /* Container adjustments */
+  .container-narrow {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* Typography adjustments */
+  h1, h2, h3, h4, h5, h6 {
+    color: black !important;
+    page-break-after: avoid;
+  }
+
+  p, li {
+    color: #333 !important;
+  }
+
+  a {
+    color: black !important;
+    text-decoration: underline !important;
+  }
+
+  /* Image handling */
+  img {
+    max-width: 100% !important;
+    height: auto !important;
+    page-break-inside: avoid;
+  }
+
+  /* Show item details for printing */
+  article {
+    padding: 0 !important;
+  }
+
+  /* Grid layouts become single column */
+  .grid {
+    display: block !important;
+  }
+
+  .grid > * {
+    margin-bottom: 1rem;
+  }
+
+  /* Show URL after links (accessibility for print) */
+  a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+
+  /* Page breaks */
+  h1, h2, h3 {
+    page-break-after: avoid;
+  }
+
+  table, figure, img {
+    page-break-inside: avoid;
+  }
 }

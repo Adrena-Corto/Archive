@@ -18,6 +18,8 @@ const allFeaturedItems = articlesWithItems
   .flatMap(({ items }) => items)
   .filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index);
 
+const allTags = [...new Set(articles.flatMap(a => a.data.tags))].sort();
+
 const base = import.meta.env.BASE_URL;
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
@@ -57,17 +59,100 @@ const itemsDataJson = JSON.stringify(
           // Knowledge Base
         </p>
         <h1 class="text-4xl md:text-5xl text-text mb-4">Articles</h1>
-        <p class="text-text-muted text-lg">
-          Essays, guides, and notes on collecting and identification.
-        </p>
+        <div class="flex items-center justify-between gap-4">
+          <p class="text-text-muted text-lg">
+            Essays, guides, and notes on collecting and identification.
+          </p>
+          <a
+            href={url('/rss.xml')}
+            class="shrink-0 flex items-center gap-2 text-text-muted hover:text-accent transition-colors font-mono text-xs"
+            title="Subscribe via RSS"
+          >
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20C5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18M4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44m0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.83A7.07 7.07 0 0 0 4 12.93V10.1Z"/>
+            </svg>
+            RSS
+          </a>
+        </div>
       </div>
 
+      {allTags.length > 0 && (
+        <div
+          x-data={`{
+            activeTag: 'all',
+            visibleCount: ${articles.length},
+            totalCount: ${articles.length},
+            init() {
+              const params = new URLSearchParams(window.location.search);
+              if (params.get('tag')) this.activeTag = params.get('tag');
+              this.filter();
+            },
+            filter() {
+              const articles = document.querySelectorAll('[data-article-tags]');
+              let count = 0;
+              articles.forEach(article => {
+                const tags = article.dataset.articleTags.split(',');
+                const visible = this.activeTag === 'all' || tags.includes(this.activeTag);
+                article.style.display = visible ? '' : 'none';
+                if (visible) count++;
+              });
+              this.visibleCount = count;
+              this.updateURL();
+            },
+            updateURL() {
+              const params = new URLSearchParams();
+              if (this.activeTag !== 'all') params.set('tag', this.activeTag);
+              const newURL = params.toString() ? '?' + params.toString() : window.location.pathname;
+              window.history.replaceState({}, '', newURL);
+            }
+          }`}
+          x-init="init()"
+          class="glass-panel p-4 mb-8"
+        >
+          <div class="flex items-center gap-3">
+            <div id="tag-scroll" class="flex items-center gap-2 overflow-x-auto scrollbar-hide min-w-0 scroll-smooth">
+              <button
+                type="button"
+                @click="activeTag = 'all'; filter()"
+                class="font-mono text-xs px-3 py-1.5 rounded-full border transition-all duration-200 whitespace-nowrap"
+                :class="activeTag === 'all' ? 'bg-accent/10 border-accent/50 text-accent' : 'border-border text-text-muted hover:border-border-light hover:text-text'"
+              >
+                All
+              </button>
+              {allTags.map(tag => (
+                <button
+                  type="button"
+                  @click={`activeTag = '${tag}'; filter()`}
+                  class="font-mono text-xs px-3 py-1.5 rounded-full border transition-all duration-200 whitespace-nowrap"
+                  :class={`activeTag === '${tag}' ? 'bg-accent/10 border-accent/50 text-accent' : 'border-border text-text-muted hover:border-border-light hover:text-text'`}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+            <div class="shrink-0 flex items-center gap-3 pl-3 border-l border-border/50">
+              <span class="font-mono text-xs text-text-muted">
+                <span x-text="visibleCount"></span>
+              </span>
+              <button
+                x-show="activeTag !== 'all'"
+                @click="activeTag = 'all'; filter()"
+                class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
+              >
+                [Clear]
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {articlesWithItems.length > 0 ? (
-        <div class="space-y-6">
+        <div id="articles-list" class="space-y-6">
           {articlesWithItems.map(({ article, items }) => (
             <a
               href={url(`/library/articles/${article.id}`)}
               class="block glass-panel p-6 hover:border-accent/30 transition-all duration-300 group"
+              data-article-tags={article.data.tags.join(',')}
             >
               <div class="flex items-start justify-between gap-4 mb-2">
                 <h2 class="text-xl text-text group-hover:text-accent transition-colors">
@@ -269,5 +354,24 @@ const itemsDataJson = JSON.stringify(
 
     // Re-run on Astro page transitions
     document.addEventListener('astro:page-load', initArticlesPopup);
+
+    // Horizontal scroll with mouse wheel
+    function initTagScroll() {
+      const tagScroll = document.getElementById('tag-scroll');
+      if (tagScroll) {
+        tagScroll.addEventListener('wheel', (e) => {
+          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+            e.preventDefault();
+            tagScroll.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+          }
+        }, { passive: false });
+      }
+    }
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTagScroll);
+    } else {
+      initTagScroll();
+    }
+    document.addEventListener('astro:page-load', initTagScroll);
   </script>
 </BaseLayout>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ItemGrid from '../components/ItemGrid.astro';
+import FeatureShowcase from '../components/home/FeatureShowcase.astro';
 import { getFeaturedItems, getAllItems, getCoins, getArtifacts } from '../lib/items';
 
 const featuredItems = getFeaturedItems();
@@ -51,6 +52,39 @@ const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50)
 ---
 
 <BaseLayout title="Archive | Historical Collection">
+  <!-- Vignette overlays -->
+  <div id="vignette-top" class="pointer-events-none fixed inset-x-0 top-0 h-32 bg-gradient-to-b from-void to-transparent z-40 opacity-0 transition-opacity duration-300"></div>
+  <div id="vignette-bottom" class="pointer-events-none fixed inset-x-0 bottom-0 h-32 bg-gradient-to-t from-void to-transparent z-40 opacity-0 transition-opacity duration-300"></div>
+
+  <script>
+    function initVignettes() {
+      const top = document.getElementById('vignette-top');
+      const bottom = document.getElementById('vignette-bottom');
+      if (!top || !bottom) return;
+
+      function updateVignettes() {
+        const scrollY = window.scrollY;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+
+        // Show top vignette after scrolling 50px
+        top.style.opacity = scrollY > 50 ? '1' : '0';
+
+        // Show bottom vignette when not at the bottom (50px threshold)
+        bottom.style.opacity = scrollY < maxScroll - 50 ? '1' : '0';
+      }
+
+      window.addEventListener('scroll', updateVignettes, { passive: true });
+      updateVignettes();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initVignettes);
+    } else {
+      initVignettes();
+    }
+    document.addEventListener('astro:page-load', initVignettes);
+  </script>
+
   <section class="relative min-h-[70vh] flex items-center justify-center overflow-x-clip">
     <div class="relative text-center px-6 max-w-4xl mx-auto">
       <p class="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-6">
@@ -99,6 +133,9 @@ const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50)
     </div>
 
   </section>
+
+  <!-- Feature Showcase Bento Grid -->
+  <FeatureShowcase />
 
   <section class="container-narrow py-16 md:py-20">
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
