@@ -1,0 +1,411 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles');
+  return articles.map((article) => ({
+    params: { id: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const { Content } = await render(article);
+
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric'
+  });
+}
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": article.data.title,
+  "description": article.data.description,
+  "datePublished": article.data.publishDate.toISOString(),
+  ...(article.data.updatedDate && { "dateModified": article.data.updatedDate.toISOString() }),
+  "author": {
+    "@type": "Person",
+    "name": "The Archive"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "The Archive"
+  }
+};
+---
+
+<BaseLayout
+  title={`${article.data.title} | Archive`}
+  description={article.data.description}
+  structuredData={structuredData}
+  image={article.data.image}
+>
+  <article class="relative py-16 min-h-screen">
+    <!-- Mini-map / Progress indicator (desktop only) -->
+    <aside id="article-minimap" class="hidden xl:block fixed right-6 top-24 z-40 select-none">
+      <div class="relative w-20 h-64 bg-surface/50 rounded border border-white/5 overflow-hidden">
+        <!-- Content preview (rendered by JS) -->
+        <div id="minimap-content" class="absolute inset-0 opacity-40 text-[2px] leading-[3px] font-mono text-text-dim overflow-hidden pointer-events-none p-1"></div>
+        <!-- Viewport indicator -->
+        <div id="minimap-viewport" class="absolute left-0 right-0 bg-accent/20 border-y border-accent/40 pointer-events-none transition-all duration-100" style="top: 0; height: 20%"></div>
+        <!-- Clickable overlay -->
+        <div id="minimap-click" class="absolute inset-0 cursor-pointer"></div>
+      </div>
+      <!-- Reading progress -->
+      <div class="mt-2 text-center">
+        <span id="progress-percent" class="font-mono text-[10px] text-text-dim">0%</span>
+      </div>
+    </aside>
+
+    <div class="container-narrow relative max-w-3xl">
+      <Breadcrumb items={[
+        { label: 'Articles', href: url('/library/articles') },
+        { label: article.data.title }
+      ]} />
+
+      <header class="mb-12">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          // Article
+        </p>
+        <h1 class="text-3xl md:text-4xl text-text mb-4 leading-tight">
+          {article.data.title}
+        </h1>
+        <div class="flex flex-wrap items-center gap-4 text-sm">
+          <time
+            datetime={article.data.publishDate.toISOString()}
+            class="font-mono text-text-dim"
+          >
+            {formatDate(article.data.publishDate)}
+          </time>
+          {article.data.updatedDate && (
+            <span class="font-mono text-text-dim">
+              (Updated {formatDate(article.data.updatedDate)})
+            </span>
+          )}
+        </div>
+        <div class="flex flex-wrap gap-2 mt-4">
+          {article.data.tags.map((tag: string) => (
+            <span class="font-mono text-xs text-accent/70 bg-accent/5 px-2 py-0.5 rounded">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </header>
+
+      <div id="article-content" class="prose prose-invert prose-cyan max-w-none">
+        <Content />
+      </div>
+
+      <footer class="mt-16 pt-8 border-t border-white/5">
+        <a
+          href={url('/library/articles')}
+          class="inline-flex items-center gap-2 font-mono text-sm text-text-muted hover:text-accent transition-colors"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          Back to Articles
+        </a>
+      </footer>
+    </div>
+  </article>
+
+  <script>
+    function initMinimap() {
+      const content = document.getElementById('article-content');
+      const minimapContent = document.getElementById('minimap-content');
+      const minimapViewport = document.getElementById('minimap-viewport');
+      const minimapClick = document.getElementById('minimap-click');
+      const progressPercent = document.getElementById('progress-percent');
+
+      if (!content || !minimapContent || !minimapViewport || !progressPercent || !minimapClick) return;
+
+      const article = content.closest('article');
+      if (!article) return;
+
+      // Generate minimap content preview
+      function generateMinimapContent() {
+        const elements = content.querySelectorAll('h2, h3, p, li, td, blockquote');
+        let html = '';
+
+        elements.forEach(el => {
+          const text = el.textContent || '';
+          const truncated = text.slice(0, 100);
+
+          if (el.tagName === 'H2') {
+            html += `<div class="text-accent/60 mt-1 font-bold">${truncated}</div>`;
+          } else if (el.tagName === 'H3') {
+            html += `<div class="text-accent/40 mt-0.5">${truncated}</div>`;
+          } else if (el.tagName === 'BLOCKQUOTE') {
+            html += `<div class="text-accent/30 border-l border-accent/30 pl-0.5">${truncated}</div>`;
+          } else {
+            html += `<div class="text-text-dim/50">${truncated}</div>`;
+          }
+        });
+
+        minimapContent.innerHTML = html;
+      }
+
+      generateMinimapContent();
+
+      // Update viewport position on scroll
+      function updateViewport() {
+        const scrollTop = window.scrollY;
+        const docHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const scrollableHeight = docHeight - windowHeight;
+        const minimapHeight = 256; // h-64 = 16rem = 256px
+
+        // Calculate viewport position and size
+        const viewportRatio = windowHeight / docHeight;
+        const viewportHeight = Math.max(20, minimapHeight * viewportRatio);
+        const scrollRatio = scrollableHeight > 0 ? scrollTop / scrollableHeight : 0;
+        const viewportTop = scrollRatio * (minimapHeight - viewportHeight);
+
+        minimapViewport.style.top = `${viewportTop}px`;
+        minimapViewport.style.height = `${viewportHeight}px`;
+
+        // Calculate reading progress (0-100%)
+        const progress = scrollableHeight > 0 ? Math.round((scrollTop / scrollableHeight) * 100) : 0;
+        progressPercent.textContent = `${Math.min(100, progress)}%`;
+      }
+
+      // Click to scroll
+      minimapClick.addEventListener('click', (e) => {
+        const rect = minimapClick.getBoundingClientRect();
+        const clickY = e.clientY - rect.top;
+        const ratio = clickY / rect.height;
+        const docHeight = document.documentElement.scrollHeight;
+        const windowHeight = window.innerHeight;
+        const targetScroll = ratio * (docHeight - windowHeight);
+
+        window.scrollTo({ top: targetScroll, behavior: 'smooth' });
+      });
+
+      window.addEventListener('scroll', updateViewport, { passive: true });
+      window.addEventListener('resize', () => {
+        generateMinimapContent();
+        updateViewport();
+      }, { passive: true });
+
+      updateViewport();
+    }
+
+    // Run on page load and after view transitions
+    document.addEventListener('astro:page-load', initMinimap);
+  </script>
+</BaseLayout>
+
+<style is:global>
+  .prose {
+    @apply text-text-muted text-[17px];
+    line-height: 1.65;
+  }
+
+  .prose > * + * {
+    @apply mt-4;
+  }
+
+  .prose h2 {
+    @apply text-text font-normal text-xl mt-10 mb-4 flex items-center gap-3;
+  }
+
+  .prose h2::before {
+    content: '//';
+    @apply text-accent font-mono text-sm;
+  }
+
+  .prose h3 {
+    @apply text-text font-normal text-lg mt-6 mb-3;
+  }
+
+  .prose h3::before {
+    content: '>';
+    @apply text-accent/60 font-mono mr-2;
+  }
+
+  .prose p {
+    @apply mb-3;
+  }
+
+  /* All lists get slight indent for visual hierarchy */
+  .prose ul,
+  .prose ol {
+    @apply ml-4;
+  }
+
+  .prose strong {
+    @apply text-text font-medium;
+  }
+
+  .prose ul, .prose ol {
+    @apply my-4 space-y-2;
+  }
+
+  .prose ul {
+    @apply list-none pl-0;
+  }
+
+  .prose ul > li {
+    @apply pl-6 relative;
+  }
+
+  .prose ul > li::before {
+    content: '›';
+    @apply absolute left-0 text-accent font-mono;
+  }
+
+  .prose ol {
+    @apply list-none pl-0;
+    counter-reset: item;
+  }
+
+  .prose ol > li {
+    @apply pl-8 relative;
+    counter-increment: item;
+  }
+
+  .prose ol > li::before {
+    content: counter(item) '.';
+    @apply absolute left-0 text-accent font-mono text-sm;
+  }
+
+  .prose li {
+    @apply mb-0;
+  }
+
+  .prose a {
+    @apply text-accent hover:text-cyan-300 transition-colors underline underline-offset-2 decoration-accent/30 hover:decoration-accent;
+  }
+
+  .prose code {
+    @apply font-mono text-accent bg-accent/10 px-1.5 py-0.5 rounded text-sm;
+  }
+
+  .prose blockquote {
+    @apply border-l-2 border-accent/40 pl-6 py-2 my-6 bg-accent/5 rounded-r-lg italic text-text-dim;
+  }
+
+  /* Tables */
+  .prose table {
+    @apply w-full my-6 text-sm;
+  }
+
+  .prose thead {
+    @apply border-b border-accent/30;
+  }
+
+  .prose th {
+    @apply text-left py-3 px-4 text-accent font-mono text-xs uppercase tracking-wider bg-accent/5;
+  }
+
+  .prose th:first-child {
+    @apply rounded-tl-lg;
+  }
+
+  .prose th:last-child {
+    @apply rounded-tr-lg;
+  }
+
+  .prose tbody tr {
+    @apply border-b border-white/5 transition-colors hover:bg-white/[0.02];
+  }
+
+  .prose tbody tr:last-child {
+    @apply border-b-0;
+  }
+
+  .prose td {
+    @apply py-3 px-4 text-text-muted;
+  }
+
+  .prose td:first-child {
+    @apply text-text font-medium;
+  }
+
+  /* Horizontal rules */
+  .prose hr {
+    @apply my-8 border-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent;
+  }
+
+  /* Images */
+  .prose img {
+    @apply rounded-lg my-6 border border-white/10 shadow-lg shadow-black/20;
+  }
+
+  .prose figure {
+    @apply my-6;
+  }
+
+  .prose figcaption {
+    @apply text-center text-sm text-text-dim mt-3 font-mono;
+  }
+
+  /* Info/Note boxes using blockquote with emoji prefix */
+  .prose blockquote p:first-child {
+    @apply mt-0;
+  }
+
+  .prose blockquote p:last-child {
+    @apply mb-0;
+  }
+
+  /* Nested lists */
+  .prose ul ul, .prose ol ol, .prose ul ol, .prose ol ul {
+    @apply mt-2 mb-0 ml-4;
+  }
+
+  /* Collection item embed - for featuring items from the collection in articles */
+  .prose .collection-embed {
+    @apply my-10 bg-surface border border-border rounded-lg overflow-hidden;
+  }
+
+  .prose .collection-embed a {
+    @apply no-underline;
+  }
+
+  .prose .collection-embed .collection-embed-images {
+    @apply bg-border;
+    gap: 2px;
+  }
+
+  .prose .collection-embed .collection-embed-images.grid-cols-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .prose .collection-embed .collection-embed-images img {
+    @apply m-0 rounded-none border-0 shadow-none brightness-90 hover:brightness-110 transition-[filter] duration-300;
+  }
+
+  .prose .collection-embed .collection-embed-info {
+    @apply p-4 border-t border-border;
+  }
+
+  .prose .collection-embed .collection-embed-label {
+    @apply font-mono text-[10px] uppercase tracking-wider text-accent mb-2 block;
+  }
+
+  .prose .collection-embed .collection-embed-caption {
+    @apply text-sm text-text-muted leading-relaxed m-0;
+  }
+
+  .prose .collection-embed .collection-embed-link {
+    @apply inline-flex items-center gap-1 mt-3 text-sm text-text-muted hover:text-accent transition-colors duration-200 no-underline;
+  }
+
+  .prose .collection-embed .collection-embed-link svg {
+    @apply w-4 h-4;
+  }
+</style>

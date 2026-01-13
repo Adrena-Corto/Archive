@@ -90,8 +90,10 @@
 
   .mobile-nav-link {
     @apply text-text-muted hover:text-accent transition-colors duration-200;
-    @apply border-l-2 border-transparent pl-4;
+    @apply border-l-2 border-transparent pl-4 rounded-r-lg;
     @apply hover:border-accent hover:bg-white/5;
+    @apply active:bg-white/10 active:text-accent;
+    -webkit-tap-highlight-color: transparent;
   }
 
   /* Alpine.js cloak */
@@ -412,4 +414,36 @@
 #timeline-loading.hidden {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Item Popup Animation */
+#item-popup {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease-out, visibility 0.3s;
+}
+
+#item-popup.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+#item-popup-backdrop {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+
+#item-popup.visible #item-popup-backdrop {
+  opacity: 1;
+}
+
+#item-popup-content {
+  opacity: 0;
+  transform: scale(0.95) translateY(10px);
+  transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+}
+
+#item-popup.visible #item-popup-content {
+  opacity: 1;
+  transform: scale(1) translateY(0);
 }

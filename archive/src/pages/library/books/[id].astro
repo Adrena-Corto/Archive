@@ -1,0 +1,124 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const books = await getCollection('books');
+  return books.map((book) => ({
+    params: { id: book.id },
+    props: { book },
+  }));
+}
+
+const { book } = Astro.props;
+
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
+const categoryLabels: Record<string, string> = {
+  jewelry: 'Jewelry',
+  rings: 'Rings',
+  coins: 'Coins',
+  reference: 'Reference',
+  exhibition: 'Exhibition',
+};
+---
+
+<BaseLayout
+  title={`${book.data.title} | Books`}
+  description={book.data.description.slice(0, 160)}
+>
+  <section class="relative py-16 min-h-screen">
+    <div class="container-narrow relative">
+      <Breadcrumb items={[
+        { label: 'Library', href: url('/library') },
+        { label: 'Books', href: url('/library/books') },
+        { label: book.data.title }
+      ]} />
+
+      <div class="grid md:grid-cols-[300px_1fr] gap-12 mt-8">
+        <div>
+          <div class="aspect-[2/3] overflow-hidden rounded-lg bg-white/5 border border-white/10 sticky top-24">
+            <img
+              src={url(`/images/books/${book.data.cover}`)}
+              alt={book.data.title}
+              class="w-full h-full object-cover"
+            />
+          </div>
+        </div>
+
+        <div>
+          <span class="inline-block px-3 py-1 text-xs font-mono uppercase tracking-wider bg-accent/10 text-accent rounded-full mb-4">
+            {categoryLabels[book.data.category] || book.data.category}
+          </span>
+
+          <h1 class="text-3xl md:text-4xl text-text mb-3">
+            {book.data.title}
+          </h1>
+
+          <p class="text-lg text-text-muted mb-8">
+            {book.data.author}
+          </p>
+
+          <div class="glass-panel p-6 mb-8">
+            <dl class="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Publisher</dt>
+                <dd class="text-text">{book.data.publisher}</dd>
+              </div>
+              <div>
+                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Year</dt>
+                <dd class="text-text">{book.data.year}</dd>
+              </div>
+              <div>
+                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">ISBN</dt>
+                <dd class="text-text font-mono text-xs">{book.data.isbn}</dd>
+              </div>
+              {book.data.pages && (
+                <div>
+                  <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Pages</dt>
+                  <dd class="text-text">{book.data.pages}</dd>
+                </div>
+              )}
+            </dl>
+          </div>
+
+          <div class="prose prose-invert max-w-none">
+            <h2 class="text-lg font-medium text-text mb-4">About this book</h2>
+            <p class="text-text-muted leading-relaxed">
+              {book.data.description}
+            </p>
+          </div>
+
+          {book.data.tags.length > 0 && (
+            <div class="mt-8 pt-8 border-t border-white/10">
+              <h3 class="text-xs font-mono uppercase tracking-wider text-text-dim mb-3">Topics</h3>
+              <div class="flex flex-wrap gap-2">
+                {book.data.tags.map((tag: string) => (
+                  <span class="px-3 py-1 text-xs bg-white/5 text-text-muted rounded-full border border-white/10">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <div class="mt-10">
+            <a
+              href={url('/library/books')}
+              class="inline-flex items-center gap-2 font-mono text-xs uppercase tracking-widest text-accent hover:text-cyan-300 transition-colors"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              Back to Books
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

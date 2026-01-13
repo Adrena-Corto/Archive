@@ -14,7 +14,29 @@ const base = import.meta.env.BASE_URL;
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
+
+const siteUrl = Astro.site?.href || 'https://adrena-corto.github.io/Archive';
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Archive",
+      "item": siteUrl
+    },
+    ...items.map((item, index) => ({
+      "@type": "ListItem",
+      "position": index + 2,
+      "name": item.label,
+      ...(item.href ? { "item": new URL(item.href, siteUrl).href } : {})
+    }))
+  ]
+};
 ---
+
+<script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
 
 <nav aria-label="Breadcrumb" class="mb-6">
   <ol class="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-xs uppercase tracking-wider">

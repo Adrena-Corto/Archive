@@ -1,9 +1,10 @@
 ---
-import { getAllItems, getAllCategories } from '../lib/items';
+import { getAllItems, getArtifactCategories } from '../lib/items';
+import ItemCard from './ItemCard.astro';
 
 const base = import.meta.env.BASE_URL || '/';
 const items = getAllItems();
-const categories = getAllCategories();
+const artifactCategories = getArtifactCategories();
 
 const categoryLabels: Record<string, string> = {
   coin: 'Coins',
@@ -19,30 +20,74 @@ const recentItems = items.slice(0, 3);
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
+
+// Prepare items data for client-side search
+const itemsData = JSON.stringify(items.map(item => ({
+  id: item.id,
+  name: item.name,
+  category: item.category,
+  era: item.era,
+  period: item.period,
+  origin: item.origin,
+  material: item.material,
+  weight: item.weight,
+  description: item.description,
+  images: item.images,
+  tags: item.tags,
+})));
 ---
 
-<div id="search-wrapper" class="search-wrapper">
-  <div id="search-loading" class="search-loading">
-    <div class="flex items-center gap-3">
-      <div class="search-spinner"></div>
-      <span class="font-mono text-sm text-text-muted">// Initializing search index...</span>
+<div id="search-wrapper" class="search-wrapper" data-base-url={base} data-items={itemsData}>
+  <!-- Custom search input -->
+  <div class="search-input-container">
+    <div class="search-input-wrapper">
+      <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+      </svg>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Search items..."
+        autocomplete="off"
+      />
+      <button id="search-clear" class="search-clear" style="display: none;">
+        × Clear
+      </button>
     </div>
   </div>
-  <div id="search" class="search-container" data-base-url={base}></div>
+
+  <!-- Search status -->
+  <div id="search-status" class="search-status" style="display: none;">
+    <span class="text-accent">//</span> <span id="search-count">0</span> results for "<span id="search-term"></span>"
+  </div>
+
+  <!-- Search results grid -->
+  <div id="search-results" class="search-results" style="display: none;">
+    <div id="results-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- Results rendered by JS -->
+    </div>
+  </div>
 
   <!-- Search suggestions (shown when search is empty) -->
   <div id="search-suggestions" class="mt-8 space-y-8">
-    <!-- Browse by category -->
+    <!-- Browse collections -->
     <div>
-      <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Browse by Category</h3>
+      <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Browse Collections</h3>
       <div class="flex flex-wrap gap-2">
-        {categories.map((cat) => (
-          <a
-            href={url(`/collection?category=${cat}`)}
-            class="px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
+        <button
+          class="browse-btn px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
+          data-category="coin"
+        >
+          {categoryLabels['coin']}
+        </button>
+        {artifactCategories.map((cat) => (
+          <button
+            class="browse-btn px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
+            data-category={cat}
           >
             {categoryLabels[cat]}
-          </a>
+          </button>
         ))}
       </div>
     </div>
@@ -53,7 +98,7 @@ function url(path: string): string {
       <div class="flex flex-wrap gap-2">
         {popularTags.map((tag) => (
           <button
-            class="search-suggestion-tag px-3 py-1.5 bg-surface border border-border rounded font-mono text-xs text-text-dim hover:border-accent hover:text-accent transition-all duration-200"
+            class="search-tag-btn px-3 py-1.5 bg-surface border border-border rounded font-mono text-xs text-text-dim hover:border-accent hover:text-accent transition-all duration-200"
             data-search-term={tag}
           >
             {tag}
@@ -86,313 +131,295 @@ function url(path: string): string {
 </div>
 
 <script>
-  let pagefindInitialized = false;
-
-  async function initPagefind() {
-    const container = document.getElementById('search');
-    const loading = document.getElementById('search-loading');
-    const suggestions = document.getElementById('search-suggestions');
-    if (!container) return;
-
-    // Skip if already initialized on this container
-    if (container.dataset.initialized === 'true') return;
-
-    const baseUrl = container.dataset.baseUrl || '/';
-
-    try {
-      // @ts-ignore - Pagefind is loaded at runtime
-      const { PagefindUI } = await import('@pagefind/default-ui');
-      new PagefindUI({
-        element: '#search',
-        showSubResults: true,
-        showImages: false,
-        baseUrl: baseUrl,
-        bundlePath: `${baseUrl}${baseUrl.endsWith('/') ? '' : '/'}pagefind/`,
-      });
-      container.dataset.initialized = 'true';
-      if (loading) loading.style.display = 'none';
-
-      // Watch for search input to toggle suggestions and clear button visibility
-      setTimeout(() => {
-        const searchInput = container.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
-        const clearButton = container.querySelector('.pagefind-ui__search-clear') as HTMLButtonElement;
-
-        const updateClearVisibility = () => {
-          if (clearButton) {
-            clearButton.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
-          }
-          if (suggestions) {
-            suggestions.style.display = searchInput.value.length > 0 ? 'none' : 'block';
-          }
-        };
-
-        if (searchInput) {
-          searchInput.addEventListener('input', updateClearVisibility);
-          // Also observe for clear button appearing (Pagefind may add it dynamically)
-          const observer = new MutationObserver(() => {
-            const btn = container.querySelector('.pagefind-ui__search-clear') as HTMLButtonElement;
-            if (btn) {
-              btn.style.display = searchInput.value.length > 0 ? 'flex' : 'none';
-            }
-          });
-          observer.observe(container, { childList: true, subtree: true });
-          // Initial state
-          updateClearVisibility();
-        }
-      }, 100);
-    } catch (e) {
-      console.error('Pagefind error:', e);
-      if (loading) loading.style.display = 'none';
-      container.innerHTML = `
-        <div class="glass-panel p-6 text-center">
-          <p class="font-mono text-sm text-text-muted mb-2">
-            <span class="text-accent">//</span> Search index not available
-          </p>
-          <p class="text-xs text-text-dim">
-            Run <code class="bg-surface-light px-2 py-1 rounded">pnpm build</code> to generate the search index.
-          </p>
-        </div>
-      `;
-    }
+  interface ItemData {
+    id: string;
+    name: string;
+    category: string;
+    era: string;
+    period: string;
+    origin: string;
+    material: string;
+    weight?: string;
+    description: string;
+    images: string[];
+    tags: string[];
   }
 
-  function setupSuggestionTags() {
-    const tags = document.querySelectorAll('.search-suggestion-tag');
-    tags.forEach(tag => {
-      tag.addEventListener('click', () => {
-        const term = (tag as HTMLElement).dataset.searchTerm;
-        const searchInput = document.querySelector('.pagefind-ui__search-input') as HTMLInputElement;
-        if (searchInput && term) {
+  const categoryLabels: Record<string, string> = {
+    coin: 'COIN',
+    jewelry: 'JEWELRY',
+    ring: 'RING',
+    seal: 'SEAL',
+    misc: 'MISC',
+  };
+
+  function initSearch() {
+    const wrapper = document.getElementById('search-wrapper');
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const clearBtn = document.getElementById('search-clear');
+    const searchStatus = document.getElementById('search-status');
+    const searchCount = document.getElementById('search-count');
+    const searchTermEl = document.getElementById('search-term');
+    const searchResults = document.getElementById('search-results');
+    const resultsGrid = document.getElementById('results-grid');
+    const suggestions = document.getElementById('search-suggestions');
+
+    if (!wrapper || !searchInput) return;
+
+    const baseUrl = wrapper.dataset.baseUrl || '/';
+    const items: ItemData[] = JSON.parse(wrapper.dataset.items || '[]');
+
+    function url(path: string): string {
+      return `${baseUrl}${path}`.replace(/\/+/g, '/');
+    }
+
+    function renderItemCard(item: ItemData): string {
+      const imagePath = item.images[0] ? url(`/images/items/${item.id}/${item.images[0]}`) : null;
+
+      return `
+        <a href="${url(`/item/${item.id}`)}" class="group block glass-panel-solid overflow-hidden card-hover">
+          <div class="aspect-[4/3] bg-surface-light overflow-hidden relative">
+            ${imagePath ? `
+              <div class="relative w-full h-full">
+                <div class="absolute inset-0 skeleton-pulse"></div>
+                <img
+                  src="${imagePath}"
+                  alt="${item.name}"
+                  width="400"
+                  height="300"
+                  class="img-fade-in w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-[filter] duration-300"
+                  loading="lazy"
+                  onload="this.classList.add('loaded')"
+                />
+              </div>
+            ` : `
+              <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface">
+                <svg class="w-8 h-8 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+                <span class="font-mono text-[10px] text-text-dim uppercase tracking-wider">No Image</span>
+              </div>
+            `}
+            <div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
+          </div>
+          <div class="p-4 space-y-3">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+                ${categoryLabels[item.category] || item.category.toUpperCase()}
+              </span>
+              <span class="text-text-dim">·</span>
+              <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim">
+                ${item.period}
+              </span>
+            </div>
+            <div class="border-t border-border pt-3">
+              <h3 class="text-lg text-text leading-tight group-hover:text-accent transition-colors duration-300">
+                ${item.name}
+              </h3>
+            </div>
+            <div class="space-y-1.5 pt-2">
+              <div class="flex items-center justify-between">
+                <span class="data-label">Era</span>
+                <span class="data-value">${item.era}</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="data-label">Material</span>
+                <span class="data-value capitalize">${item.material}</span>
+              </div>
+            </div>
+          </div>
+        </a>
+      `;
+    }
+
+    function searchItems(query: string): ItemData[] {
+      if (!query.trim()) return [];
+
+      const q = query.toLowerCase();
+      return items.filter(item => {
+        return (
+          item.name.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q) ||
+          item.category.toLowerCase().includes(q) ||
+          item.material.toLowerCase().includes(q) ||
+          item.origin.toLowerCase().includes(q) ||
+          item.period.toLowerCase().includes(q) ||
+          item.era.toLowerCase().includes(q) ||
+          item.tags.some(tag => tag.toLowerCase().includes(q))
+        );
+      });
+    }
+
+    function filterByCategory(category: string): ItemData[] {
+      return items.filter(item => item.category === category);
+    }
+
+    function showResults(results: ItemData[], query: string, isCategory = false) {
+      if (resultsGrid) {
+        resultsGrid.innerHTML = results.map(renderItemCard).join('');
+      }
+
+      if (searchStatus && searchCount && searchTermEl) {
+        searchCount.textContent = results.length.toString();
+        searchTermEl.textContent = query;
+        searchStatus.style.display = results.length > 0 || query ? 'block' : 'none';
+      }
+
+      if (searchResults) {
+        searchResults.style.display = results.length > 0 ? 'block' : 'none';
+      }
+
+      if (suggestions) {
+        suggestions.style.display = results.length > 0 || query ? 'none' : 'block';
+      }
+
+      if (clearBtn) {
+        clearBtn.style.display = query ? 'block' : 'none';
+      }
+    }
+
+    function handleSearch() {
+      const query = searchInput.value.trim();
+      if (!query) {
+        showResults([], '');
+        return;
+      }
+      const results = searchItems(query);
+      showResults(results, query);
+    }
+
+    // Search input handler
+    let debounceTimer: number;
+    searchInput.addEventListener('input', () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(handleSearch, 150);
+    });
+
+    // Clear button handler
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        searchInput.value = '';
+        showResults([], '');
+        searchInput.focus();
+      });
+    }
+
+    // Browse category buttons
+    document.querySelectorAll('.browse-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const category = (btn as HTMLElement).dataset.category;
+        if (category) {
+          const results = filterByCategory(category);
+          const label = categoryLabels[category.toUpperCase()] || category;
+          searchInput.value = `category:${category}`;
+          showResults(results, label, true);
+        }
+      });
+    });
+
+    // Popular search tag buttons
+    document.querySelectorAll('.search-tag-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const term = (btn as HTMLElement).dataset.searchTerm;
+        if (term) {
           searchInput.value = term;
-          searchInput.dispatchEvent(new Event('input', { bubbles: true }));
-          searchInput.focus();
+          handleSearch();
         }
       });
     });
   }
 
-  // Initialize on first load and after View Transitions navigation
-  document.addEventListener('astro:page-load', () => {
-    initPagefind();
-    setupSuggestionTags();
-  });
+  // Initialize on page load and after View Transitions
+  document.addEventListener('astro:page-load', initSearch);
+  if (document.readyState === 'complete') {
+    initSearch();
+  }
 </script>
 
-<style is:global>
-  .search-loading {
-    padding: 1rem;
-  }
-
-  .search-spinner {
-    width: 16px;
-    height: 16px;
-    border: 2px solid rgba(34, 211, 238, 0.2);
-    border-top-color: #22d3ee;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-  }
-
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  .search-container {
-    --pagefind-ui-scale: 1;
-    --pagefind-ui-primary: #22d3ee;
-    --pagefind-ui-text: #e4e4e7;
-    --pagefind-ui-background: #12121a;
-    --pagefind-ui-border: rgba(255, 255, 255, 0.1);
-    --pagefind-ui-border-width: 1px;
-    --pagefind-ui-border-radius: 12px;
-    --pagefind-ui-font: 'JetBrains Mono', 'Fira Code', monospace;
-  }
-
-  /* Search form container */
-  .pagefind-ui__form {
+<style>
+  .search-input-container {
     position: relative;
   }
 
-  /* Search input wrapper */
-  .pagefind-ui__search-input-wrapper {
+  .search-input-wrapper {
     position: relative;
+    display: flex;
+    align-items: center;
   }
 
-  /* Search input */
-  .pagefind-ui__search-input {
-    width: 100% !important;
-    font-size: 15px !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    padding: 16px 120px 16px 48px !important;
-    background: rgba(18, 18, 26, 0.9) !important;
-    backdrop-filter: blur(20px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 12px !important;
-    color: #e4e4e7 !important;
-    transition: all 0.3s ease !important;
-  }
-
-  .pagefind-ui__search-input::placeholder {
-    color: #52525b !important;
-    font-family: 'JetBrains Mono', monospace !important;
-  }
-
-  .pagefind-ui__search-input:focus {
-    border-color: rgba(34, 211, 238, 0.5) !important;
-    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1), 0 0 30px rgba(34, 211, 238, 0.15) !important;
-    outline: none !important;
-    background: rgba(18, 18, 26, 0.95) !important;
-  }
-
-  /* Custom search icon */
-  .pagefind-ui__form::before {
-    content: '';
+  .search-icon {
     position: absolute;
     left: 16px;
     top: 50%;
     transform: translateY(-50%);
-    width: 20px;
-    height: 20px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2322d3ee' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z'/%3E%3C/svg%3E");
-    background-size: contain;
-    background-repeat: no-repeat;
-    z-index: 10;
+    width: 18px;
+    height: 18px;
+    color: #22d3ee;
+    opacity: 0.8;
     pointer-events: none;
-    opacity: 0.7;
+    z-index: 10;
   }
 
-  /* Clear button styling */
-  .pagefind-ui__search-clear {
+  .search-input {
+    width: 100%;
+    font-size: 15px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 16px 120px 16px 48px;
+    background: rgba(18, 18, 26, 0.9);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    color: #e4e4e7;
+    transition: all 0.3s ease;
+  }
+
+  .search-input::placeholder {
+    color: #52525b;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .search-input:focus {
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.1), 0 0 30px rgba(34, 211, 238, 0.15);
+    outline: none;
+    background: rgba(18, 18, 26, 0.95);
+  }
+
+  .search-clear {
     position: absolute !important;
     right: 12px !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
-    padding: 8px 16px !important;
-    background: rgba(34, 211, 238, 0.1) !important;
-    border: 1px solid rgba(34, 211, 238, 0.3) !important;
-    border-radius: 8px !important;
-    color: #22d3ee !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 11px !important;
-    font-weight: 500 !important;
-    text-transform: uppercase !important;
-    letter-spacing: 0.05em !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
-  }
-
-  .pagefind-ui__search-clear:hover {
-    background: rgba(34, 211, 238, 0.2) !important;
-    border-color: rgba(34, 211, 238, 0.5) !important;
-    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2) !important;
-  }
-
-  /* Hide default clear text, show custom */
-  .pagefind-ui__search-clear {
-    font-size: 0 !important;
-  }
-
-  .pagefind-ui__search-clear::after {
-    content: '× Clear';
-    font-size: 11px !important;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }
-
-  /* Results container */
-  .pagefind-ui__results-area {
-    margin-top: 16px !important;
-  }
-
-  /* Individual result */
-  .pagefind-ui__result {
-    padding: 20px !important;
-    background: rgba(18, 18, 26, 0.8) !important;
-    backdrop-filter: blur(12px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.08) !important;
-    border-radius: 12px !important;
-    margin-bottom: 12px !important;
-    transition: all 0.2s ease !important;
-  }
-
-  .pagefind-ui__result:hover {
-    border-color: rgba(34, 211, 238, 0.4) !important;
-    background: rgba(18, 18, 26, 0.9) !important;
-    box-shadow: 0 0 20px rgba(34, 211, 238, 0.1) !important;
-  }
-
-  .pagefind-ui__result-link {
-    font-family: 'Space Grotesk', system-ui, sans-serif !important;
-    font-size: 18px !important;
-    font-weight: 500 !important;
-    color: #e4e4e7 !important;
-    text-decoration: none !important;
-    transition: color 0.2s ease !important;
-  }
-
-  .pagefind-ui__result-link:hover {
-    color: #22d3ee !important;
-  }
-
-  .pagefind-ui__result-title {
-    font-weight: 500 !important;
-    margin-bottom: 8px !important;
-  }
-
-  .pagefind-ui__result-excerpt {
-    font-size: 14px !important;
-    line-height: 1.6 !important;
-    color: #8a8a99 !important;
-    font-family: 'Space Grotesk', system-ui, sans-serif !important;
-  }
-
-  .pagefind-ui__result-excerpt mark {
-    background: rgba(34, 211, 238, 0.2) !important;
-    color: #22d3ee !important;
-    padding: 1px 4px !important;
-    border-radius: 3px !important;
-  }
-
-  /* Message styling */
-  .pagefind-ui__message {
-    color: #8a8a99 !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 13px !important;
-    padding: 16px !important;
-    text-align: center !important;
-  }
-
-  /* Results count */
-  .pagefind-ui__results-area > p {
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 12px !important;
-    color: #8a8a99 !important;
-    margin-bottom: 16px !important;
-    padding-left: 4px !important;
-  }
-
-  .pagefind-ui__results-area > p::before {
-    content: '// ';
+    padding: 8px 16px;
+    background: rgba(34, 211, 238, 0.1);
+    border: 1px solid rgba(34, 211, 238, 0.3);
+    border-radius: 8px;
     color: #22d3ee;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    z-index: 10;
   }
 
-  /* Suppress default button styling */
-  .pagefind-ui__button {
-    background: rgba(34, 211, 238, 0.1) !important;
-    border: 1px solid rgba(34, 211, 238, 0.3) !important;
-    border-radius: 8px !important;
-    color: #22d3ee !important;
-    font-family: 'JetBrains Mono', monospace !important;
-    font-size: 12px !important;
-    padding: 10px 20px !important;
-    cursor: pointer !important;
-    transition: all 0.2s ease !important;
+  .search-clear:hover {
+    background: rgba(34, 211, 238, 0.2);
+    border-color: rgba(34, 211, 238, 0.5);
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
   }
 
-  .pagefind-ui__button:hover {
-    background: rgba(34, 211, 238, 0.2) !important;
-    border-color: rgba(34, 211, 238, 0.5) !important;
+  .search-status {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: #6b6b7b;
+    padding: 16px 4px;
+    text-align: center;
+  }
+
+  .search-results {
+    margin-top: 8px;
   }
 </style>

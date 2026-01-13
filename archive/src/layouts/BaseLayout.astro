@@ -5,12 +5,14 @@ interface Props {
   title?: string;
   description?: string;
   structuredData?: object;
+  image?: string;
 }
 
 const {
   title = 'Collection',
   description = 'A curated collection of coins, jewelry, rings, cylinder seals, and small antiques.',
-  structuredData
+  structuredData,
+  image
 } = Astro.props;
 
 const defaultStructuredData = {
@@ -23,6 +25,8 @@ const defaultStructuredData = {
 
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const ogImage = image ? new URL(image, Astro.site).href : null;
 
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
@@ -41,7 +45,22 @@ function isActive(path: string): boolean {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0f" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" type="image/svg+xml" href={url('/favicon.svg')} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:site_name" content="The Archive" />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
     <style set:html={`
       @font-face {
         font-family: 'Space Grotesk';
@@ -97,7 +116,7 @@ function isActive(path: string): boolean {
       style="width: 0%; transition: width 400ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease;"
     ></div>
 
-    <div x-data="{ mobileMenuOpen: false }" :style="mobileMenuOpen ? 'z-index: 9999' : ''" class="relative">
+    <div x-data="{ mobileMenuOpen: false }" class="relative z-50">
       <header class="sticky top-0 z-50 bg-void/80 backdrop-blur-xl border-b border-white/5" transition:name="header" transition:animate="none">
         <nav class="container-narrow py-4 flex items-center justify-between">
           <a href={url('/')} class="font-mono text-lg tracking-wider text-text hover:text-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
@@ -122,6 +141,11 @@ function isActive(path: string): boolean {
               aria-current={isActive('/timeline') ? 'page' : undefined}
             >Timeline</a>
             <a
+              href={url('/library')}
+              class:list={["nav-link font-mono text-xs uppercase tracking-widest", pathname.startsWith(url('/library')) && "nav-link-active"]}
+              aria-current={pathname.startsWith(url('/library')) ? 'page' : undefined}
+            >Library</a>
+            <a
               href={url('/about')}
               class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
               aria-current={isActive('/about') ? 'page' : undefined}
@@ -142,16 +166,26 @@ function isActive(path: string): boolean {
           <!-- Mobile Menu Button -->
           <button
             @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden p-2 text-text-muted hover:text-accent transition-colors"
+            class="md:hidden relative w-10 h-10 flex items-center justify-center text-text-muted hover:text-accent active:text-accent transition-colors rounded-lg active:bg-white/10"
+            :class="mobileMenuOpen && 'text-accent'"
             :aria-expanded="mobileMenuOpen"
             aria-label="Toggle navigation menu"
           >
-            <svg x-show="!mobileMenuOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg x-show="mobileMenuOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <span class="sr-only" x-text="mobileMenuOpen ? 'Close menu' : 'Open menu'"></span>
+            <div class="w-5 h-4 flex flex-col justify-between">
+              <span
+                class="block h-0.5 bg-current rounded-full transition-all duration-300 origin-center"
+                :class="mobileMenuOpen ? 'translate-y-[7px] rotate-45' : ''"
+              ></span>
+              <span
+                class="block h-0.5 bg-current rounded-full transition-all duration-300"
+                :class="mobileMenuOpen ? 'opacity-0 scale-x-0' : ''"
+              ></span>
+              <span
+                class="block h-0.5 bg-current rounded-full transition-all duration-300 origin-center"
+                :class="mobileMenuOpen ? '-translate-y-[7px] -rotate-45' : ''"
+              ></span>
+            </div>
           </button>
         </nav>
       </header>
@@ -160,23 +194,34 @@ function isActive(path: string): boolean {
       <div
         x-show="mobileMenuOpen"
         x-cloak
-        x-transition:enter="transition ease-out duration-200"
-        x-transition:enter-start="opacity-0"
-        x-transition:enter-end="opacity-100"
-        x-transition:leave="transition ease-in duration-150"
-        x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0"
         class="fixed inset-0 top-[57px] z-[9999] md:hidden"
-        style="background-color: #0a0a0f;"
         @click="mobileMenuOpen = false"
       >
+        <!-- Backdrop -->
+        <div
+          x-show="mobileMenuOpen"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0"
+          x-transition:enter-end="opacity-100"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="absolute inset-0 bg-void/95 backdrop-blur-sm"
+        ></div>
+
         <!-- Menu panel -->
         <div
-          class="border-b border-white/10"
-          style="background-color: #12121a;"
+          x-show="mobileMenuOpen"
+          x-transition:enter="transition ease-out duration-200"
+          x-transition:enter-start="opacity-0 -translate-y-2"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-150"
+          x-transition:leave-start="opacity-100 translate-y-0"
+          x-transition:leave-end="opacity-0 -translate-y-2"
+          class="relative border-b border-white/10 bg-surface"
           @click.stop
         >
-          <div class="container-narrow py-6 flex flex-col gap-2">
+          <div class="container-narrow py-6 flex flex-col gap-1">
             <a
               href={url('/artifacts')}
               @click="mobileMenuOpen = false"
@@ -201,6 +246,32 @@ function isActive(path: string): boolean {
             >
               <span class="text-accent mr-2">></span> Timeline
             </a>
+            <div class="py-1">
+              <a
+                href={url('/library')}
+                @click="mobileMenuOpen = false"
+                class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", pathname.startsWith(url('/library')) && "text-accent border-accent"]}
+                aria-current={pathname.startsWith(url('/library')) ? 'page' : undefined}
+              >
+                <span class="text-accent mr-2">></span> Library
+              </a>
+              <div class="ml-6 flex flex-col gap-1 mt-1">
+                <a
+                  href={url('/library/articles')}
+                  @click="mobileMenuOpen = false"
+                  class:list={["font-mono text-xs uppercase tracking-widest py-2 text-text-muted hover:text-accent transition-colors", isActive('/library/articles') && "text-accent"]}
+                >
+                  <span class="text-accent/50 mr-2">-</span> Articles
+                </a>
+                <a
+                  href={url('/library/books')}
+                  @click="mobileMenuOpen = false"
+                  class:list={["font-mono text-xs uppercase tracking-widest py-2 text-text-muted hover:text-accent transition-colors", isActive('/library/books') && "text-accent"]}
+                >
+                  <span class="text-accent/50 mr-2">-</span> Books
+                </a>
+              </div>
+            </div>
             <a
               href={url('/about')}
               @click="mobileMenuOpen = false"
@@ -284,6 +355,7 @@ function isActive(path: string): boolean {
       import { initMatrixEffect } from '../scripts/matrix-effect';
       initMatrixEffect();
     </script>
+
   </body>
 </html>
 

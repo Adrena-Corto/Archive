@@ -1,0 +1,273 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { getItemById, getAllItems, type Item } from '../../../lib/items';
+
+const articles = (await getCollection('articles'))
+  .filter(article => !article.data.draft)
+  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf());
+
+const articlesWithItems = articles.map(article => ({
+  article,
+  items: (article.data.featuredItems || [])
+    .map((id: string) => getItemById(id))
+    .filter((item): item is Item => item !== undefined)
+}));
+
+const allFeaturedItems = articlesWithItems
+  .flatMap(({ items }) => items)
+  .filter((item, index, arr) => arr.findIndex(i => i.id === item.id) === index);
+
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
+function formatDate(date: Date): string {
+  return date.toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric'
+  });
+}
+
+const itemsDataJson = JSON.stringify(
+  allFeaturedItems.map(item => ({
+    id: item.id,
+    name: item.name,
+    category: item.category,
+    era: item.era,
+    origin: item.origin,
+    material: item.material,
+    dimensions: item.dimensions,
+    description: item.description,
+    images: item.images,
+  }))
+);
+---
+
+<BaseLayout
+  title="Articles | Archive"
+  description="Essays and guides on ancient coins, cylinder seals, and collecting antiques."
+>
+  <section class="relative py-16 min-h-screen">
+    <div class="container-narrow relative">
+      <div class="mb-12">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          // Knowledge Base
+        </p>
+        <h1 class="text-4xl md:text-5xl text-text mb-4">Articles</h1>
+        <p class="text-text-muted text-lg">
+          Essays, guides, and notes on collecting and identification.
+        </p>
+      </div>
+
+      {articlesWithItems.length > 0 ? (
+        <div class="space-y-6">
+          {articlesWithItems.map(({ article, items }) => (
+            <a
+              href={url(`/library/articles/${article.id}`)}
+              class="block glass-panel p-6 hover:border-accent/30 transition-all duration-300 group"
+            >
+              <div class="flex items-start justify-between gap-4 mb-2">
+                <h2 class="text-xl text-text group-hover:text-accent transition-colors">
+                  {article.data.title}
+                </h2>
+                <time
+                  datetime={article.data.publishDate.toISOString()}
+                  class="font-mono text-xs text-text-dim shrink-0 pt-1"
+                >
+                  {formatDate(article.data.publishDate)}
+                </time>
+              </div>
+
+              <div class="flex flex-col md:flex-row md:items-end gap-4">
+                <div class="flex-1 min-w-0">
+                  <p class="text-text-muted text-sm leading-relaxed mb-3">
+                    {article.data.description}
+                  </p>
+                  <div class="flex flex-wrap gap-2">
+                    {article.data.tags.map((tag: string) => (
+                      <span class="font-mono text-xs text-accent/70 bg-accent/5 px-2 py-0.5 rounded">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {items.length > 0 && (
+                  <div class="shrink-0 flex items-center gap-1.5">
+                    {items.slice(0, 2).map((item) => (
+                      <span
+                        data-item-id={item.id}
+                        class="featured-item relative group/item w-14 h-14 rounded overflow-hidden bg-surface-elevated border border-border/30 hover:border-accent/50 transition-colors cursor-pointer"
+                        title={item.name}
+                      >
+                        <img
+                          src={url(`/images/items/${item.id}/${item.images[0]}`)}
+                          alt={item.name}
+                          class="w-full h-full object-cover"
+                        />
+                        <span class="absolute inset-0 bg-black/80 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center p-1">
+                          <span class="text-[10px] text-white text-center leading-tight line-clamp-3">{item.name}</span>
+                        </span>
+                      </span>
+                    ))}
+                    {items.length > 2 && (
+                      <span class="w-14 h-14 rounded overflow-hidden bg-surface-elevated border border-border/30 flex items-center justify-center">
+                        <span class="font-mono text-xs text-text-dim">+{items.length - 2}</span>
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <div class="text-center py-16">
+          <div class="glass-panel p-8 inline-block">
+            <svg class="w-12 h-12 text-text-dim mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+            </svg>
+            <p class="font-mono text-sm text-text-muted">
+              <span class="text-accent">//</span> No articles published yet
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- Item Popup Modal -->
+  <div id="item-popup" class="fixed inset-0 z-50">
+    <div id="item-popup-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+    <div class="absolute inset-4 md:inset-8 lg:inset-16 flex items-center justify-center pointer-events-none">
+      <div id="item-popup-content" class="relative bg-surface border border-border rounded-lg shadow-2xl max-w-4xl w-full max-h-full overflow-auto pointer-events-auto">
+        <button id="item-popup-close" class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-text-muted hover:text-text transition-colors rounded-full hover:bg-white/5">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+        <div id="item-popup-body" class="p-6 md:p-8">
+          <!-- Content loaded dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script is:inline define:vars={{ itemsDataJson, base }}>
+    const data = {
+      items: JSON.parse(itemsDataJson),
+      baseUrl: base,
+    };
+
+      function initArticlesPopup() {
+        const popup = document.getElementById('item-popup');
+        const backdrop = document.getElementById('item-popup-backdrop');
+        const closeBtn = document.getElementById('item-popup-close');
+        const body = document.getElementById('item-popup-body');
+        const content = document.getElementById('item-popup-content');
+
+        if (!popup || !body || !content) return;
+
+        const closePopup = () => {
+          popup.classList.remove('visible');
+          document.body.style.overflow = '';
+        };
+
+        const openPopup = (itemId) => {
+          const item = data.items.find((i) => i.id === itemId);
+          if (!item) return;
+
+          const images = item.images || [];
+          const firstImage = images[0] ? (data.baseUrl + '/images/items/' + itemId + '/' + images[0]).replace(/\/+/g, '/') : '';
+
+          let thumbsHtml = '';
+          if (images.length > 1) {
+            thumbsHtml = '<div class="flex gap-2 overflow-x-auto pb-2">' +
+              images.map((img, i) =>
+                '<button class="flex-shrink-0 w-16 h-16 rounded border-2 ' + (i === 0 ? 'border-accent' : 'border-border') + ' overflow-hidden hover:border-accent transition-colors" data-image="' + (data.baseUrl + '/images/items/' + itemId + '/' + img).replace(/\/+/g, '/') + '">' +
+                  '<img src="' + (data.baseUrl + '/images/items/' + itemId + '/' + img).replace(/\/+/g, '/') + '" alt="" class="w-full h-full object-cover" />' +
+                '</button>'
+              ).join('') +
+            '</div>';
+          }
+
+          body.innerHTML =
+            '<div class="grid md:grid-cols-2 gap-6 md:gap-8">' +
+              '<div class="space-y-4">' +
+                (firstImage ?
+                  '<div class="relative bg-surface-light rounded-lg overflow-hidden" style="aspect-ratio: 4/3;">' +
+                    '<img id="popup-main-image" src="' + firstImage + '" alt="' + item.name + '" class="w-full h-full object-cover" />' +
+                  '</div>' + thumbsHtml
+                : '') +
+              '</div>' +
+              '<div class="space-y-4">' +
+                '<div>' +
+                  '<p class="font-mono text-xs uppercase tracking-wider text-accent mb-1">' + (item.category || 'Artifact') + '</p>' +
+                  '<h2 class="text-2xl md:text-3xl text-text">' + item.name + '</h2>' +
+                '</div>' +
+                '<div class="grid grid-cols-2 gap-4 text-sm">' +
+                  (item.era ? '<div><p class="text-text-dim font-mono text-xs">Era</p><p class="text-text-muted">' + item.era + '</p></div>' : '') +
+                  (item.origin ? '<div><p class="text-text-dim font-mono text-xs">Origin</p><p class="text-text-muted">' + item.origin + '</p></div>' : '') +
+                  (item.material ? '<div><p class="text-text-dim font-mono text-xs">Material</p><p class="text-text-muted">' + item.material + '</p></div>' : '') +
+                  (item.dimensions ? '<div><p class="text-text-dim font-mono text-xs">Dimensions</p><p class="text-text-muted">' + item.dimensions + '</p></div>' : '') +
+                '</div>' +
+                (item.description ? '<p class="text-text-muted text-sm leading-relaxed">' + item.description + '</p>' : '') +
+                '<a href="' + (data.baseUrl + '/item/' + itemId).replace(/\/+/g, '/') + '" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-mono text-sm mt-4">' +
+                  'View full details' +
+                  '<svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">' +
+                    '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />' +
+                  '</svg>' +
+                '</a>' +
+              '</div>' +
+            '</div>';
+
+          // Setup image gallery switching
+          const mainImage = document.getElementById('popup-main-image');
+          const thumbButtons = body.querySelectorAll('[data-image]');
+          thumbButtons.forEach((btn) => {
+            btn.addEventListener('click', () => {
+              if (mainImage) {
+                mainImage.src = btn.dataset.image || '';
+              }
+              thumbButtons.forEach(b => b.classList.replace('border-accent', 'border-border'));
+              btn.classList.replace('border-border', 'border-accent');
+            });
+          });
+
+          popup.classList.add('visible');
+          document.body.style.overflow = 'hidden';
+        };
+
+        document.querySelectorAll('.featured-item').forEach(item => {
+          item.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const itemId = item.dataset.itemId;
+            if (itemId) openPopup(itemId);
+          });
+        });
+
+        if (backdrop) backdrop.addEventListener('click', closePopup);
+        if (closeBtn) closeBtn.addEventListener('click', closePopup);
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && popup.classList.contains('visible')) {
+            closePopup();
+          }
+        });
+      }
+
+      // Run on initial load
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initArticlesPopup);
+      } else {
+        initArticlesPopup();
+      }
+
+    // Re-run on Astro page transitions
+    document.addEventListener('astro:page-load', initArticlesPopup);
+  </script>
+</BaseLayout>

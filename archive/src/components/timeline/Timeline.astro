@@ -96,6 +96,23 @@ const base = import.meta.env.BASE_URL || '/Archive';
   </div>
 </div>
 
+<!-- Item Popup Modal -->
+<div id="item-popup" class="fixed inset-0 z-50">
+  <div id="item-popup-backdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+  <div class="absolute inset-4 md:inset-8 lg:inset-16 flex items-center justify-center pointer-events-none">
+    <div id="item-popup-content" class="relative bg-surface border border-border rounded-lg shadow-2xl max-w-4xl w-full max-h-full overflow-auto pointer-events-auto">
+      <button id="item-popup-close" class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-text-muted hover:text-text transition-colors rounded-full hover:bg-white/5">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+      <div id="item-popup-body" class="p-6 md:p-8">
+        <!-- Content loaded dynamically -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <script define:vars={{ itemsJson, landmarksJson, base }}>
   window.__TIMELINE_DATA__ = {
     items: JSON.parse(itemsJson),
@@ -157,6 +174,9 @@ const base = import.meta.env.BASE_URL || '/Archive';
       loadingEl.classList.add('hidden');
       setTimeout(() => loadingEl.remove(), 300);
     }
+
+    // Setup item popup
+    setupItemPopup(timeline, data);
 
     // Build minimap density bars
     buildMinimap(data.items);
@@ -248,6 +268,95 @@ const base = import.meta.env.BASE_URL || '/Archive';
       bar.style.height = `${Math.max(height, 2)}%`;
       minimapBars.appendChild(bar);
     }
+  }
+
+  function setupItemPopup(timeline: any, data: any) {
+    const popup = document.getElementById('item-popup');
+    const backdrop = document.getElementById('item-popup-backdrop');
+    const closeBtn = document.getElementById('item-popup-close');
+    const body = document.getElementById('item-popup-body');
+
+    if (!popup || !body) return;
+
+    const closePopup = () => {
+      popup.classList.remove('visible');
+      document.body.style.overflow = '';
+    };
+
+    const openPopup = async (itemId: string) => {
+      const item = data.items.find((i: any) => i.id === itemId);
+      if (!item) return;
+
+      const images = item.images || [];
+      const firstImage = images[0] ? `${data.baseUrl}/images/items/${itemId}/${images[0]}` : '';
+
+      body.innerHTML = `
+        <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+          <div class="space-y-4">
+            ${firstImage ? `
+              <div class="relative bg-surface-light rounded-lg overflow-hidden" style="aspect-ratio: 4/3;">
+                <img id="popup-main-image" src="${firstImage}" alt="${item.name}" class="w-full h-full object-cover" />
+              </div>
+              ${images.length > 1 ? `
+                <div class="flex gap-2 overflow-x-auto pb-2">
+                  ${images.map((img: string, i: number) => `
+                    <button class="flex-shrink-0 w-16 h-16 rounded border-2 ${i === 0 ? 'border-accent' : 'border-border'} overflow-hidden hover:border-accent transition-colors" data-image="${data.baseUrl}/images/items/${itemId}/${img}">
+                      <img src="${data.baseUrl}/images/items/${itemId}/${img}" alt="" class="w-full h-full object-cover" />
+                    </button>
+                  `).join('')}
+                </div>
+              ` : ''}
+            ` : ''}
+          </div>
+          <div class="space-y-4">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-wider text-accent mb-1">${item.category || 'Artifact'}</p>
+              <h2 class="text-2xl md:text-3xl text-text">${item.name}</h2>
+            </div>
+            <div class="grid grid-cols-2 gap-4 text-sm">
+              ${item.era ? `<div><p class="text-text-dim font-mono text-xs">Era</p><p class="text-text-muted">${item.era}</p></div>` : ''}
+              ${item.origin ? `<div><p class="text-text-dim font-mono text-xs">Origin</p><p class="text-text-muted">${item.origin}</p></div>` : ''}
+              ${item.material ? `<div><p class="text-text-dim font-mono text-xs">Material</p><p class="text-text-muted">${item.material}</p></div>` : ''}
+              ${item.dimensions ? `<div><p class="text-text-dim font-mono text-xs">Dimensions</p><p class="text-text-muted">${item.dimensions}</p></div>` : ''}
+            </div>
+            ${item.description ? `<p class="text-text-muted text-sm leading-relaxed">${item.description}</p>` : ''}
+            <a href="${data.baseUrl}/item/${itemId}" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-mono text-sm mt-4">
+              View full details
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      `;
+
+      // Setup image gallery switching
+      const mainImage = document.getElementById('popup-main-image') as HTMLImageElement;
+      const thumbButtons = body.querySelectorAll('[data-image]');
+      thumbButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          if (mainImage) {
+            mainImage.src = (btn as HTMLElement).dataset.image || '';
+          }
+          thumbButtons.forEach(b => b.classList.replace('border-accent', 'border-border'));
+          btn.classList.replace('border-border', 'border-accent');
+        });
+      });
+
+      popup.classList.add('visible');
+      document.body.style.overflow = 'hidden';
+    };
+
+    timeline.setItemSelectHandler(openPopup);
+
+    backdrop?.addEventListener('click', closePopup);
+    closeBtn?.addEventListener('click', closePopup);
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && popup.classList.contains('visible')) {
+        closePopup();
+      }
+    });
   }
 
   // Support both initial load and Astro View Transitions

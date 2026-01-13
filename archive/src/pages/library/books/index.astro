@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import Breadcrumb from '../../../components/Breadcrumb.astro';
+import { getCollection } from 'astro:content';
+
+const books = await getCollection('books');
+
+const categories = [
+  { id: 'all', label: 'All' },
+  { id: 'jewelry', label: 'Jewelry' },
+  { id: 'rings', label: 'Rings' },
+  { id: 'coins', label: 'Coins' },
+  { id: 'exhibition', label: 'Exhibition' },
+];
+
+const base = import.meta.env.BASE_URL;
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+---
+
+<BaseLayout
+  title="Books | Archive"
+  description="Reference books and literature on numismatics, ancient history, and artifact collecting."
+>
+  <section class="relative py-16 min-h-screen">
+    <div class="container-narrow relative">
+      <Breadcrumb items={[
+        { label: 'Library', href: url('/library') },
+        { label: 'Books' }
+      ]} />
+
+      <div class="mb-12">
+        <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
+          // Reference Collection
+        </p>
+        <h1 class="text-4xl md:text-5xl text-text mb-4">Books</h1>
+        <p class="text-text-muted text-lg">
+          Reference books and literature from my personal numismatic and jewelry library.
+        </p>
+      </div>
+
+      <div x-data="{ category: 'all' }">
+        <div class="flex flex-wrap gap-2 mb-10">
+          {categories.map((cat) => (
+            <button
+              x-on:click={`category = '${cat.id}'`}
+              x-bind:class={`category === '${cat.id}' ? 'bg-accent/20 border-accent/50 text-accent' : 'bg-white/5 border-white/10 text-text-muted hover:border-accent/30'`}
+              class="px-4 py-2 rounded-full border text-sm font-mono transition-all"
+            >
+              {cat.label}
+            </button>
+          ))}
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {books.map((book) => (
+          <div
+            class="group"
+            x-show={`category === 'all' || category === '${book.data.category}'`}
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+          >
+            <a
+              href={url(`/library/books/${book.id}`)}
+              class="block"
+            >
+              <div class="aspect-[2/3] mb-4 overflow-hidden rounded-lg bg-white/5 border border-white/10 group-hover:border-accent/30 transition-all duration-300">
+                <img
+                  src={url(`/images/books/${book.data.cover}`)}
+                  alt={book.data.title}
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                />
+              </div>
+              <h3 class="text-sm text-text group-hover:text-accent transition-colors line-clamp-2 mb-1">
+                {book.data.title}
+              </h3>
+              <p class="text-xs text-text-muted line-clamp-1">
+                {book.data.author}
+              </p>
+            </a>
+          </div>
+        ))}
+        </div>
+      </div>
+
+      <div class="mt-12 text-center">
+        <p class="text-text-dim text-sm font-mono">
+          {books.length} books in collection
+        </p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

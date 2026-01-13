@@ -206,7 +206,7 @@ class MatrixEffect {
       const distance = Math.sqrt(dx * dx + dy * dy);
       if (distance < currentRadius) {
         const falloff = 1 - Math.pow(distance / currentRadius, 1.5);
-        totalIntensity += this.lingerIntensity * falloff;
+        totalIntensity += this.lingerIntensity * falloff * 1.1;
       }
     }
 

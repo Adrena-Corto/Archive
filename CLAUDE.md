@@ -163,6 +163,51 @@ magick image.jpg -rotate 180 image.jpg
 - Use 2-second timer to avoid camera shake
 - For items under 2cm, consider macro extension tubes
 
+## Writing Articles
+
+Articles live in `archive/src/content/articles/*.md`.
+
+### Collection Item Embeds
+
+When featuring items from the collection in articles, use the `.collection-embed` block. This creates a distinct card that signals "from our collection" with clickable images and a link to the item page.
+
+```html
+<div class="collection-embed">
+  <a href="/Archive/items/ITEM-ID">
+    <div class="collection-embed-images grid-cols-2">
+      <img src="/Archive/images/items/ITEM-ID/image1.jpg" alt="Description" />
+      <img src="/Archive/images/items/ITEM-ID/image2.jpg" alt="Description" />
+    </div>
+  </a>
+  <div class="collection-embed-info">
+    <span class="collection-embed-label">From the Collection</span>
+    <p class="collection-embed-caption">Caption describing the item and what to notice.</p>
+    <a href="/Archive/items/ITEM-ID" class="collection-embed-link">
+      View full item details
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </a>
+  </div>
+</div>
+```
+
+**Notes:**
+- For single image, omit `grid-cols-2` class
+- Always link to the item page (`/Archive/items/ITEM-ID`)
+- Keep captions concise but informative
+
+### Featured Items in Article List
+
+Articles can display thumbnail previews of collection items on the articles index page. Add `featuredItems` to article frontmatter:
+
+```yaml
+---
+title: "Article Title"
+featuredItems: [item-id-1, item-id-2]
+---
+```
+
+**Important:** Only add items to `featuredItems` if they actually appear in the article body via a `collection-embed`. This field is for surfacing embedded items in the article list UI, not for tagging related items.
+
 ## Design Guidelines
 
 - **Colors**: White/off-white backgrounds, dark text

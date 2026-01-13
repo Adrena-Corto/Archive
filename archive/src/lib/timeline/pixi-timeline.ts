@@ -1,10 +1,14 @@
-import { Application, Container, Graphics, Text, TextStyle, FederatedPointerEvent } from 'pixi.js';
+import { Application, Container, Graphics, Text, TextStyle, FederatedPointerEvent, Sprite, Texture, Assets } from 'pixi.js';
 import type { TimelineItem, TimelineLandmark, ZoomLevel } from './types';
 import { TIMELINE_BOUNDS, ZOOM_CONFIGS } from './types';
+
+const IMAGE_CACHE = new Map<string, Texture>();
+const LOADING_IMAGES = new Set<string>();
 
 interface Dot {
   item: TimelineItem;
   graphics: Graphics;
+  rangeGraphics: Graphics;
   label: Text | null;
   x: number;
   y: number;
@@ -41,6 +45,14 @@ interface TooltipData {
   subtitle: string;
   x: number;
   y: number;
+  imageUrl: string | null;
+  itemId: string;
+}
+
+interface Cluster {
+  dots: Dot[];
+  centerX: number;
+  centerYear: number;
 }
 
 export class PixiTimeline {
@@ -53,6 +65,7 @@ export class PixiTimeline {
   private axisContainer!: Container;
   private dotsContainer!: Container;
   private labelsContainer!: Container;
+  private thumbnailsContainer!: Container;
   private tooltipContainer!: Container;
 
   // Data
@@ -82,13 +95,45 @@ export class PixiTimeline {
   private tooltipGraphics: Graphics | null = null;
   private tooltipText: Text | null = null;
   private tooltipSubtext: Text | null = null;
+  private tooltipSprite: Sprite | null = null;
+  private tooltipImageMask: Graphics | null = null;
   private currentTooltip: TooltipData | null = null;
+
+  // Floating thumbnails for sparse view
+  private floatingThumbnails: Map<string, {
+    sprite: Sprite;
+    mask: Graphics;
+    border: Graphics;
+    targetX: number;
+    targetY: number;
+    targetScale: number;
+    targetAlpha: number;
+    targetRadius: number;
+    currentScale: number;
+    currentRadius: number;
+  }> = new Map();
+  private clusterBadges: Map<string, { bg: Graphics; text: Text }> = new Map();
+  private clusterDiamonds: Map<string, { graphics: Graphics; targetX: number; targetY: number; targetScale: number; currentScale: number }> = new Map();
+  private clusterLabels: Map<string, Text> = new Map();
+  private labelCollisionGroups: Map<string, Text> = new Map();
+  private clusteredDotIds: Set<string> = new Set();
+  private activeClusterKeys: Set<string> = new Set();
+  private labelCollisionGroupIds: Set<string> = new Set();
+
+  // Item popup callback
+  private onItemSelect: ((itemId: string) => void) | null = null;
 
   // Cursor tracking line
   private cursorLineContainer!: Container;
   private cursorLine: Graphics | null = null;
   private cursorYearText: Text | null = null;
   private mouseX: number = -1;
+
+  // Animation time for pulsing effects
+  private animTime: number = 0;
+
+  // Track if thumbnails are currently being shown
+  private thumbnailsVisible: boolean = false;
 
   // Config
   private baseUrl: string;
@@ -168,6 +213,7 @@ export class PixiTimeline {
     this.axisContainer = new Container();
     this.dotsContainer = new Container();
     this.labelsContainer = new Container();
+    this.thumbnailsContainer = new Container();
     this.tooltipContainer = new Container();
 
     this.app.stage.addChild(this.cursorLineContainer);
@@ -176,11 +222,16 @@ export class PixiTimeline {
     this.app.stage.addChild(this.axisContainer);
     this.app.stage.addChild(this.dotsContainer);
     this.app.stage.addChild(this.labelsContainer);
+    this.app.stage.addChild(this.thumbnailsContainer);
     this.app.stage.addChild(this.tooltipContainer);
   }
 
   private createDots(): void {
     for (const item of this.items) {
+      // Range indicator (drawn behind the diamond)
+      const rangeGraphics = new Graphics();
+      this.dotsContainer.addChild(rangeGraphics);
+
       const graphics = new Graphics();
       // Small diamond shape (like a gem/coin)
       const size = 5;
@@ -198,6 +249,7 @@ export class PixiTimeline {
       const dot: Dot = {
         item,
         graphics,
+        rangeGraphics,
         label: null,
         x: 0,
         y: this.height * this.DOT_Y_RATIO,
@@ -209,13 +261,14 @@ export class PixiTimeline {
         hovered: false,
       };
 
-      // Create label
+      // Create label (2-line format for better horizontal space usage)
       const labelStyle = new TextStyle({
         fontFamily: 'monospace',
         fontSize: 10,
         fill: this.COLORS.cyan,
+        align: 'center',
       });
-      dot.label = new Text({ text: this.truncateName(item.name, 20), style: labelStyle });
+      dot.label = new Text({ text: this.formatNameMultiLine(item.name, 12, 3), style: labelStyle });
       dot.label.anchor.set(0.5, 0);
       dot.label.alpha = 0;
       this.labelsContainer.addChild(dot.label);
@@ -380,6 +433,14 @@ export class PixiTimeline {
 
   private setupTooltip(): void {
     this.tooltipGraphics = new Graphics();
+    this.tooltipSprite = new Sprite();
+    this.tooltipSprite.visible = false;
+
+    // Create rounded rect mask for tooltip image
+    this.tooltipImageMask = new Graphics();
+    this.tooltipContainer.addChild(this.tooltipImageMask);
+    this.tooltipSprite.mask = this.tooltipImageMask;
+
     this.tooltipText = new Text({
       text: '',
       style: new TextStyle({
@@ -399,6 +460,7 @@ export class PixiTimeline {
     });
 
     this.tooltipContainer.addChild(this.tooltipGraphics);
+    this.tooltipContainer.addChild(this.tooltipSprite);
     this.tooltipContainer.addChild(this.tooltipText);
     this.tooltipContainer.addChild(this.tooltipSubtext);
     this.tooltipContainer.visible = false;
@@ -575,29 +637,169 @@ export class PixiTimeline {
     return this.height * this.DOT_Y_RATIO;
   }
 
+  private readonly CLUSTER_THRESHOLD_PX = 50;
+
+  private detectClusters(visibleDots: Dot[]): Cluster[] {
+    if (visibleDots.length === 0) return [];
+
+    const sorted = [...visibleDots].sort((a, b) => a.x - b.x);
+    const clusters: Cluster[] = [];
+    let currentCluster: Dot[] = [sorted[0]];
+
+    for (let i = 1; i < sorted.length; i++) {
+      const dot = sorted[i];
+      const lastDot = currentCluster[currentCluster.length - 1];
+
+      if (dot.x - lastDot.x < this.CLUSTER_THRESHOLD_PX) {
+        currentCluster.push(dot);
+      } else {
+        clusters.push(this.createCluster(currentCluster));
+        currentCluster = [dot];
+      }
+    }
+
+    clusters.push(this.createCluster(currentCluster));
+    return clusters;
+  }
+
+  private createCluster(dots: Dot[]): Cluster {
+    const centerX = dots.reduce((sum, d) => sum + d.x, 0) / dots.length;
+    const centerYear = dots.reduce((sum, d) => sum + d.item.yearMidpoint, 0) / dots.length;
+    return { dots, centerX, centerYear };
+  }
+
+  private zoomToCluster(cluster: Cluster): void {
+    const years = cluster.dots.map(d => d.item.yearMidpoint);
+    const minYear = Math.min(...years);
+    const maxYear = Math.max(...years);
+
+    const range = Math.max(maxYear - minYear, 50);
+    const padding = range * 0.3;
+
+    this.animateToViewport(minYear - padding, maxYear + padding);
+  }
+
+  private animateToViewport(targetStart: number, targetEnd: number): void {
+    const duration = 300;
+    const startTime = performance.now();
+    const fromStart = this.viewportStart;
+    const fromEnd = this.viewportEnd;
+
+    const animate = (now: number) => {
+      const elapsed = now - startTime;
+      const t = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+
+      this.viewportStart = fromStart + (targetStart - fromStart) * eased;
+      this.viewportEnd = fromEnd + (targetEnd - fromEnd) * eased;
+      this.clampViewport();
+
+      if (t < 1) requestAnimationFrame(animate);
+    };
+
+    requestAnimationFrame(animate);
+  }
+
   private onDotHover(dot: Dot, hovered: boolean): void {
     dot.hovered = hovered;
 
     if (hovered) {
+      const firstImage = dot.item.images?.[0];
+      const imageUrl = firstImage ? `${this.baseUrl}/images/items/${dot.item.id}/${firstImage}`.replace(/\/+/g, '/') : null;
+
       this.currentTooltip = {
         title: dot.item.name,
         subtitle: dot.item.era || '',
         x: dot.x,
         y: dot.y - 20,
+        imageUrl,
+        itemId: dot.item.id,
       };
+
+      if (imageUrl) {
+        this.loadThumbnail(imageUrl);
+      }
     } else {
       this.currentTooltip = null;
     }
   }
 
+  private async loadThumbnail(url: string): Promise<Texture | null> {
+    if (IMAGE_CACHE.has(url)) {
+      return IMAGE_CACHE.get(url)!;
+    }
+
+    if (LOADING_IMAGES.has(url)) {
+      return null;
+    }
+
+    LOADING_IMAGES.add(url);
+
+    try {
+      const texture = await Assets.load(url);
+      IMAGE_CACHE.set(url, texture);
+      LOADING_IMAGES.delete(url);
+      return texture;
+    } catch {
+      LOADING_IMAGES.delete(url);
+      return null;
+    }
+  }
+
   private onDotClick(dot: Dot): void {
-    const url = `${this.baseUrl}/item/${dot.item.id}`.replace(/\/+/g, '/');
-    window.location.href = url;
+    if (this.onItemSelect) {
+      this.onItemSelect(dot.item.id);
+    } else {
+      const url = `${this.baseUrl}/item/${dot.item.id}`.replace(/\/+/g, '/');
+      window.location.href = url;
+    }
+  }
+
+  setItemSelectHandler(handler: (itemId: string) => void): void {
+    this.onItemSelect = handler;
   }
 
   private truncateName(name: string, maxLength: number): string {
     if (name.length <= maxLength) return name;
     return name.substring(0, maxLength - 1) + '…';
+  }
+
+  private formatNameMultiLine(name: string, maxLineLength: number = 12, maxLines: number = 3): string {
+    if (name.length <= maxLineLength) return name;
+
+    const words = name.split(' ');
+    if (words.length === 1) {
+      const maxTotal = maxLineLength * maxLines;
+      return name.length > maxTotal
+        ? name.substring(0, maxTotal - 1) + '…'
+        : name;
+    }
+
+    const lines: string[] = [];
+    let currentLine = '';
+
+    for (const word of words) {
+      if (currentLine.length === 0 || currentLine.length + word.length + 1 <= maxLineLength) {
+        currentLine += (currentLine ? ' ' : '') + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+        if (lines.length >= maxLines - 1) break;
+      }
+    }
+
+    if (currentLine) {
+      if (lines.length >= maxLines) {
+        lines[maxLines - 1] = lines[maxLines - 1].substring(0, maxLineLength - 1) + '…';
+      } else {
+        if (currentLine.length > maxLineLength) {
+          currentLine = currentLine.substring(0, maxLineLength - 1) + '…';
+        }
+        lines.push(currentLine);
+      }
+    }
+
+    return lines.join('\n');
   }
 
   private formatYear(year: number): string {
@@ -607,51 +809,470 @@ export class PixiTimeline {
   }
 
   private update(): void {
-    const zoomLevel = this.getZoomLevel();
-    const showLabels = zoomLevel >= 2;  // Show labels at Period zoom and higher
+    // Update animation time for pulsing effects
+    this.animTime += 0.02;
 
-    // Update dots
+    const zoomLevel = this.getZoomLevel();
+    const showLabels = zoomLevel >= 2;
+
+    // Update dot positions first
     for (let i = 0; i < this.dots.length; i++) {
       const dot = this.dots[i];
-      // Calculate position - instant, no physics
       dot.x = this.yearToPixel(dot.item.yearMidpoint);
       dot.y = this.calculateDensityY(dot, i);
+    }
 
-      // Update graphics
+    // Update floating thumbnails (this populates clusteredDotIds)
+    this.updateFloatingThumbnails();
+
+    // Detect label collisions for non-clustered items
+    const LABEL_COLLISION_THRESHOLD = 80; // pixels - labels closer than this will show "X items"
+    const axisY = this.height * this.AXIS_Y_RATIO;
+
+    // Find non-clustered visible dots and detect label collisions
+    const nonClusteredDots = this.dots.filter(d =>
+      !this.clusteredDotIds.has(d.item.id) && d.x > -50 && d.x < this.width + 50
+    ).sort((a, b) => a.x - b.x);
+
+    // Group labels that would collide
+    const labelGroups: Dot[][] = [];
+    let currentGroup: Dot[] = [];
+
+    for (const dot of nonClusteredDots) {
+      if (currentGroup.length === 0) {
+        currentGroup.push(dot);
+      } else {
+        const lastDot = currentGroup[currentGroup.length - 1];
+        if (dot.x - lastDot.x < LABEL_COLLISION_THRESHOLD) {
+          currentGroup.push(dot);
+        } else {
+          labelGroups.push(currentGroup);
+          currentGroup = [dot];
+        }
+      }
+    }
+    if (currentGroup.length > 0) {
+      labelGroups.push(currentGroup);
+    }
+
+    // Track which dots have colliding labels
+    this.labelCollisionGroupIds.clear();
+    const activeCollisionGroupKeys = new Set<string>();
+
+    for (const group of labelGroups) {
+      if (group.length > 1) {
+        // Labels would collide - hide individual labels and show group label
+        for (const dot of group) {
+          this.labelCollisionGroupIds.add(dot.item.id);
+        }
+
+        const groupKey = group.map(d => d.item.id).join('-');
+        activeCollisionGroupKeys.add(groupKey);
+
+        let groupLabel = this.labelCollisionGroups.get(groupKey);
+        if (!groupLabel) {
+          groupLabel = new Text({
+            text: '',
+            style: { fontSize: 10, fill: this.COLORS.cyan, fontFamily: 'monospace', align: 'center' }
+          });
+          groupLabel.anchor.set(0.5, 0);
+          this.labelsContainer.addChild(groupLabel);
+          this.labelCollisionGroups.set(groupKey, groupLabel);
+        }
+
+        const centerX = group.reduce((sum, d) => sum + d.x, 0) / group.length;
+        groupLabel.text = `${group.length} items`;
+        groupLabel.position.set(centerX, axisY + 30);
+        groupLabel.alpha = showLabels ? 0.8 : 0;
+        groupLabel.visible = showLabels;
+      }
+    }
+
+    // Hide inactive collision group labels
+    for (const [key, label] of this.labelCollisionGroups) {
+      if (!activeCollisionGroupKeys.has(key)) {
+        label.visible = false;
+      }
+    }
+
+    // Update dot visibility and graphics
+    for (let i = 0; i < this.dots.length; i++) {
+      const dot = this.dots[i];
+      const isClustered = this.clusteredDotIds.has(dot.item.id);
+      const hasCollidingLabel = this.labelCollisionGroupIds.has(dot.item.id);
+
       dot.graphics.position.set(dot.x, dot.y);
 
-      // Hover effect
       const scale = dot.hovered ? 1.5 : 1;
       dot.graphics.scale.set(scale);
 
-      // Update label - position below the axis line and year labels
+      // Draw date range indicator when hovered and item has a date range
+      dot.rangeGraphics.clear();
+      const hasDateRange = dot.item.yearStart !== dot.item.yearEnd;
+      if (dot.hovered && hasDateRange) {
+        const startX = this.yearToPixel(dot.item.yearStart);
+        const endX = this.yearToPixel(dot.item.yearEnd);
+        dot.rangeGraphics.rect(startX, dot.y - 2, endX - startX, 4);
+        dot.rangeGraphics.fill({ color: this.COLORS.cyan, alpha: 0.25 });
+        // Small diamonds at the endpoints
+        this.drawSmallDiamond(dot.rangeGraphics, startX, dot.y, 3, this.COLORS.cyan, 0.4);
+        this.drawSmallDiamond(dot.rangeGraphics, endX, dot.y, 3, this.COLORS.cyan, 0.4);
+      }
+      dot.rangeGraphics.visible = dot.hovered && hasDateRange;
+
       if (dot.label) {
-        const axisY = this.height * this.AXIS_Y_RATIO;
-        dot.label.position.set(dot.x, axisY + 30);  // Below axis labels
-        dot.label.alpha = showLabels ? 0.8 : 0;
+        dot.label.position.set(dot.x, axisY + 30);
+        // Show label if: (labels enabled OR thumbnails visible) AND not clustered AND no collision
+        const shouldShowLabel = (showLabels || this.thumbnailsVisible) && !isClustered && !hasCollidingLabel;
+        dot.label.alpha = shouldShowLabel ? 0.8 : 0;
       }
 
-      // Hide if off-screen
-      const visible = dot.x > -50 && dot.x < this.width + 50;
-      dot.graphics.visible = visible;
-      if (dot.label) dot.label.visible = visible && showLabels;
+      const onScreen = dot.x > -50 && dot.x < this.width + 50;
+      dot.graphics.visible = onScreen && !isClustered;
+      const shouldShowLabel = (showLabels || this.thumbnailsVisible) && !isClustered && !hasCollidingLabel;
+      if (dot.label) dot.label.visible = onScreen && shouldShowLabel;
     }
 
-    // Update landmark bars
     this.updateLandmarks();
-
-    // Update person markers
     this.updatePersonMarkers();
-
-    // Update axis
     this.drawAxis();
-
-    // Update cursor line
     this.updateCursorLine();
-
-    // Update tooltip
     this.updateTooltip();
   }
+
+  private updateFloatingThumbnails(): void {
+    const MAX_THUMBNAILS = 12;
+    const THUMB_SIZE = 48;
+    const GROUP_SIZE = THUMB_SIZE * 1.5;
+    const MAX_VISIBLE_IN_CLUSTER = 4;
+    const LERP_SPEED = 0.25;
+
+    const visibleDots = this.dots.filter(d =>
+      d.x > 20 && d.x < this.width - 20
+    );
+
+    const shouldShowThumbnails = visibleDots.length > 0 && visibleDots.length <= MAX_THUMBNAILS;
+    this.thumbnailsVisible = shouldShowThumbnails;
+
+    this.clusteredDotIds.clear();
+    this.activeClusterKeys.clear();
+
+    if (!shouldShowThumbnails) {
+      for (const entry of this.floatingThumbnails.values()) {
+        entry.targetAlpha = 0;
+        entry.targetScale = 0;
+        entry.targetRadius = 0;
+      }
+      for (const badge of this.clusterBadges.values()) {
+        badge.bg.visible = false;
+        badge.text.visible = false;
+      }
+      for (const diamond of this.clusterDiamonds.values()) {
+        diamond.targetScale = 0;
+      }
+      for (const label of this.clusterLabels.values()) {
+        label.visible = false;
+      }
+      this.animateThumbnails(LERP_SPEED);
+      return;
+    }
+
+    const clusters = this.detectClusters(visibleDots);
+    const visibleIds = new Set<string>();
+    const visibleClusterIds = new Set<string>();
+
+    for (const cluster of clusters) {
+      const isCluster = cluster.dots.length > 1;
+      const clusterKey = cluster.dots.map(d => d.item.id).join('-');
+      const displayCount = Math.min(cluster.dots.length, MAX_VISIBLE_IN_CLUSTER);
+      const extraCount = cluster.dots.length - MAX_VISIBLE_IN_CLUSTER;
+
+      if (isCluster) {
+        this.activeClusterKeys.add(clusterKey);
+        for (const dot of cluster.dots) {
+          this.clusteredDotIds.add(dot.item.id);
+        }
+
+        let diamond = this.clusterDiamonds.get(clusterKey);
+        if (!diamond) {
+          const graphics = new Graphics();
+          const size = 5;
+          graphics.moveTo(0, -size);
+          graphics.lineTo(size, 0);
+          graphics.lineTo(0, size);
+          graphics.lineTo(-size, 0);
+          graphics.closePath();
+          graphics.fill({ color: this.COLORS.cyan, alpha: 0.9 });
+          graphics.eventMode = 'static';
+          graphics.cursor = 'pointer';
+          this.dotsContainer.addChild(graphics);
+          diamond = { graphics, targetX: cluster.centerX, targetY: cluster.dots[0].y, targetScale: 1, currentScale: 0 };
+          this.clusterDiamonds.set(clusterKey, diamond);
+        }
+
+        // Update click handler to zoom to current cluster
+        diamond.graphics.removeAllListeners();
+        const clusterRef = cluster;
+        diamond.graphics.on('pointertap', () => this.zoomToCluster(clusterRef));
+
+        diamond.targetX = cluster.centerX;
+        diamond.targetY = cluster.dots[0].y;
+        diamond.targetScale = 1;
+        diamond.graphics.visible = true;
+      }
+
+      const thumbSize = isCluster
+        ? Math.max(24, THUMB_SIZE / Math.sqrt(displayCount))
+        : THUMB_SIZE;
+      const thumbRadius = thumbSize / 2;
+
+      // Calculate total height of the grid for clusters
+      const rows = isCluster ? Math.ceil(displayCount / 2) : 1;
+      const gap = isCluster ? Math.max(1, 4 - displayCount) : 0;
+      const totalGridHeight = rows * thumbSize + (rows - 1) * gap;
+
+      // Position so bottom of grid is at same level as single thumbnail bottom
+      // Single thumbnail bottom: dot.y - 8
+      // So cluster grid bottom should also be at dot.y - 8
+      const gridBottomY = cluster.dots[0].y - 8;
+      const gridTopY = gridBottomY - totalGridHeight;
+
+      for (let i = 0; i < displayCount; i++) {
+        const dot = cluster.dots[i];
+        const itemId = dot.item.id;
+        const firstImage = dot.item.images?.[0];
+        if (!firstImage) continue;
+
+        visibleIds.add(itemId);
+        const imageUrl = `${this.baseUrl}/images/items/${itemId}/${firstImage}`.replace(/\/+/g, '/');
+
+        if (!IMAGE_CACHE.has(imageUrl)) {
+          this.loadThumbnail(imageUrl);
+          continue;
+        }
+
+        const texture = IMAGE_CACHE.get(imageUrl)!;
+        let entry = this.floatingThumbnails.get(itemId);
+
+        if (!entry) {
+          const sprite = new Sprite(texture);
+          sprite.anchor.set(0.5, 0.5);
+          sprite.eventMode = 'static';
+          sprite.cursor = 'pointer';
+
+          const mask = new Graphics();
+          sprite.mask = mask;
+
+          const border = new Graphics();
+
+          this.thumbnailsContainer.addChild(mask);
+          this.thumbnailsContainer.addChild(sprite);
+          this.thumbnailsContainer.addChild(border);
+
+          entry = {
+            sprite,
+            mask,
+            border,
+            targetX: dot.x,
+            targetY: dot.y - 8 - thumbRadius,
+            targetScale: 1,
+            targetAlpha: 0.9,
+            targetRadius: thumbRadius,
+            currentScale: 0,
+            currentRadius: thumbRadius,
+          };
+          this.floatingThumbnails.set(itemId, entry);
+        }
+
+        entry.sprite.texture = texture;
+        const baseScale = Math.max(thumbSize / texture.width, thumbSize / texture.height);
+
+        entry.sprite.removeAllListeners();
+
+        // All thumbnails (clustered or not) show item tooltip on hover and navigate on click
+        entry.sprite.on('pointertap', () => {
+          if (this.onItemSelect) {
+            this.onItemSelect(itemId);
+          } else {
+            window.location.href = `${this.baseUrl}/item/${itemId}`.replace(/\/+/g, '/');
+          }
+        });
+        entry.sprite.on('pointerover', () => {
+          const matchingDot = this.dots.find(d => d.item.id === itemId);
+          if (matchingDot) this.onDotHover(matchingDot, true);
+        });
+        entry.sprite.on('pointerout', () => {
+          const matchingDot = this.dots.find(d => d.item.id === itemId);
+          if (matchingDot) this.onDotHover(matchingDot, false);
+        });
+
+        let posX: number, posY: number;
+
+        if (isCluster) {
+          const cols = displayCount <= 2 ? displayCount : 2;
+          const row = Math.floor(i / cols);
+          const col = i % cols;
+          const itemsInRow = Math.min(cols, displayCount - row * cols);
+          const rowWidth = itemsInRow * thumbSize + (itemsInRow - 1) * gap;
+          const startX = cluster.centerX - rowWidth / 2 + thumbRadius;
+
+          posX = startX + col * (thumbSize + gap);
+          // Position from top of grid down
+          posY = gridTopY + row * (thumbSize + gap) + thumbRadius;
+        } else {
+          posX = dot.x;
+          posY = dot.y - 8 - thumbRadius;
+        }
+
+        entry.targetX = posX;
+        entry.targetY = posY;
+        entry.targetScale = baseScale;
+        entry.targetAlpha = dot.hovered ? 0.3 : 0.9;
+        entry.targetRadius = thumbRadius;
+        entry.sprite.visible = true;
+        entry.mask.visible = true;
+        entry.border.visible = true;
+      }
+
+      if (isCluster && extraCount > 0) {
+        visibleClusterIds.add(clusterKey);
+        let badge = this.clusterBadges.get(clusterKey);
+
+        if (!badge) {
+          const bg = new Graphics();
+          const text = new Text({
+            text: '',
+            style: { fontSize: 10, fill: 0xffffff, fontFamily: 'system-ui' }
+          });
+          text.anchor.set(0.5, 0.5);
+          this.thumbnailsContainer.addChild(bg);
+          this.thumbnailsContainer.addChild(text);
+          badge = { bg, text };
+          this.clusterBadges.set(clusterKey, badge);
+        }
+
+        badge.text.text = `+${extraCount}`;
+        const badgeX = cluster.centerX + totalGridHeight / 2 + 4;
+        const badgeY = gridTopY + 8;
+
+        badge.bg.clear();
+        badge.bg.circle(0, 0, 10);
+        badge.bg.fill({ color: 0x22d3ee });
+        badge.bg.position.set(badgeX, badgeY);
+        badge.text.position.set(badgeX, badgeY);
+        badge.bg.visible = true;
+        badge.text.visible = true;
+      }
+
+      if (isCluster) {
+        let clusterLabel = this.clusterLabels.get(clusterKey);
+        if (!clusterLabel) {
+          clusterLabel = new Text({
+            text: '',
+            style: { fontSize: 10, fill: this.COLORS.cyan, fontFamily: 'monospace', align: 'center' }
+          });
+          clusterLabel.anchor.set(0.5, 0);
+          clusterLabel.eventMode = 'static';
+          clusterLabel.cursor = 'pointer';
+          this.labelsContainer.addChild(clusterLabel);
+          this.clusterLabels.set(clusterKey, clusterLabel);
+        }
+
+        // Update click handler to zoom to current cluster
+        clusterLabel.removeAllListeners();
+        const clusterRef = cluster;
+        clusterLabel.on('pointertap', () => this.zoomToCluster(clusterRef));
+
+        clusterLabel.text = `${cluster.dots.length} items ⤢`;
+        const axisY = this.height * this.AXIS_Y_RATIO;
+        clusterLabel.position.set(cluster.centerX, axisY + 30);
+        clusterLabel.alpha = 0.8;
+        clusterLabel.visible = true;
+      }
+    }
+
+    for (const [itemId, entry] of this.floatingThumbnails) {
+      if (!visibleIds.has(itemId)) {
+        entry.targetAlpha = 0;
+        entry.targetScale = 0;
+        entry.targetRadius = 0;
+      }
+    }
+
+    for (const [key, badge] of this.clusterBadges) {
+      if (!visibleClusterIds.has(key)) {
+        badge.bg.visible = false;
+        badge.text.visible = false;
+      }
+    }
+
+    for (const [key, diamond] of this.clusterDiamonds) {
+      if (!this.activeClusterKeys.has(key)) {
+        diamond.targetScale = 0;
+        diamond.graphics.visible = false;
+      }
+    }
+
+    for (const [key, label] of this.clusterLabels) {
+      if (!this.activeClusterKeys.has(key)) {
+        label.visible = false;
+      }
+    }
+
+    this.animateThumbnails(LERP_SPEED);
+  }
+
+  private animateThumbnails(lerp: number): void {
+    for (const entry of this.floatingThumbnails.values()) {
+      const { sprite, mask, border } = entry;
+
+      sprite.x += (entry.targetX - sprite.x) * lerp;
+      sprite.y += (entry.targetY - sprite.y) * lerp;
+      mask.x = sprite.x;
+      mask.y = sprite.y;
+      border.x = sprite.x;
+      border.y = sprite.y;
+
+      entry.currentScale += (entry.targetScale - entry.currentScale) * lerp;
+      sprite.scale.set(entry.currentScale);
+
+      entry.currentRadius += (entry.targetRadius - entry.currentRadius) * lerp;
+
+      mask.clear();
+      mask.circle(0, 0, entry.currentRadius);
+      mask.fill({ color: 0xffffff });
+
+      border.clear();
+      if (entry.currentRadius > 1) {
+        border.circle(0, 0, entry.currentRadius);
+        border.stroke({ color: 0x444444, width: 1 });
+      }
+
+      sprite.alpha += (entry.targetAlpha - sprite.alpha) * lerp;
+      border.alpha = sprite.alpha;
+
+      if (sprite.alpha < 0.01) {
+        sprite.visible = false;
+        mask.visible = false;
+        border.visible = false;
+      }
+    }
+
+    for (const diamond of this.clusterDiamonds.values()) {
+      diamond.graphics.x += (diamond.targetX - diamond.graphics.x) * lerp;
+      diamond.graphics.y += (diamond.targetY - diamond.graphics.y) * lerp;
+      diamond.currentScale += (diamond.targetScale - diamond.currentScale) * lerp;
+
+      // Add subtle pulse effect to hint clickability
+      const pulse = 1 + Math.sin(this.animTime * 2) * 0.15;
+      diamond.graphics.scale.set(diamond.currentScale * pulse);
+
+      if (diamond.currentScale < 0.01) {
+        diamond.graphics.visible = false;
+      }
+    }
+  }
+
 
   private updateLandmarks(): void {
     const baseY = this.height * this.LANDMARK_Y_RATIO;
@@ -740,8 +1361,16 @@ export class PixiTimeline {
     graphics.fill({ color: this.COLORS.gold, alpha: 0.8 });
   }
 
+  private drawSmallDiamond(graphics: Graphics, x: number, y: number, size: number, color: number, alpha: number): void {
+    graphics.moveTo(x, y - size);
+    graphics.lineTo(x + size, y);
+    graphics.lineTo(x, y + size);
+    graphics.lineTo(x - size, y);
+    graphics.closePath();
+    graphics.fill({ color, alpha });
+  }
+
   private drawAxis(): void {
-    const zoomLevel = this.getZoomLevel();
     const y = this.height * this.AXIS_Y_RATIO;
 
     this.axisContainer.removeChildren();
@@ -753,28 +1382,24 @@ export class PixiTimeline {
     axis.lineTo(this.width, y);
     axis.stroke({ color: this.COLORS.cyan, alpha: 0.3, width: 1 });
 
-    // Determine tick interval
-    let majorInterval: number;
-    let minorInterval: number;
+    // Calculate tick intervals based on viewport span for smoother transitions
+    const yearsVisible = this.viewportEnd - this.viewportStart;
+    const targetLabelCount = 8; // Aim for roughly this many labels on screen
+    const rawInterval = yearsVisible / targetLabelCount;
 
-    switch (zoomLevel) {
-      case 1:
-        majorInterval = 1000;
-        minorInterval = 500;
+    // Snap to nice round numbers: 5, 10, 25, 50, 100, 250, 500, 1000, etc.
+    const niceIntervals = [5, 10, 25, 50, 100, 250, 500, 1000, 2500, 5000];
+    let majorInterval = niceIntervals[0];
+    for (const interval of niceIntervals) {
+      if (interval >= rawInterval) {
+        majorInterval = interval;
         break;
-      case 2:
-        majorInterval = 100;
-        minorInterval = 50;
-        break;
-      case 3:
-        majorInterval = 50;
-        minorInterval = 10;
-        break;
-      case 4:
-        majorInterval = 10;
-        minorInterval = 5;
-        break;
+      }
+      majorInterval = interval;
     }
+
+    // Minor interval is typically half or a fifth of major
+    const minorInterval = majorInterval >= 100 ? majorInterval / 2 : majorInterval / 5;
 
     const startTick = Math.floor(this.viewportStart / minorInterval) * minorInterval;
     const endTick = Math.ceil(this.viewportEnd / minorInterval) * minorInterval;
@@ -810,21 +1435,37 @@ export class PixiTimeline {
   }
 
   private updateTooltip(): void {
-    if (!this.tooltipGraphics || !this.tooltipText || !this.tooltipSubtext) return;
+    if (!this.tooltipGraphics || !this.tooltipText || !this.tooltipSubtext || !this.tooltipSprite) return;
 
     if (this.currentTooltip) {
       this.tooltipContainer.visible = true;
 
-      const padding = 12;
+      const padding = 10;
+      const thumbSize = 56;
+      const hasImage = this.currentTooltip.imageUrl && IMAGE_CACHE.has(this.currentTooltip.imageUrl);
 
       // Set text first to measure it
       this.tooltipText.text = this.currentTooltip.title;
       this.tooltipSubtext.text = this.currentTooltip.subtitle;
 
-      // Calculate dynamic width based on text
+      // Calculate dimensions
       const textWidth = Math.max(this.tooltipText.width, this.tooltipSubtext.width);
-      const width = Math.min(300, Math.max(180, textWidth + padding * 2));
-      const height = 56;
+      const textHeight = 44; // title + subtitle + gap
+
+      let width: number;
+      let height: number;
+
+      if (hasImage) {
+        // Image on left, text on right
+        width = padding + thumbSize + padding + textWidth + padding;
+        height = padding + Math.max(thumbSize, textHeight) + padding;
+      } else {
+        width = padding + textWidth + padding;
+        height = padding + textHeight + padding;
+      }
+
+      // Clamp width
+      width = Math.min(400, Math.max(160, width));
 
       let x = this.currentTooltip.x - width / 2;
       let y = this.currentTooltip.y - height - 15;
@@ -839,15 +1480,50 @@ export class PixiTimeline {
 
       // Background
       this.tooltipGraphics.clear();
-      this.tooltipGraphics.roundRect(x, y, width, height, 8);
+      this.tooltipGraphics.roundRect(x, y, width, height, 6);
       this.tooltipGraphics.fill({ color: 0x0a0a0a, alpha: 0.95 });
-      this.tooltipGraphics.stroke({ color: this.COLORS.cyan, alpha: 0.6, width: 1 });
+      this.tooltipGraphics.stroke({ color: this.COLORS.cyan, alpha: 0.5, width: 1 });
 
-      // Text positioning
-      this.tooltipText.position.set(x + padding, y + padding);
-      this.tooltipSubtext.position.set(x + padding, y + padding + 22);
+      if (hasImage && this.currentTooltip.imageUrl) {
+        const texture = IMAGE_CACHE.get(this.currentTooltip.imageUrl)!;
+        this.tooltipSprite.texture = texture;
+        this.tooltipSprite.visible = true;
+
+        // Scale image to fill thumbnail size (cover), cropping excess
+        const scale = Math.max(thumbSize / texture.width, thumbSize / texture.height);
+        this.tooltipSprite.scale.set(scale);
+
+        // Center the image within the thumb area
+        const scaledWidth = texture.width * scale;
+        const scaledHeight = texture.height * scale;
+        const imgX = x + padding + (thumbSize - scaledWidth) / 2;
+        const imgY = y + padding + (thumbSize - scaledHeight) / 2;
+        this.tooltipSprite.position.set(imgX, imgY);
+
+        // Update rounded rect mask position
+        if (this.tooltipImageMask) {
+          this.tooltipImageMask.clear();
+          this.tooltipImageMask.roundRect(x + padding, y + padding, thumbSize, thumbSize, 6);
+          this.tooltipImageMask.fill({ color: 0xffffff });
+        }
+
+        // Text to the right of image, vertically centered
+        const textX = x + padding + thumbSize + padding;
+        const textY = y + padding + (Math.max(thumbSize, textHeight) - textHeight) / 2;
+        this.tooltipText.position.set(textX, textY);
+        this.tooltipSubtext.position.set(textX, textY + 24);
+      } else {
+        this.tooltipSprite.visible = false;
+
+        // Text only - centered
+        const textX = x + padding;
+        const textY = y + padding;
+        this.tooltipText.position.set(textX, textY);
+        this.tooltipSubtext.position.set(textX, textY + 24);
+      }
     } else {
       this.tooltipContainer.visible = false;
+      this.tooltipSprite.visible = false;
     }
   }
 
@@ -898,7 +1574,7 @@ export class PixiTimeline {
     visibleLandmarks: number;
   } {
     const visibleItems = this.dots.filter(d =>
-      d.graphics.visible && d.x > 0 && d.x < this.width
+      d.x > 0 && d.x < this.width
     ).length;
 
     const visibleLandmarks = this.landmarkBars.filter(b => b.graphics.visible).length;
