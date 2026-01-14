@@ -241,6 +241,10 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
 </section>
 
 <script>
+  function isMobile() {
+    return window.innerWidth < 768 || 'ontouchstart' in window;
+  }
+
   function initFilmstrip() {
     const filmstrip = document.getElementById('collection-filmstrip');
     if (!filmstrip) return;
@@ -257,8 +261,12 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
       track.style.animationPlayState = 'paused';
     };
 
-    parentLink.addEventListener('mouseenter', startScroll);
-    parentLink.addEventListener('mouseleave', stopScroll);
+    if (isMobile()) {
+      startScroll();
+    } else {
+      parentLink.addEventListener('mouseenter', startScroll);
+      parentLink.addEventListener('mouseleave', stopScroll);
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -318,8 +326,12 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
       });
     };
 
-    parentLink.addEventListener('mouseenter', startCycle);
-    parentLink.addEventListener('mouseleave', stopCycle);
+    if (isMobile()) {
+      startCycle();
+    } else {
+      parentLink.addEventListener('mouseenter', startCycle);
+      parentLink.addEventListener('mouseleave', stopCycle);
+    }
   }
 
   if (document.readyState === 'loading') {

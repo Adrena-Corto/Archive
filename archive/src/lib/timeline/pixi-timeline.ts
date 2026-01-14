@@ -296,11 +296,15 @@ export class PixiTimeline {
     // Track which rows have which year ranges occupied
     const rows: { start: number; end: number }[][] = [];
 
+    // Use smaller font on mobile
+    const isMobile = this.width < 500;
+    const fontSize = isMobile ? 7 : 9;
+
     for (const landmark of sortedLandmarks) {
       const graphics = new Graphics();
       const labelStyle = new TextStyle({
         fontFamily: 'monospace',
-        fontSize: 9,
+        fontSize,
         fill: this.COLORS.gold,
       });
       const label = new Text({ text: landmark.name, style: labelStyle });
@@ -368,6 +372,10 @@ export class PixiTimeline {
     const rows: { start: number; end: number }[][] = [];
     const yearBuffer = 80; // Years buffer to account for label width horizontally
 
+    // Use smaller font on mobile
+    const isMobile = this.width < 500;
+    const fontSize = isMobile ? 7 : 9;
+
     for (const person of persons) {
       const graphics = new Graphics();
 
@@ -377,7 +385,7 @@ export class PixiTimeline {
 
       const labelStyle = new TextStyle({
         fontFamily: 'system-ui, -apple-system, sans-serif',
-        fontSize: 9,
+        fontSize,
         fill: this.COLORS.purple,
         fontWeight: '500',
       });
@@ -640,11 +648,15 @@ export class PixiTimeline {
     return this.height * this.DOT_Y_RATIO;
   }
 
-  private readonly CLUSTER_THRESHOLD_PX = 50;
+  private getClusterThreshold(): number {
+    const isMobile = this.width < 500;
+    return isMobile ? 32 : 50;
+  }
 
   private detectClusters(visibleDots: Dot[]): Cluster[] {
     if (visibleDots.length === 0) return [];
 
+    const threshold = this.getClusterThreshold();
     const sorted = [...visibleDots].sort((a, b) => a.x - b.x);
     const clusters: Cluster[] = [];
     let currentCluster: Dot[] = [sorted[0]];
@@ -653,7 +665,7 @@ export class PixiTimeline {
       const dot = sorted[i];
       const lastDot = currentCluster[currentCluster.length - 1];
 
-      if (dot.x - lastDot.x < this.CLUSTER_THRESHOLD_PX) {
+      if (dot.x - lastDot.x < threshold) {
         currentCluster.push(dot);
       } else {
         clusters.push(this.createCluster(currentCluster));
@@ -966,10 +978,11 @@ export class PixiTimeline {
   }
 
   private updateFloatingThumbnails(): void {
-    const MAX_THUMBNAILS = 12;
-    const THUMB_SIZE = 48;
+    const isMobile = this.width < 500;
+    const MAX_THUMBNAILS = isMobile ? 20 : 12;
+    const THUMB_SIZE = isMobile ? 28 : 48;
     const GROUP_SIZE = THUMB_SIZE * 1.5;
-    const MAX_VISIBLE_IN_CLUSTER = 4;
+    const MAX_VISIBLE_IN_CLUSTER = isMobile ? 3 : 4;
     const LERP_SPEED = 0.25;
 
     const visibleDots = this.dots.filter(d =>
@@ -1301,18 +1314,18 @@ export class PixiTimeline {
 
   private updateLandmarks(): void {
     const baseY = this.height * this.LANDMARK_Y_RATIO;
+    const isMobile = this.width < 500;
+
+    // Collect visible labels with their positions for collision detection
+    const visibleLabels: { bar: LandmarkBar; x: number; y: number; width: number }[] = [];
 
     for (const bar of this.landmarkBars) {
       const startX = this.yearToPixel(bar.landmark.yearStart!);
       const endX = this.yearToPixel(bar.landmark.yearEnd!);
-      const barWidth = endX - startX;
-      // Stack rows upward from base position
       const y = baseY - (bar.row * this.LANDMARK_SPACING);
 
-      // Redraw bar
       bar.graphics.clear();
 
-      // Only draw if visible on screen
       if (endX < -50 || startX > this.width + 50) {
         bar.graphics.visible = false;
         bar.label.visible = false;
@@ -1321,22 +1334,15 @@ export class PixiTimeline {
 
       bar.graphics.visible = true;
 
-      // Always show label if any part of the bar is visible
-      const labelWidth = bar.label.width;
-      bar.label.visible = true;
-
-      // Clamp bar drawing to screen edges for partial visibility
       const drawStartX = Math.max(-10, startX);
       const drawEndX = Math.min(this.width + 10, endX);
       const drawWidth = drawEndX - drawStartX;
 
       if (drawWidth > 0) {
-        // Bar rectangle
         bar.graphics.rect(drawStartX, y - 2, drawWidth, 4);
         bar.graphics.fill({ color: this.COLORS.gold, alpha: 0.3 });
       }
 
-      // Endpoints (diamonds) - only draw if on screen
       if (startX > -10 && startX < this.width + 10) {
         this.drawDiamond(bar.graphics, startX, y, 4);
       }
@@ -1344,36 +1350,83 @@ export class PixiTimeline {
         this.drawDiamond(bar.graphics, endX, y, 4);
       }
 
-      // Label positioned above the bar center, clamped to stay on screen
       const barCenterX = (startX + endX) / 2;
+      const labelWidth = bar.label.width;
       const clampedX = Math.max(labelWidth / 2 + 5, Math.min(this.width - labelWidth / 2 - 5, barCenterX));
       bar.label.position.set(clampedX, y - 8);
+
+      visibleLabels.push({ bar, x: clampedX, y, width: labelWidth });
+    }
+
+    // On mobile, hide overlapping labels to prevent visual clutter
+    if (isMobile && visibleLabels.length > 1) {
+      visibleLabels.sort((a, b) => a.x - b.x);
+
+      let lastVisibleX = -Infinity;
+      const minGap = 10; // Minimum gap between labels
+
+      for (const { bar, x, width } of visibleLabels) {
+        const leftEdge = x - width / 2;
+        if (leftEdge - lastVisibleX < minGap) {
+          bar.label.visible = false;
+        } else {
+          bar.label.visible = true;
+          lastVisibleX = x + width / 2;
+        }
+      }
+    } else {
+      for (const { bar } of visibleLabels) {
+        bar.label.visible = true;
+      }
     }
   }
 
   private updatePersonMarkers(): void {
     const baseY = this.height * this.PERSON_Y_RATIO;
+    const isMobile = this.width < 500;
+
+    // Collect visible markers for collision detection
+    const visibleMarkers: { marker: PersonMarker; x: number; y: number; width: number }[] = [];
 
     for (const marker of this.personMarkers) {
-      // Calculate X position based on the midpoint of their life - instant, no physics
       const midYear = marker.landmark.yearMidpoint;
       marker.x = this.yearToPixel(midYear);
-
-      // Calculate Y position with row staggering (rows go downward)
       const y = baseY + (marker.row * this.PERSON_SPACING);
 
-      // Check if visible
       const visible = marker.x > -50 && marker.x < this.width + 50;
       marker.graphics.visible = visible;
-      marker.label.visible = visible;
 
-      if (!visible) continue;
+      if (!visible) {
+        marker.label.visible = false;
+        continue;
+      }
 
-      // Position the marker
       marker.graphics.position.set(marker.x, y);
-
-      // Position label below the marker
       marker.label.position.set(marker.x, y + 8);
+
+      visibleMarkers.push({ marker, x: marker.x, y, width: marker.label.width });
+    }
+
+    // On mobile, hide overlapping person labels
+    if (isMobile && visibleMarkers.length > 1) {
+      visibleMarkers.sort((a, b) => a.x - b.x);
+
+      let lastVisibleX = -Infinity;
+      const minGap = 10;
+
+      for (const { marker, x, width } of visibleMarkers) {
+        const leftEdge = x - width / 2;
+        if (leftEdge - lastVisibleX < minGap) {
+          marker.label.visible = false;
+        } else {
+          marker.label.visible = true;
+          lastVisibleX = x + width / 2;
+        }
+      }
+    } else {
+      for (const { marker } of visibleMarkers) {
+        marker.label.visible = true;
+      }
     }
   }
 
