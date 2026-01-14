@@ -30,9 +30,15 @@
     pointer-events: none;
   }
 
-  body > *:not(#matrix-bg) {
+  body > *:not(#matrix-bg):not([x-data]) {
     position: relative;
     z-index: 1;
+  }
+
+  /* Ensure header wrapper with mobile menu has higher z-index */
+  body > [x-data] {
+    position: relative;
+    z-index: 50;
   }
 
 
@@ -99,7 +105,7 @@
   }
 
   .mobile-nav-link {
-    @apply text-text-muted hover:text-accent transition-colors duration-200;
+    @apply text-text hover:text-accent transition-colors duration-200;
     @apply border-l-2 border-transparent pl-4 rounded-r-lg;
     @apply hover:border-accent hover:bg-white/5;
     @apply active:bg-white/10 active:text-accent;
