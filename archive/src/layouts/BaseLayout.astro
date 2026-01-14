@@ -169,14 +169,15 @@ function isActive(path: string): boolean {
 
           <!-- Mobile Menu Button -->
           <button
-            @click="mobileMenuOpen = !mobileMenuOpen"
-            class="md:hidden relative w-10 h-10 flex items-center justify-center text-text-muted hover:text-accent active:text-accent transition-colors rounded-lg active:bg-white/10"
+            @click.prevent="mobileMenuOpen = !mobileMenuOpen"
+            type="button"
+            class="md:hidden relative z-50 w-12 h-12 flex items-center justify-center text-text-muted hover:text-accent active:text-accent transition-colors rounded-lg active:bg-white/10 touch-manipulation"
             :class="mobileMenuOpen && 'text-accent'"
             :aria-expanded="mobileMenuOpen"
             aria-label="Toggle navigation menu"
           >
             <span class="sr-only" x-text="mobileMenuOpen ? 'Close menu' : 'Open menu'"></span>
-            <div class="w-5 h-4 flex flex-col justify-between">
+            <div class="w-5 h-4 flex flex-col justify-between pointer-events-none">
               <span
                 class="block h-0.5 bg-current rounded-full transition-all duration-300 origin-center"
                 :class="mobileMenuOpen ? 'translate-y-[7px] rotate-45' : ''"
@@ -343,6 +344,20 @@ function isActive(path: string): boolean {
     <script>
       import { initMatrixEffect } from '../scripts/matrix-effect';
       initMatrixEffect();
+    </script>
+
+    <script>
+      // Ensure mobile menu closes on navigation and Alpine reinitializes
+      document.addEventListener('astro:before-swap', () => {
+        // Close mobile menu before page swap
+        const xDataEl = document.querySelector('[x-data]');
+        if (xDataEl && window.Alpine) {
+          const data = window.Alpine.$data(xDataEl);
+          if (data) {
+            data.mobileMenuOpen = false;
+          }
+        }
+      });
     </script>
 
   </body>

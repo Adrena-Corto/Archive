@@ -112,6 +112,11 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  /* Ensure touch events work properly on mobile */
+  .touch-manipulation {
+    touch-action: manipulation;
+  }
+
   /* Alpine.js cloak */
   [x-cloak] {
     display: none !important;
