@@ -66,6 +66,7 @@ export class PixiTimeline {
   private dotsContainer!: Container;
   private labelsContainer!: Container;
   private thumbnailsContainer!: Container;
+  private badgesContainer!: Container;
   private tooltipContainer!: Container;
 
   // Data
@@ -217,6 +218,7 @@ export class PixiTimeline {
     this.dotsContainer = new Container();
     this.labelsContainer = new Container();
     this.thumbnailsContainer = new Container();
+    this.badgesContainer = new Container();
     this.tooltipContainer = new Container();
 
     this.app.stage.addChild(this.cursorLineContainer);
@@ -226,6 +228,7 @@ export class PixiTimeline {
     this.app.stage.addChild(this.dotsContainer);
     this.app.stage.addChild(this.labelsContainer);
     this.app.stage.addChild(this.thumbnailsContainer);
+    this.app.stage.addChild(this.badgesContainer);
     this.app.stage.addChild(this.tooltipContainer);
   }
 
@@ -1043,8 +1046,14 @@ export class PixiTimeline {
           graphics.fill({ color: this.COLORS.cyan, alpha: 0.9 });
           graphics.eventMode = 'static';
           graphics.cursor = 'pointer';
+
+          const initialX = cluster.centerX;
+          const initialY = cluster.dots[0].y;
+          graphics.position.set(initialX, initialY);
+          graphics.scale.set(0);
+
           this.dotsContainer.addChild(graphics);
-          diamond = { graphics, targetX: cluster.centerX, targetY: cluster.dots[0].y, targetScale: 1, currentScale: 0 };
+          diamond = { graphics, targetX: initialX, targetY: initialY, targetScale: 1, currentScale: 0 };
           this.clusterDiamonds.set(clusterKey, diamond);
         }
 
@@ -1107,12 +1116,20 @@ export class PixiTimeline {
           this.thumbnailsContainer.addChild(sprite);
           this.thumbnailsContainer.addChild(border);
 
+          const initialX = dot.x;
+          const initialY = dot.y - 8 - thumbRadius;
+
+          sprite.position.set(initialX, initialY);
+          sprite.alpha = 0;
+          mask.position.set(initialX, initialY);
+          border.position.set(initialX, initialY);
+
           entry = {
             sprite,
             mask,
             border,
-            targetX: dot.x,
-            targetY: dot.y - 8 - thumbRadius,
+            targetX: initialX,
+            targetY: initialY,
             targetScale: 1,
             targetAlpha: 0.9,
             targetRadius: thumbRadius,
@@ -1172,30 +1189,53 @@ export class PixiTimeline {
         entry.border.visible = true;
       }
 
-      if (isCluster && extraCount > 0) {
+      if (isCluster) {
         visibleClusterIds.add(clusterKey);
         let badge = this.clusterBadges.get(clusterKey);
 
         if (!badge) {
           const bg = new Graphics();
+          bg.eventMode = 'static';
+          bg.cursor = 'pointer';
+
           const text = new Text({
             text: '',
-            style: { fontSize: 10, fill: 0xffffff, fontFamily: 'system-ui' }
+            style: { fontSize: 10, fill: 0xaaaaaa, fontFamily: 'system-ui' }
           });
           text.anchor.set(0.5, 0.5);
-          this.thumbnailsContainer.addChild(bg);
-          this.thumbnailsContainer.addChild(text);
+          text.eventMode = 'none';
+
+          this.badgesContainer.addChild(bg);
+          this.badgesContainer.addChild(text);
           badge = { bg, text };
           this.clusterBadges.set(clusterKey, badge);
         }
 
-        badge.text.text = `+${extraCount}`;
-        const badgeX = cluster.centerX + totalGridHeight / 2 + 4;
-        const badgeY = gridTopY + 8;
+        // Update click handler to zoom to current cluster
+        badge.bg.removeAllListeners();
+        const clusterRef = cluster;
+        badge.bg.on('pointertap', () => this.zoomToCluster(clusterRef));
+
+        // Show +X if there are extra hidden items, otherwise show expand icon
+        if (extraCount > 0) {
+          badge.text.text = `+${extraCount}`;
+          badge.text.style.fontSize = 9;
+        } else {
+          badge.text.text = '⤢';
+          badge.text.style.fontSize = 12;
+        }
+
+        // Calculate grid dimensions to position badge at top-right
+        const gridWidth = displayCount <= 2
+          ? displayCount * thumbSize + (displayCount - 1) * gap
+          : 2 * thumbSize + gap;
+        const badgeX = cluster.centerX + gridWidth / 2 + 6;
+        const badgeY = gridTopY + 6;
 
         badge.bg.clear();
         badge.bg.circle(0, 0, 10);
-        badge.bg.fill({ color: 0x22d3ee });
+        badge.bg.fill({ color: 0x333333 });
+        badge.bg.stroke({ color: 0x555555, width: 1 });
         badge.bg.position.set(badgeX, badgeY);
         badge.text.position.set(badgeX, badgeY);
         badge.bg.visible = true;
