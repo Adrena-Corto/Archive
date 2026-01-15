@@ -1,0 +1,22 @@
+id: septimius-severus-denarius
+name: "Septimius Severus Denarius"
+category: coin
+era: "193-211 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+weight: ""
+dimensions: ""
+condition: "VF"
+description: "Silver denarius of Emperor Septimius Severus. Obverse features laureate head right with curly beard. Reverse depicts Minerva standing left, holding spear and shield, with partial legend visible including COS."
+images:
+  - dscf4539.jpg
+  - dscf4540.jpg
+  - dscf4538.jpg
+tags:
+  - roman
+  - denarius
+  - septimius severus
+  - severan
+  - silver
+dateAdded: "2026-01-15"

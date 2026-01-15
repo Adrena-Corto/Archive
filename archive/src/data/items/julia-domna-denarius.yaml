@@ -1,0 +1,22 @@
+id: julia-domna-denarius
+name: "Julia Domna Denarius"
+category: coin
+era: "193-217 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+weight: ""
+dimensions: ""
+condition: "VF"
+description: "Silver denarius of Empress Julia Domna, wife of Septimius Severus. Obverse features draped bust right with distinctive wavy hair arrangement and legend IVLIA AVGVSTA. Reverse depicts standing female figure, likely Pietas or Ceres."
+images:
+  - dscf4542.jpg
+  - dscf4543.jpg
+tags:
+  - roman
+  - denarius
+  - julia domna
+  - severan
+  - silver
+  - empress
+dateAdded: "2026-01-15"

@@ -1,0 +1,21 @@
+id: marcus-aurelius-denarius-02
+name: "Marcus Aurelius Denarius"
+category: coin
+era: "161-180 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+weight: ""
+dimensions: ""
+condition: "VF+"
+description: "Silver denarius of Emperor Marcus Aurelius. Obverse features laureate head right with legend M AVREL ANTONINVS AVG. Reverse depicts standing figure (likely Providentia or Annona) with legend TR POT...COS visible."
+images:
+  - dscf4546.jpg
+  - dscf4547.jpg
+tags:
+  - roman
+  - denarius
+  - marcus aurelius
+  - antonine
+  - silver
+dateAdded: "2026-01-15"

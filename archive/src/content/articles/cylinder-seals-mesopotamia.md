@@ -3,6 +3,7 @@ title: "Cylinder Seals: Mesopotamia's First Security Technology"
 description: "How ancient cylinder seals functioned as identity verification, property protection, and artistic expression in the ancient Near East."
 publishDate: 2025-01-10
 tags: [seals, mesopotamia, artifacts, history]
+featuredItems: [uruk-lapis-cylinder-seal]
 ---
 
 Long before signatures, passwords, or blockchain, Mesopotamians solved the problem of authentication with elegant simplicity: the cylinder seal.
@@ -30,6 +31,23 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
 - **Early Dynastic (2900-2350 BC)**: Dense combat and banquet scenes
 - **Akkadian (2350-2150 BC)**: Masterful mythology scenes
 - **Neo-Assyrian (911-609 BC)**: Royal hunt and ritual scenes
+
+<div class="collection-embed">
+  <a href="/items/uruk-lapis-cylinder-seal">
+    <div class="collection-embed-images grid-cols-2">
+      <img src="/images/items/uruk-lapis-cylinder-seal/01.jpg" alt="Uruk period lapis lazuli cylinder seal" />
+      <img src="/images/items/uruk-lapis-cylinder-seal/02.jpg" alt="Uruk period cylinder seal impression" />
+    </div>
+  </a>
+  <div class="collection-embed-info">
+    <span class="collection-embed-label">From the Collection</span>
+    <p class="collection-embed-caption">An Uruk period (c. 3400-3000 BCE) cylinder seal carved from lapis lazuli—a prestigious material imported from Afghanistan. The geometric pattern of sheep is typical of this early period.</p>
+    <a href="/items/uruk-lapis-cylinder-seal" class="collection-embed-link">
+      View full item details
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+    </a>
+  </div>
+</div>
 
 ## Materials and Craft
 

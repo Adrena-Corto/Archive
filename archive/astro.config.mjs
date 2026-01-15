@@ -10,6 +10,6 @@ export default defineConfig({
     alpinejs(),
     sitemap(),
   ],
-  site: 'https://adrena-corto.github.io',
-  base: '/Archive',
+  site: 'https://theantiquearchive.com',
+  // base: '/Archive', // Not needed with custom domain
 });

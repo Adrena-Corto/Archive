@@ -1,0 +1,23 @@
+id: divus-marcus-aurelius-denarius
+name: "Divus Marcus Aurelius Denarius"
+category: coin
+era: "180 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+weight: ""
+dimensions: ""
+condition: "VF+"
+description: "Posthumous silver denarius struck to commemorate the deified Marcus Aurelius. Obverse features bare head right with legend DIVVS M ANTONINVS PIVS. Reverse depicts eagle standing with head turned, legend CONSECRATIO - a standard consecration type symbolizing the emperor's apotheosis."
+images:
+  - dscf4544.jpg
+  - dscf4545.jpg
+tags:
+  - roman
+  - denarius
+  - marcus aurelius
+  - antonine
+  - silver
+  - commemorative
+  - consecratio
+dateAdded: "2026-01-15"

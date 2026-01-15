@@ -979,7 +979,7 @@ export class PixiTimeline {
 
   private updateFloatingThumbnails(): void {
     const isMobile = this.width < 500;
-    const MAX_THUMBNAILS = isMobile ? 20 : 12;
+    const MAX_THUMBNAILS = isMobile ? 30 : 25;
     const THUMB_SIZE = isMobile ? 28 : 48;
     const GROUP_SIZE = THUMB_SIZE * 1.5;
     const MAX_VISIBLE_IN_CLUSTER = isMobile ? 3 : 4;
@@ -1518,8 +1518,8 @@ export class PixiTimeline {
     if (this.currentTooltip) {
       this.tooltipContainer.visible = true;
 
-      const padding = 10;
-      const thumbSize = 56;
+      const padding = 14;
+      const thumbSize = 100;
       const hasImage = this.currentTooltip.imageUrl && IMAGE_CACHE.has(this.currentTooltip.imageUrl);
 
       // Set text first to measure it
