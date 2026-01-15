@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Custom easing curves for premium feel */
+:root {
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;
@@ -154,8 +160,19 @@
   }
 
   .card-hover {
-    @apply transition-all duration-300;
-    @apply hover:border-accent/50 hover:shadow-glow-cyan;
+    transition: transform 300ms var(--ease-out-quint), box-shadow 300ms ease-out, border-color 300ms ease-out;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-4px);
+    box-shadow:
+      0 10px 40px -10px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(34, 211, 238, 0.2);
+    border-color: rgba(34, 211, 238, 0.3);
+  }
+
+  .card-hover:active {
+    transform: translateY(-2px) scale(0.99);
   }
 
 }
@@ -207,6 +224,52 @@
   .img-fade-in.loaded {
     @apply opacity-90;
   }
+
+  /* Scroll reveal animations */
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 600ms var(--ease-out-quint), transform 600ms var(--ease-out-quint);
+  }
+
+  .reveal.revealed {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Stagger delay for grid children */
+  .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
+  .reveal-stagger > .reveal:nth-child(2) { transition-delay: 50ms; }
+  .reveal-stagger > .reveal:nth-child(3) { transition-delay: 100ms; }
+  .reveal-stagger > .reveal:nth-child(4) { transition-delay: 150ms; }
+  .reveal-stagger > .reveal:nth-child(5) { transition-delay: 200ms; }
+  .reveal-stagger > .reveal:nth-child(6) { transition-delay: 250ms; }
+  .reveal-stagger > .reveal:nth-child(7) { transition-delay: 300ms; }
+  .reveal-stagger > .reveal:nth-child(8) { transition-delay: 350ms; }
+  .reveal-stagger > .reveal:nth-child(n+9) { transition-delay: 400ms; }
+}
+
+/* Reduced motion - disable animations for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .card-hover {
+    transition: none;
+  }
+
+  .card-hover:hover {
+    transform: none;
+  }
+}
+
+/* Button press micro-feedback */
+button:active:not(:disabled),
+a.card-hover:active {
+  transition-duration: 100ms;
 }
 
 /* View Transitions - Clean crossfade */

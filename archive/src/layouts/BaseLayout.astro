@@ -27,7 +27,8 @@ const defaultStructuredData = {
 const pathname = Astro.url.pathname;
 const base = import.meta.env.BASE_URL;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
-const ogImage = image ? new URL(image, Astro.site).href : null;
+const defaultOgImage = new URL('/og-image.png', Astro.site).href;
+const ogImage = image ? new URL(image, Astro.site).href : defaultOgImage;
 
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
@@ -57,14 +58,23 @@ function isActive(path: string): boolean {
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="The Archive" />
-    {ogImage && <meta property="og:image" content={ogImage} />}
+    <meta property="og:site_name" content="The Antique Archive" />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
 
     <!-- Twitter Card -->
-    <meta name="twitter:card" content={ogImage ? "summary_large_image" : "summary"} />
+    <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
-    {ogImage && <meta name="twitter:image" content={ogImage} />}
+    <meta name="twitter:image" content={ogImage} />
+
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="The Antique Archive" />
+    <meta name="geo.region" content="HK" />
+    <meta name="geo.placename" content="Hong Kong" />
     <style set:html={`
       @font-face {
         font-family: 'Space Grotesk';
@@ -121,7 +131,7 @@ function isActive(path: string): boolean {
     ></div>
 
     <div x-data="{ mobileMenuOpen: false }">
-      <header class="sticky top-0 z-50 bg-void/80 backdrop-blur-xl border-b border-white/5" transition:name="header" transition:animate="none">
+      <header class="sticky top-0 z-50 bg-void/80 backdrop-blur-xl border-b border-white/5" transition:persist>
         <nav class="container-narrow py-4 flex items-center justify-between">
           <a href={url('/')} class="font-mono text-lg tracking-wider text-text hover:text-accent transition-all duration-300 hover:drop-shadow-[0_0_8px_rgba(34,211,238,0.5)]">
             <span class="font-cuneiform text-accent" aria-hidden="true">𒃸𒁀</span> ARCHIVE
@@ -358,6 +368,35 @@ function isActive(path: string): boolean {
           }
         }
       });
+    </script>
+
+    <script>
+      // Scroll reveal animations with IntersectionObserver
+      function initRevealObserver() {
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        if (prefersReducedMotion) {
+          document.querySelectorAll('.reveal').forEach(el => el.classList.add('revealed'));
+          return;
+        }
+
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('revealed');
+              observer.unobserve(entry.target);
+            }
+          });
+        }, {
+          threshold: 0.1,
+          rootMargin: '50px'
+        });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+      }
+
+      initRevealObserver();
+      document.addEventListener('astro:page-load', initRevealObserver);
     </script>
 
   </body>

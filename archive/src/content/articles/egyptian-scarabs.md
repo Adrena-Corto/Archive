@@ -40,7 +40,7 @@ The flat underside is where meaning lives. Bases may feature:
 ## Reading the Inscriptions
 
 <div class="collection-embed">
-  <a href="/items/egyptian-scarab">
+  <a href="/item/egyptian-scarab">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/egyptian-scarab/04.jpg" alt="Egyptian faience scarab dorsal view" />
       <img src="/images/items/egyptian-scarab/05.jpg" alt="Egyptian faience scarab base with Amun-Ra hieroglyphs" />
@@ -49,7 +49,7 @@ The flat underside is where meaning lives. Bases may feature:
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">New Kingdom faience scarab — dorsal view showing beetle anatomy (left) and base with Amun-Ra inscription (right).</p>
-    <a href="/items/egyptian-scarab" class="collection-embed-link">
+    <a href="/item/egyptian-scarab" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

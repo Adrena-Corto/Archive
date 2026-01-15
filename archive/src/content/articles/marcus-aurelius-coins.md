@@ -13,7 +13,7 @@ Marcus Aurelius ruled Rome from 161 to 180 AD, and his silver denarii tell the s
 During his lifetime, Marcus Aurelius appeared on coins with the standard imperial titulature: **M ANTONINVS AVG** (Marcus Antoninus Augustus) or **M AVREL ANTONINVS AVG**. His portrait shows the distinctive curly beard and hair he cultivated, influenced by Greek philosophical tradition.
 
 <div class="collection-embed">
-  <a href="/items/marcus-aurelius-denarius-01">
+  <a href="/item/marcus-aurelius-denarius-01">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/marcus-aurelius-denarius-01/dscf4431.jpg" alt="Marcus Aurelius denarius obverse" />
       <img src="/images/items/marcus-aurelius-denarius-01/dscf4432.jpg" alt="Marcus Aurelius denarius reverse with Concordia" />
@@ -22,7 +22,7 @@ During his lifetime, Marcus Aurelius appeared on coins with the standard imperia
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">A lifetime denarius showing Marcus Aurelius laureate, with Concordia seated on the reverse—a symbol of harmony within the empire.</p>
-    <a href="/items/marcus-aurelius-denarius-01" class="collection-embed-link">
+    <a href="/item/marcus-aurelius-denarius-01" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>
@@ -38,7 +38,7 @@ The legend **TR P XVI COS III** on one example tells us the coin was struck duri
 When Marcus Aurelius died on March 17, 180 AD, the Senate voted him divine honors—a process called *consecratio*. His son Commodus then issued commemorative coins declaring his father a god.
 
 <div class="collection-embed">
-  <a href="/items/divus-marcus-aurelius-denarius">
+  <a href="/item/divus-marcus-aurelius-denarius">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/divus-marcus-aurelius-denarius/dscf4544.jpg" alt="Divus Marcus Aurelius denarius obverse" />
       <img src="/images/items/divus-marcus-aurelius-denarius/dscf4545.jpg" alt="Divus Marcus Aurelius denarius reverse with eagle" />
@@ -47,7 +47,7 @@ When Marcus Aurelius died on March 17, 180 AD, the Senate voted him divine honor
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">The posthumous "Divus" denarius. Note the bare head (no laurel wreath) and the eagle on the reverse symbolizing apotheosis.</p>
-    <a href="/items/divus-marcus-aurelius-denarius" class="collection-embed-link">
+    <a href="/item/divus-marcus-aurelius-denarius" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

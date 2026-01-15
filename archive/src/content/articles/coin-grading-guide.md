@@ -54,7 +54,7 @@ On reverses, look at:
 ## Grade by Grade
 
 <div class="collection-embed">
-  <a href="/items/marcus-aurelius-denarius-01">
+  <a href="/item/marcus-aurelius-denarius-01">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/marcus-aurelius-denarius-01/dscf4431.jpg" alt="Marcus Aurelius Denarius obverse" />
       <img src="/images/items/marcus-aurelius-denarius-01/dscf4432.jpg" alt="Marcus Aurelius Denarius reverse" />
@@ -63,7 +63,7 @@ On reverses, look at:
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">Marcus Aurelius denarius — obverse portrait (left) and reverse showing Providentia (right). Note the portrait detail and legend clarity when assessing grade.</p>
-    <a href="/items/marcus-aurelius-denarius-01" class="collection-embed-link">
+    <a href="/item/marcus-aurelius-denarius-01" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

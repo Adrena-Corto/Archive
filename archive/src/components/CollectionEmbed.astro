@@ -12,7 +12,7 @@ function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 
-const itemUrl = url(`/items/${itemId}`);
+const itemUrl = url(`/item/${itemId}`);
 const imagePaths = images.map(img => url(`/images/items/${itemId}/${img}`));
 const isSingleImage = images.length === 1;
 ---

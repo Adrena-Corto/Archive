@@ -7,7 +7,10 @@ import { getCoins } from '../../lib/items';
 const coins = getCoins();
 ---
 
-<BaseLayout title="Coins | Archive">
+<BaseLayout
+  title="Ancient Coins Collection | Greek, Roman & Byzantine Numismatics"
+  description="Browse our collection of ancient Greek, Roman, Byzantine, and Near Eastern coins. Each piece authenticated with detailed provenance and historical context."
+>
   <section class="relative py-16 min-h-screen">
 
     <div class="container-narrow relative">
@@ -23,7 +26,7 @@ const coins = getCoins();
 
       <CoinFilterBar />
 
-      <div id="coin-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200">
+      <div id="coin-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 transition-opacity duration-200 reveal-stagger">
         {coins.length > 0 ? (
           coins.map((coin, index) => (
             <CoinCard coin={coin} priority={index < 6} />

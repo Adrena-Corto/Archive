@@ -13,7 +13,7 @@ In the world between late antiquity and the medieval period, the line between re
 Why lead? To modern eyes, it seems an odd choice for jewelry. But in ancient magical thinking, lead held special properties. Its heaviness and dull color associated it with Saturn and the underworld. More practically, lead was used in *defixiones*—curse tablets buried to bind enemies or rivals. An amulet made of lead carried that binding power, but turned protective: it could bind evil *away* from the wearer.
 
 <div class="collection-embed">
-  <a href="/items/lead-amulet">
+  <a href="/item/lead-amulet">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/lead-amulet/01.jpg" alt="Lead amulet obverse with magical inscription" />
       <img src="/images/items/lead-amulet/02.jpg" alt="Lead amulet reverse with serpent motif" />
@@ -22,7 +22,7 @@ Why lead? To modern eyes, it seems an odd choice for jewelry. But in ancient mag
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">A Byzantine lead amulet (c. 400-800 CE) with dense magical inscriptions on both faces. The suspension loop allowed it to be worn around the neck.</p>
-    <a href="/items/lead-amulet" class="collection-embed-link">
+    <a href="/item/lead-amulet" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

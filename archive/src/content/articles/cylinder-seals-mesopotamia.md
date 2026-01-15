@@ -33,7 +33,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
 - **Neo-Assyrian (911-609 BC)**: Royal hunt and ritual scenes
 
 <div class="collection-embed">
-  <a href="/items/uruk-lapis-cylinder-seal">
+  <a href="/item/uruk-lapis-cylinder-seal">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/uruk-lapis-cylinder-seal/01.jpg" alt="Uruk period lapis lazuli cylinder seal" />
       <img src="/images/items/uruk-lapis-cylinder-seal/02.jpg" alt="Uruk period cylinder seal impression" />
@@ -42,7 +42,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">An Uruk period (c. 3400-3000 BCE) cylinder seal carved from lapis lazuli—a prestigious material imported from Afghanistan. The geometric pattern of sheep is typical of this early period.</p>
-    <a href="/items/uruk-lapis-cylinder-seal" class="collection-embed-link">
+    <a href="/item/uruk-lapis-cylinder-seal" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

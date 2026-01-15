@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://adrena-corto.github.io/Archive/sitemap-index.xml
+Sitemap: https://theantiquearchive.com/sitemap-index.xml

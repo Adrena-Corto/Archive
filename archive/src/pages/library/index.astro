@@ -25,8 +25,8 @@ function formatDate(date: Date): string {
 ---
 
 <BaseLayout
-  title="Library | Archive"
-  description="Articles, guides, and book collection for ancient coin and artifact collectors."
+  title="Library | Articles & Books on Ancient Coins and Artifacts"
+  description="Educational articles on ancient coin collecting, cylinder seals, and artifact identification. Reference books and collecting guides for numismatists."
 >
   <section class="relative py-16 min-h-screen">
     <div class="container-narrow relative">
@@ -40,9 +40,9 @@ function formatDate(date: Date): string {
         </p>
       </div>
 
-      <div class="grid md:grid-cols-2 gap-8">
+      <div class="grid md:grid-cols-2 gap-8 reveal-stagger">
         <!-- Articles Section -->
-        <a href={url('/library/articles')} class="group glass-panel p-10 hover:border-accent/30 transition-all duration-300">
+        <a href={url('/library/articles')} class="group glass-panel p-10 hover:border-accent/30 transition-all duration-300 reveal card-hover">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
               <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +75,7 @@ function formatDate(date: Date): string {
         </a>
 
         <!-- Books Section -->
-        <a href={url('/library/books')} class="group glass-panel p-10 hover:border-accent/30 transition-all duration-300">
+        <a href={url('/library/books')} class="group glass-panel p-10 hover:border-accent/30 transition-all duration-300 reveal card-hover">
           <div class="flex items-center gap-3 mb-6">
             <div class="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
               <svg class="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">

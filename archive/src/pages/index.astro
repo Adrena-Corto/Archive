@@ -51,7 +51,10 @@ const coinsShuffled = [...Array(coinsChars.length).keys()].sort(() => Math.rando
 const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50);
 ---
 
-<BaseLayout title="Archive | Historical Collection">
+<BaseLayout
+  title="The Antique Archive | Ancient Coins, Cylinder Seals & Historical Artifacts"
+  description="A curated collection of ancient coins, Mesopotamian cylinder seals, Byzantine jewelry, and rare artifacts spanning 5,000 years. Based in Hong Kong."
+>
   <!-- Vignette overlays -->
   <div id="vignette-top" class="pointer-events-none fixed inset-x-0 top-0 h-32 bg-gradient-to-b from-void to-transparent z-40 opacity-0 transition-opacity duration-300"></div>
   <div id="vignette-bottom" class="pointer-events-none fixed inset-x-0 bottom-0 h-32 bg-gradient-to-t from-void to-transparent z-40 opacity-0 transition-opacity duration-300"></div>
@@ -85,8 +88,50 @@ const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50)
     document.addEventListener('astro:page-load', initVignettes);
   </script>
 
+  <script>
+    function initParallax() {
+      const hero = document.getElementById('hero-content');
+      if (!hero) return;
+
+      // Only enable parallax on devices that prefer motion
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) return;
+
+      let ticking = false;
+
+      function updateParallax() {
+        const scrollY = window.scrollY;
+        const heroHeight = hero.offsetHeight + hero.offsetTop;
+
+        // Only apply parallax while hero is visible
+        if (scrollY < heroHeight) {
+          const translateY = scrollY * 0.3;
+          const opacity = 1 - (scrollY / heroHeight) * 0.5;
+          hero.style.transform = `translateY(${translateY}px)`;
+          hero.style.opacity = String(Math.max(opacity, 0.5));
+        }
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      }, { passive: true });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initParallax);
+    } else {
+      initParallax();
+    }
+    document.addEventListener('astro:page-load', initParallax);
+  </script>
+
   <section class="relative min-h-[70vh] flex items-center justify-center overflow-x-clip">
-    <div class="relative text-center px-6 max-w-4xl mx-auto">
+    <div id="hero-content" class="relative text-center px-6 max-w-4xl mx-auto">
       <p class="font-mono text-xs uppercase tracking-[0.3em] text-accent mb-6">
         // Personal Collection Display
       </p>
@@ -158,16 +203,16 @@ const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50)
 
   <section class="border-t border-white/5 py-12 md:py-20">
     <div class="container-narrow">
-      <div class="grid grid-cols-3 gap-3 sm:gap-6 md:gap-8">
-        <div class="glass-panel p-4 sm:p-6 text-center">
+      <div class="grid grid-cols-3 gap-3 sm:gap-6 md:gap-8 reveal-stagger">
+        <div class="glass-panel p-4 sm:p-6 text-center reveal">
           <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{artifacts.length}</p>
           <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Artifacts</p>
         </div>
-        <div class="glass-panel p-4 sm:p-6 text-center">
+        <div class="glass-panel p-4 sm:p-6 text-center reveal">
           <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">{coins.length}</p>
           <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Coins</p>
         </div>
-        <div class="glass-panel p-4 sm:p-6 text-center">
+        <div class="glass-panel p-4 sm:p-6 text-center reveal">
           <p class="font-mono text-2xl sm:text-3xl md:text-4xl text-accent mb-1 sm:mb-2">5000+</p>
           <p class="font-mono text-[10px] sm:text-xs uppercase tracking-wider text-text-dim">Years</p>
         </div>

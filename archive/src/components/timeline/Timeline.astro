@@ -14,7 +14,7 @@ const landmarks = getTimelineLandmarks(rawLandmarks);
 const itemsJson = JSON.stringify(items);
 const landmarksJson = JSON.stringify(landmarks);
 
-const base = import.meta.env.BASE_URL || '/Archive';
+const baseUrl = import.meta.env.BASE_URL || '';
 ---
 
 <div
@@ -122,13 +122,13 @@ const base = import.meta.env.BASE_URL || '/Archive';
   </div>
 </div>
 
-<script define:vars={{ itemsJson, landmarksJson, base }}>
+<script is:inline set:html={`
   window.__TIMELINE_DATA__ = {
-    items: JSON.parse(itemsJson),
-    landmarks: JSON.parse(landmarksJson),
-    baseUrl: base,
+    items: ${itemsJson},
+    landmarks: ${landmarksJson},
+    baseUrl: ${JSON.stringify(baseUrl)},
   };
-</script>
+`}></script>
 
 <script>
   import { PixiTimeline } from '../../lib/timeline/pixi-timeline';
@@ -309,6 +309,8 @@ const base = import.meta.env.BASE_URL || '/Archive';
 
     if (!popup || !body) return;
 
+    const url = (path: string) => `${data.baseUrl}${path}`.replace(/\/+/g, '/');
+
     const closePopup = () => {
       popup.classList.remove('visible');
       document.body.style.overflow = '';
@@ -319,7 +321,7 @@ const base = import.meta.env.BASE_URL || '/Archive';
       if (!item) return;
 
       const images = item.images || [];
-      const firstImage = images[0] ? `${data.baseUrl}/images/items/${itemId}/${images[0]}` : '';
+      const firstImage = images[0] ? url(`/images/items/${itemId}/${images[0]}`) : '';
 
       body.innerHTML = `
         <div class="grid md:grid-cols-2 gap-6 md:gap-8">
@@ -331,8 +333,8 @@ const base = import.meta.env.BASE_URL || '/Archive';
               ${images.length > 1 ? `
                 <div class="flex gap-2 overflow-x-auto pb-2">
                   ${images.map((img: string, i: number) => `
-                    <button class="flex-shrink-0 w-16 h-16 rounded border-2 ${i === 0 ? 'border-accent' : 'border-border'} overflow-hidden hover:border-accent transition-colors" data-image="${data.baseUrl}/images/items/${itemId}/${img}">
-                      <img src="${data.baseUrl}/images/items/${itemId}/${img}" alt="" class="w-full h-full object-cover" />
+                    <button class="flex-shrink-0 w-16 h-16 rounded border-2 ${i === 0 ? 'border-accent' : 'border-border'} overflow-hidden hover:border-accent transition-colors" data-image="${url(`/images/items/${itemId}/${img}`)}">
+                      <img src="${url(`/images/items/${itemId}/${img}`)}" alt="" class="w-full h-full object-cover" />
                     </button>
                   `).join('')}
                 </div>
@@ -351,7 +353,7 @@ const base = import.meta.env.BASE_URL || '/Archive';
               ${item.dimensions ? `<div><p class="text-text-dim font-mono text-xs">Dimensions</p><p class="text-text-muted">${item.dimensions}</p></div>` : ''}
             </div>
             ${item.description ? `<p class="text-text-muted text-sm leading-relaxed">${item.description}</p>` : ''}
-            <a href="${data.baseUrl}/item/${itemId}" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-mono text-sm mt-4">
+            <a href="${url(`/item/${itemId}`)}" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-mono text-sm mt-4">
               View full details
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

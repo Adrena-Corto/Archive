@@ -163,7 +163,7 @@ export class PixiTimeline {
     canvas: HTMLCanvasElement,
     items: TimelineItem[],
     landmarks: TimelineLandmark[],
-    baseUrl: string = '/Archive'
+    baseUrl: string = ''
   ) {
     this.canvas = canvas;
     this.items = items;
