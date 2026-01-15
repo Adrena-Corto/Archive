@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../components/Breadcrumb.astro';
 import { getAllItems, getItemById, getRelatedItems } from '../../lib/items';
 import type { Item } from '../../lib/items';
+import thumbhashManifest from '../../data/thumbhash-manifest.json';
 
 export async function getStaticPaths() {
   const items = getAllItems();
@@ -36,6 +37,15 @@ const base = import.meta.env.BASE_URL;
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
+
+function getThumbhash(imagePath: string): string | null {
+  return (thumbhashManifest as Record<string, string>)[imagePath] || null;
+}
+
+const imageThumbhashes = item.images.map(image => {
+  const path = `/images/items/${item.id}/${image}`;
+  return { path, thumbhash: getThumbhash(path) };
+});
 
 const itemStructuredData = {
   "@context": "https://schema.org",
@@ -147,21 +157,34 @@ const itemStructuredData = {
               <div
                 class="glass-panel overflow-hidden w-full rounded-lg relative"
               >
-                {item.images.map((image, index) => (
-                  <img
+                {imageThumbhashes.map(({ path, thumbhash }, index) => (
+                  <div
                     x-show={`activeImage === ${index}`}
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    @mouseenter="showMagnifier($event)"
-                    @mousemove="handleMagnifier($event)"
-                    @mouseleave="hideMagnifier()"
-                    @click="openLightbox(activeImage)"
-                    src={url(`/images/items/${item.id}/${image}`)}
-                    alt={`${item.name} - Image ${index + 1}`}
-                    class="w-full h-auto cursor-zoom-in"
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                  />
+                    class="relative"
+                  >
+                    {thumbhash && (
+                      <canvas
+                        class="detail-placeholder absolute inset-0 w-full h-full object-cover"
+                        data-thumbhash={thumbhash}
+                        style="filter: blur(20px); transform: scale(1.1);"
+                        aria-hidden="true"
+                      />
+                    )}
+                    <img
+                      @mouseenter="showMagnifier($event)"
+                      @mousemove="handleMagnifier($event)"
+                      @mouseleave="hideMagnifier()"
+                      @click="openLightbox(activeImage)"
+                      src={path}
+                      alt={`${item.name} - Image ${index + 1}`}
+                      class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
+                      loading={index === 0 ? 'eager' : 'lazy'}
+                      onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100'); this.previousElementSibling?.classList.add('opacity-0')"
+                    />
+                  </div>
                 ))}
               </div>
 
@@ -453,4 +476,46 @@ const itemStructuredData = {
       </nav>
     </div>
   </article>
+
+  <script>
+    import { thumbHashToDataURL } from 'thumbhash';
+
+    function base64ToBytes(base64: string): Uint8Array {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    function initDetailPlaceholders() {
+      const canvases = document.querySelectorAll<HTMLCanvasElement>('.detail-placeholder');
+      canvases.forEach(canvas => {
+        const thumbhash = canvas.dataset.thumbhash;
+        if (!thumbhash) return;
+
+        try {
+          const hash = base64ToBytes(thumbhash);
+          const dataUrl = thumbHashToDataURL(hash);
+
+          const img = new Image();
+          img.onload = () => {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              canvas.width = canvas.offsetWidth || 400;
+              canvas.height = canvas.offsetHeight || 300;
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            }
+          };
+          img.src = dataUrl;
+        } catch (e) {
+          console.warn('Failed to decode thumbhash:', e);
+        }
+      });
+    }
+
+    initDetailPlaceholders();
+    document.addEventListener('astro:page-load', initDetailPlaceholders);
+  </script>
 </BaseLayout>

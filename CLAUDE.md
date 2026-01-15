@@ -78,7 +78,31 @@ Use `/add-item` skill - just share photos and describe the item. Claude handles:
 1. Add photos to `public/images/items/[item-id]/`
 2. Create `src/data/items/[item-id].yaml`
 3. Fill in item details (Claude can assist with identification)
-4. Run `pnpm build` to regenerate search index
+4. Regenerate ThumbHash manifest: `node scripts/generate-thumbhash.mjs`
+5. Run `pnpm build` to regenerate search index
+
+### ThumbHash (Progressive Image Loading)
+
+Images use ThumbHash placeholders for smooth loading. When adding new images:
+
+```bash
+cd archive
+node scripts/generate-thumbhash.mjs
+```
+
+This updates `src/data/thumbhash-manifest.json` with blur placeholders for all images.
+
+**How it works:**
+
+- Script scans `public/images/items/` and generates 28-byte hashes
+- Client decodes hash → renders blurry placeholder instantly
+- When real image loads → crossfade transition
+
+**Files involved:**
+
+- `scripts/generate-thumbhash.mjs` - Generation script
+- `src/data/thumbhash-manifest.json` - Hash manifest (auto-generated)
+- `src/components/BlurImage.astro` - Reusable blur component
 
 ## Photography Workflow
 

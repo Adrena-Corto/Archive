@@ -205,6 +205,90 @@ const structuredData = {
     // Run on page load and after view transitions
     document.addEventListener('astro:page-load', initMinimap);
   </script>
+
+  <script>
+    import { thumbHashToDataURL } from 'thumbhash';
+    import thumbhashManifest from '../../../data/thumbhash-manifest.json';
+
+    function base64ToBytes(base64: string): Uint8Array {
+      const binary = atob(base64);
+      const bytes = new Uint8Array(binary.length);
+      for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+
+    function initArticleEmbedImages() {
+      const embedImages = document.querySelectorAll<HTMLImageElement>('.collection-embed img');
+
+      embedImages.forEach(img => {
+        const src = img.getAttribute('src');
+        if (!src) return;
+
+        const thumbhash = (thumbhashManifest as Record<string, string>)[src];
+        if (!thumbhash) return;
+
+        // Already processed?
+        if (img.dataset.thumbhashProcessed) return;
+        img.dataset.thumbhashProcessed = 'true';
+
+        // Create wrapper if not already wrapped
+        const parent = img.parentElement;
+        if (!parent || parent.classList.contains('embed-img-wrapper')) return;
+
+        const wrapper = document.createElement('div');
+        wrapper.className = 'embed-img-wrapper relative overflow-hidden';
+        parent.insertBefore(wrapper, img);
+        wrapper.appendChild(img);
+
+        // Create canvas placeholder
+        const canvas = document.createElement('canvas');
+        canvas.className = 'absolute inset-0 w-full h-full object-cover';
+        canvas.style.filter = 'blur(20px)';
+        canvas.style.transform = 'scale(1.1)';
+        wrapper.insertBefore(canvas, img);
+
+        // Decode thumbhash and draw
+        try {
+          const hash = base64ToBytes(thumbhash);
+          const dataUrl = thumbHashToDataURL(hash);
+
+          const placeholder = new Image();
+          placeholder.onload = () => {
+            canvas.width = canvas.offsetWidth || 200;
+            canvas.height = canvas.offsetHeight || 150;
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              ctx.drawImage(placeholder, 0, 0, canvas.width, canvas.height);
+            }
+          };
+          placeholder.src = dataUrl;
+        } catch (e) {
+          console.warn('Failed to decode thumbhash for article embed:', e);
+        }
+
+        // Style the actual image for fade-in
+        img.style.opacity = '0';
+        img.style.transition = 'opacity 0.5s ease';
+
+        const onLoad = () => {
+          img.style.opacity = '1';
+          canvas.style.opacity = '0';
+          canvas.style.transition = 'opacity 0.5s ease';
+        };
+
+        if (img.complete && img.naturalWidth > 0) {
+          onLoad();
+        } else {
+          img.addEventListener('load', onLoad, { once: true });
+        }
+      });
+    }
+
+    initArticleEmbedImages();
+    document.addEventListener('astro:page-load', initArticleEmbedImages);
+  </script>
 </BaseLayout>
 
 <style is:global>

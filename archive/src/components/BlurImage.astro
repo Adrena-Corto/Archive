@@ -1,0 +1,111 @@
+---
+import thumbhashManifest from '../data/thumbhash-manifest.json';
+
+interface Props {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  priority?: boolean;
+}
+
+const { src, alt, width, height, class: className = '', loading = 'lazy', priority = false } = Astro.props;
+
+const thumbhash = (thumbhashManifest as Record<string, string>)[src] || null;
+---
+
+<div class="blur-image-container relative w-full h-full overflow-hidden">
+  {thumbhash && (
+    <canvas
+      class="blur-image-placeholder absolute inset-0 w-full h-full object-cover"
+      data-thumbhash={thumbhash}
+      aria-hidden="true"
+    />
+  )}
+  <img
+    src={src}
+    alt={alt}
+    width={width}
+    height={height}
+    class:list={[
+      'blur-image w-full h-full object-cover',
+      'opacity-0 transition-opacity duration-500',
+      className
+    ]}
+    loading={priority ? 'eager' : loading}
+    decoding={priority ? 'sync' : 'async'}
+    fetchpriority={priority ? 'high' : undefined}
+  />
+</div>
+
+<script>
+  import { thumbHashToDataURL } from 'thumbhash';
+
+  function base64ToBytes(base64: string): Uint8Array {
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  function initBlurImages() {
+    const containers = document.querySelectorAll('.blur-image-container');
+
+    containers.forEach(container => {
+      const canvas = container.querySelector<HTMLCanvasElement>('.blur-image-placeholder');
+      const img = container.querySelector<HTMLImageElement>('.blur-image');
+
+      if (!canvas || !img) return;
+
+      const thumbhash = canvas.dataset.thumbhash;
+      if (thumbhash) {
+        try {
+          const hash = base64ToBytes(thumbhash);
+          const dataUrl = thumbHashToDataURL(hash);
+
+          const placeholderImg = new Image();
+          placeholderImg.onload = () => {
+            const ctx = canvas.getContext('2d');
+            if (ctx) {
+              canvas.width = canvas.offsetWidth;
+              canvas.height = canvas.offsetHeight;
+              ctx.drawImage(placeholderImg, 0, 0, canvas.width, canvas.height);
+            }
+          };
+          placeholderImg.src = dataUrl;
+        } catch (e) {
+          console.warn('Failed to decode thumbhash:', e);
+        }
+      }
+
+      if (img.complete && img.naturalWidth > 0) {
+        img.classList.remove('opacity-0');
+        img.classList.add('opacity-100');
+        canvas?.classList.add('opacity-0');
+      } else {
+        img.addEventListener('load', () => {
+          img.classList.remove('opacity-0');
+          img.classList.add('opacity-100');
+          canvas?.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+        }, { once: true });
+      }
+    });
+  }
+
+  // Run on initial load
+  initBlurImages();
+
+  // Run on Astro page transitions
+  document.addEventListener('astro:page-load', initBlurImages);
+</script>
+
+<style>
+  .blur-image-placeholder {
+    filter: blur(20px);
+    transform: scale(1.1);
+  }
+</style>

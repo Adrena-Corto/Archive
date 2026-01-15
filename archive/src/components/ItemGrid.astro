@@ -17,8 +17,8 @@ const gridCols = {
 ---
 
 <div class={`grid ${gridCols[columns]} gap-8 transition-opacity duration-150`} id="item-grid">
-  {items.map((item) => (
-    <ItemCard item={item} />
+  {items.map((item, index) => (
+    <ItemCard item={item} priority={index < 6} />
   ))}
 </div>
 
