@@ -1,0 +1,17 @@
+id: sasanian-stone-stamp-seal
+name: "Sasanian Green Stone Stamp Seal"
+category: seal
+era: "c. 200-400 CE"
+period: "Sasanian"
+origin: "Persia"
+material: stone
+weight: "9g"
+dimensions: "28mm x 24mm"
+condition: "Good - green patina, portrait clearly visible"
+description: "Sasanian green stone stamp seal depicting a bearded man facing right with highly stylised facial features and clothing. The figure shows characteristic Sasanian artistic conventions with linear rendering of the beard and garments. The seal has a flat oval body with a horizontally drilled suspension hole. Such personal seals were used throughout the Sasanian Empire to authenticate documents and mark property, with the owner's image or symbol pressed into clay or wax."
+images:
+  - 01.jpg
+  - 02.jpg
+tags: [stone, seal, stamp, sasanian, persian, portrait, bearded]
+dateAdded: "2025-01-15"
+featured: false
