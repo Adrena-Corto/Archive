@@ -53,6 +53,10 @@ function isActive(path: string): boolean {
     <link rel="apple-touch-icon" sizes="180x180" href={url('/apple-touch-icon.png')} />
     <link rel="alternate" type="application/rss+xml" title="The Archive Articles" href={url('/rss.xml')} />
 
+    <!-- Preload critical fonts -->
+    <link rel="preload" href={url('/fonts/space-grotesk-variable.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={url('/fonts/JetBrainsMono-Regular.woff2')} as="font" type="font/woff2" crossorigin />
+
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
@@ -398,6 +402,14 @@ function isActive(path: string): boolean {
       initRevealObserver();
       document.addEventListener('astro:page-load', initRevealObserver);
     </script>
+
+    <!-- GoatCounter Analytics (privacy-friendly, no cookies) -->
+    <!-- Replace YOUR-CODE with your GoatCounter subdomain after signup at https://goatcounter.com -->
+    <script
+      data-goatcounter="https://YOUR-CODE.goatcounter.com/count"
+      async
+      src="//gc.zgo.at/count.js"
+    ></script>
 
   </body>
 </html>

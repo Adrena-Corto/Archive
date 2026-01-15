@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "astro dev",
     "thumbhash": "node scripts/generate-thumbhash.mjs",
-    "prebuild": "node scripts/generate-thumbhash.mjs",
+    "prebuild": "node scripts/generate-thumbnails.mjs && node scripts/generate-thumbhash.mjs && node scripts/generate-og-image.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
     "astro": "astro"

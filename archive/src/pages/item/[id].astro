@@ -47,26 +47,52 @@ const imageThumbhashes = item.images.map(image => {
   return { path, thumbhash: getThumbhash(path) };
 });
 
+const siteUrl = 'https://theantiquearchive.com';
+const breadcrumbItems = item.category === 'coin'
+  ? [
+      { name: 'Home', url: siteUrl },
+      { name: 'Coins', url: `${siteUrl}/coins` },
+      { name: item.name, url: `${siteUrl}/item/${item.id}` }
+    ]
+  : [
+      { name: 'Home', url: siteUrl },
+      { name: 'Artifacts', url: `${siteUrl}/artifacts` },
+      { name: item.name, url: `${siteUrl}/item/${item.id}` }
+    ];
+
 const itemStructuredData = {
   "@context": "https://schema.org",
-  "@type": "Product",
-  "name": item.name,
-  "description": item.description,
-  "category": categoryLabels[item.category],
-  "material": item.material,
-  "image": item.images.length > 0 ? `${Astro.site || ''}${url(`/images/items/${item.id}/${item.images[0]}`)}` : undefined,
-  "additionalProperty": [
-    { "@type": "PropertyValue", "name": "Era", "value": item.era },
-    { "@type": "PropertyValue", "name": "Period", "value": item.period },
-    { "@type": "PropertyValue", "name": "Origin", "value": item.origin },
-    ...(item.weight ? [{ "@type": "PropertyValue", "name": "Weight", "value": item.weight }] : []),
-    ...(item.dimensions ? [{ "@type": "PropertyValue", "name": "Dimensions", "value": item.dimensions }] : []),
-    ...(item.condition ? [{ "@type": "PropertyValue", "name": "Condition", "value": item.condition }] : [])
+  "@graph": [
+    {
+      "@type": "Product",
+      "name": item.name,
+      "description": item.description,
+      "category": categoryLabels[item.category],
+      "material": item.material,
+      "image": item.images.length > 0 ? `${siteUrl}${url(`/images/items/${item.id}/${item.images[0]}`)}` : undefined,
+      "additionalProperty": [
+        { "@type": "PropertyValue", "name": "Era", "value": item.era },
+        { "@type": "PropertyValue", "name": "Period", "value": item.period },
+        { "@type": "PropertyValue", "name": "Origin", "value": item.origin },
+        ...(item.weight ? [{ "@type": "PropertyValue", "name": "Weight", "value": item.weight }] : []),
+        ...(item.dimensions ? [{ "@type": "PropertyValue", "name": "Dimensions", "value": item.dimensions }] : []),
+        ...(item.condition ? [{ "@type": "PropertyValue", "name": "Condition", "value": item.condition }] : [])
+      ]
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": breadcrumbItems.map((item, index) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "name": item.name,
+        "item": item.url
+      }))
+    }
   ]
 };
 ---
 
-<BaseLayout title={`${item.name} | Archive`} description={item.description} structuredData={itemStructuredData} image={item.images.length > 0 ? url(`/images/items/${item.id}/${item.images[0]}`) : undefined}>
+<BaseLayout title={`${item.name} | The Antique Archive`} description={item.description} structuredData={itemStructuredData} image={item.images.length > 0 ? url(`/images/items/${item.id}/${item.images[0]}`) : undefined}>
   <article class="relative py-16 min-h-screen" data-pagefind-body>
 
     <div class="container-narrow relative">

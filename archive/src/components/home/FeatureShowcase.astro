@@ -28,6 +28,12 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
   category: item.category,
   era: item.era,
 })));
+
+// Helper to get thumbnail path
+function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium' = 'thumb') {
+  const baseName = imageName.replace(/\.(jpg|jpeg|png)$/i, '');
+  return url(`/images/items/${itemId}/${baseName}-${size}.webp`);
+}
 ---
 
 <section class="py-12 md:py-16">
@@ -65,10 +71,12 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
               >
                 {item.images[0] && (
                   <img
-                    src={url(`/images/items/${item.id}/${item.images[0]}`)}
+                    src={getThumbnail(item.id, item.images[0])}
                     alt=""
                     class="w-full h-full object-cover"
                     loading="lazy"
+                    width="200"
+                    height="200"
                   />
                 )}
               </div>
@@ -356,6 +364,7 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
   .filmstrip-track {
     animation: filmstrip-scroll 25s linear infinite;
     animation-play-state: paused;
+    will-change: transform;
   }
 
   @keyframes timeline-pulse {
@@ -389,10 +398,12 @@ const itemsJson = JSON.stringify(previewItems.map(item => ({
 
   .animate-scroll-left {
     animation: scroll-left 30s linear infinite;
+    will-change: transform;
   }
 
   .animate-scroll-right {
     animation: scroll-right 25s linear infinite;
+    will-change: transform;
   }
 
   .library-scroll:hover,

@@ -49,11 +49,58 @@ const coinsChars = coinsText.split('').map(char => ({
 
 const coinsShuffled = [...Array(coinsChars.length).keys()].sort(() => Math.random() - 0.5);
 const coinsDelayMap = coinsShuffled.map((_, i) => coinsShuffled.indexOf(i) * 50);
+
+const structuredData = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://theantiquearchive.com/#website",
+      "url": "https://theantiquearchive.com",
+      "name": "The Antique Archive",
+      "description": "A curated collection of ancient coins, Mesopotamian cylinder seals, Byzantine jewelry, and rare artifacts spanning 5,000 years.",
+      "inLanguage": "en-US"
+    },
+    {
+      "@type": "CollectionPage",
+      "@id": "https://theantiquearchive.com/#collection",
+      "url": "https://theantiquearchive.com",
+      "name": "The Antique Archive",
+      "isPartOf": { "@id": "https://theantiquearchive.com/#website" },
+      "description": "Ancient coins, cylinder seals, jewelry, and historical artifacts from Greek, Roman, Byzantine, and Mesopotamian civilizations.",
+      "about": [
+        { "@type": "Thing", "name": "Ancient Coins" },
+        { "@type": "Thing", "name": "Cylinder Seals" },
+        { "@type": "Thing", "name": "Ancient Jewelry" },
+        { "@type": "Thing", "name": "Historical Artifacts" }
+      ]
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://theantiquearchive.com/#organization",
+      "name": "The Antique Archive",
+      "url": "https://theantiquearchive.com",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://theantiquearchive.com/og-image.png"
+      },
+      "sameAs": [
+        "https://t.me/ccccoooocccc"
+      ],
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Hong Kong",
+        "addressCountry": "HK"
+      }
+    }
+  ]
+};
 ---
 
 <BaseLayout
   title="The Antique Archive | Ancient Coins, Cylinder Seals & Historical Artifacts"
   description="A curated collection of ancient coins, Mesopotamian cylinder seals, Byzantine jewelry, and rare artifacts spanning 5,000 years. Based in Hong Kong."
+  structuredData={structuredData}
 >
   <!-- Vignette overlays -->
   <div id="vignette-top" class="pointer-events-none fixed inset-x-0 top-0 h-32 bg-gradient-to-b from-void to-transparent z-40 opacity-0 transition-opacity duration-300"></div>

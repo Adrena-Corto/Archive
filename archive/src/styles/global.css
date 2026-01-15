@@ -230,11 +230,13 @@
     opacity: 0;
     transform: translateY(20px);
     transition: opacity 600ms var(--ease-out-quint), transform 600ms var(--ease-out-quint);
+    will-change: opacity, transform;
   }
 
   .reveal.revealed {
     opacity: 1;
     transform: translateY(0);
+    will-change: auto;
   }
 
   /* Stagger delay for grid children */

@@ -27,26 +27,52 @@ function formatDate(date: Date): string {
   });
 }
 
+const siteUrl = 'https://theantiquearchive.com';
+
 const structuredData = {
   "@context": "https://schema.org",
-  "@type": "Article",
-  "headline": article.data.title,
-  "description": article.data.description,
-  "datePublished": article.data.publishDate.toISOString(),
-  ...(article.data.updatedDate && { "dateModified": article.data.updatedDate.toISOString() }),
-  "author": {
-    "@type": "Person",
-    "name": "The Archive"
-  },
-  "publisher": {
-    "@type": "Organization",
-    "name": "The Archive"
-  }
+  "@graph": [
+    {
+      "@type": "Article",
+      "headline": article.data.title,
+      "description": article.data.description,
+      "datePublished": article.data.publishDate.toISOString(),
+      ...(article.data.updatedDate && { "dateModified": article.data.updatedDate.toISOString() }),
+      "image": article.data.image ? `${siteUrl}${article.data.image}` : `${siteUrl}/og-image.png`,
+      "author": {
+        "@type": "Organization",
+        "name": "The Antique Archive",
+        "url": siteUrl
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "The Antique Archive",
+        "url": siteUrl,
+        "logo": {
+          "@type": "ImageObject",
+          "url": `${siteUrl}/og-image.png`
+        }
+      },
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": `${siteUrl}/library/articles/${article.id}`
+      }
+    },
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
+        { "@type": "ListItem", "position": 2, "name": "Library", "item": `${siteUrl}/library` },
+        { "@type": "ListItem", "position": 3, "name": "Articles", "item": `${siteUrl}/library/articles` },
+        { "@type": "ListItem", "position": 4, "name": article.data.title, "item": `${siteUrl}/library/articles/${article.id}` }
+      ]
+    }
+  ]
 };
 ---
 
 <BaseLayout
-  title={`${article.data.title} | Archive`}
+  title={`${article.data.title} | The Antique Archive`}
   description={article.data.description}
   structuredData={structuredData}
   image={article.data.image}
