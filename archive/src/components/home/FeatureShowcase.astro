@@ -36,8 +36,8 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
 }
 ---
 
-<section class="py-12 md:py-16">
-  <div class="container-narrow">
+<section class="py-12 md:py-16 overflow-x-hidden">
+  <div class="container-narrow overflow-x-hidden">
     <div class="text-center mb-8 md:mb-10">
       <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
         // Explore the Archive
@@ -49,7 +49,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
     </div>
 
     <!-- Bento Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-6 overflow-x-clip">
 
       <!-- Collection Preview (Large - 3 cols) -->
       <a
@@ -138,11 +138,13 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
             const topOffset = (i % 2 === 0 ? -1 : 1) * (12 + (i % 3) * 4);
             return (
               <div
-                class="timeline-dot absolute w-2.5 h-2.5 rounded-full bg-gold/50 transform -translate-x-1/2 transition-all duration-300"
+                class="timeline-dot absolute w-2.5 h-2.5 rounded-full transform -translate-x-1/2"
                 data-index={i}
                 style={`left: ${leftPercent}%; top: calc(50% + ${topOffset}px);`}
               >
-                <div class="dot-ring absolute inset-[-4px] rounded-full border border-gold/0 transition-all duration-300"></div>
+                <div class="dot-inner absolute inset-0 rounded-full bg-gold/50 transition-transform duration-300"></div>
+                <div class="dot-highlight absolute inset-0 rounded-full bg-gold opacity-0 transition-opacity duration-300"></div>
+                <div class="dot-ring absolute inset-[-4px] rounded-full border border-gold opacity-0 transition-opacity duration-300"></div>
               </div>
             );
           })}
@@ -184,7 +186,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
       <!-- Library Preview (Full Width) -->
       <a
         href={url('/library')}
-        class="lg:col-span-5 group relative glass-panel overflow-hidden min-h-[200px] md:min-h-[240px] hover:border-accent/30 transition-all duration-500"
+        class="lg:col-span-5 group relative glass-panel overflow-hidden min-h-[200px] md:min-h-[240px] hover:border-accent/30 transition-all duration-500 max-w-full"
       >
         <div class="absolute inset-0 bg-gradient-to-br from-purple-500/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
@@ -209,6 +211,9 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
                   alt=""
                   class="w-full h-full object-cover"
                   loading="lazy"
+                  width="56"
+                  height="80"
+                  decoding="async"
                 />
               </div>
             ))}
@@ -261,20 +266,8 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
     const parentLink = filmstrip.closest('a');
     if (!parentLink || !track) return;
 
-    const startScroll = () => {
-      track.style.animationPlayState = 'running';
-    };
-
-    const stopScroll = () => {
-      track.style.animationPlayState = 'paused';
-    };
-
-    if (isMobile()) {
-      startScroll();
-    } else {
-      parentLink.addEventListener('mouseenter', startScroll);
-      parentLink.addEventListener('mouseleave', stopScroll);
-    }
+    // Always run at constant speed - opacity changes handled by CSS group-hover
+    track.style.animationPlayState = 'running';
   }
 
   if (document.readyState === 'loading') {
@@ -296,49 +289,52 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
 
     let currentIndex = 0;
     let intervalId: ReturnType<typeof setInterval> | null = null;
+    let isHovered = false;
 
-    const highlightDot = (index: number) => {
+    const highlightDot = (index: number, intense: boolean) => {
       dots.forEach((dot, i) => {
+        const inner = dot.querySelector('.dot-inner') as HTMLElement;
+        const highlight = dot.querySelector('.dot-highlight') as HTMLElement;
         const ring = dot.querySelector('.dot-ring') as HTMLElement;
         if (i === index) {
-          (dot as HTMLElement).style.transform = 'translateX(-50%) scale(1.5)';
-          (dot as HTMLElement).style.backgroundColor = 'rgb(251 191 36)';
-          if (ring) ring.style.borderColor = 'rgb(251 191 36 / 0.5)';
+          if (inner) inner.style.transform = intense ? 'scale(1.5)' : 'scale(1.2)';
+          if (highlight) highlight.style.opacity = intense ? '1' : '0.4';
+          if (ring) ring.style.opacity = intense ? '0.5' : '0';
         } else {
-          (dot as HTMLElement).style.transform = 'translateX(-50%) scale(1)';
-          (dot as HTMLElement).style.backgroundColor = 'rgb(251 191 36 / 0.5)';
-          if (ring) ring.style.borderColor = 'transparent';
+          if (inner) inner.style.transform = 'scale(1)';
+          if (highlight) highlight.style.opacity = '0';
+          if (ring) ring.style.opacity = '0';
         }
       });
     };
 
-    const startCycle = () => {
-      if (intervalId) return;
-      highlightDot(currentIndex);
+    const startCycle = (speed: number, intense: boolean) => {
+      if (intervalId) clearInterval(intervalId);
+      highlightDot(currentIndex, intense);
       intervalId = setInterval(() => {
         currentIndex = (currentIndex + 1) % dots.length;
-        highlightDot(currentIndex);
-      }, 600);
+        highlightDot(currentIndex, intense);
+      }, speed);
     };
 
-    const stopCycle = () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
-      dots.forEach(dot => {
-        (dot as HTMLElement).style.transform = 'translateX(-50%) scale(1)';
-        (dot as HTMLElement).style.backgroundColor = 'rgb(251 191 36 / 0.5)';
-        const ring = dot.querySelector('.dot-ring') as HTMLElement;
-        if (ring) ring.style.borderColor = 'transparent';
-      });
+    // Always run - slow and subtle when idle
+    startCycle(1200, false);
+
+    const intensify = () => {
+      isHovered = true;
+      startCycle(600, true); // Faster and brighter on hover
     };
 
-    if (isMobile()) {
-      startCycle();
+    const relax = () => {
+      isHovered = false;
+      startCycle(1200, false); // Back to slow and subtle
+    };
+
+    if (!isMobile()) {
+      parentLink.addEventListener('mouseenter', intensify);
+      parentLink.addEventListener('mouseleave', relax);
     } else {
-      parentLink.addEventListener('mouseenter', startCycle);
-      parentLink.addEventListener('mouseleave', stopCycle);
+      startCycle(600, true); // Full intensity on mobile
     }
   }
 
@@ -362,8 +358,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
   }
 
   .filmstrip-track {
-    animation: filmstrip-scroll 25s linear infinite;
-    animation-play-state: paused;
+    animation: filmstrip-scroll 40s linear infinite;
     will-change: transform;
   }
 

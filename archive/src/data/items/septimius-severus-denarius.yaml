@@ -8,6 +8,9 @@ material: silver
 weight: ""
 dimensions: ""
 condition: "VF"
+empire: roman
+denomination: Denarius
+ruler: Septimius Severus
 description: "Silver denarius of Emperor Septimius Severus. Obverse features laureate head right with curly beard. Reverse depicts Minerva standing left, holding spear and shield, with partial legend visible including COS."
 images:
   - dscf4539.jpg

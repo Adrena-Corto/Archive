@@ -294,10 +294,10 @@ const itemsDataJson = JSON.stringify(
                   '<h2 class="text-2xl md:text-3xl text-text">' + item.name + '</h2>' +
                 '</div>' +
                 '<div class="grid grid-cols-2 gap-4 text-sm">' +
-                  (item.era ? '<div><p class="text-text-dim font-mono text-xs">Era</p><p class="text-text-muted">' + item.era + '</p></div>' : '') +
-                  (item.origin ? '<div><p class="text-text-dim font-mono text-xs">Origin</p><p class="text-text-muted">' + item.origin + '</p></div>' : '') +
-                  (item.material ? '<div><p class="text-text-dim font-mono text-xs">Material</p><p class="text-text-muted">' + item.material + '</p></div>' : '') +
-                  (item.dimensions ? '<div><p class="text-text-dim font-mono text-xs">Dimensions</p><p class="text-text-muted">' + item.dimensions + '</p></div>' : '') +
+                  (item.era ? '<div><p class="data-label">Era</p><p class="data-value">' + item.era + '</p></div>' : '') +
+                  (item.origin ? '<div><p class="data-label">Origin</p><p class="data-value">' + item.origin + '</p></div>' : '') +
+                  (item.material ? '<div><p class="data-label">Material</p><p class="data-value capitalize">' + item.material + '</p></div>' : '') +
+                  (item.dimensions ? '<div><p class="data-label">Dimensions</p><p class="data-value">' + item.dimensions + '</p></div>' : '') +
                 '</div>' +
                 (item.description ? '<p class="text-text-muted text-sm leading-relaxed">' + item.description + '</p>' : '') +
                 '<a href="' + (data.baseUrl + '/item/' + itemId).replace(/\/+/g, '/') + '" class="inline-flex items-center gap-2 text-accent hover:text-accent/80 font-mono text-sm mt-4">' +

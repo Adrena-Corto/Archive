@@ -27,6 +27,15 @@
 
   body {
     @apply bg-void text-text font-sans antialiased overflow-x-hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Allow text selection in content areas */
+  .prose,
+  .selectable {
+    user-select: text;
+    -webkit-user-select: text;
   }
 
   #matrix-bg {
@@ -152,7 +161,14 @@
   }
 
   .data-value {
-    @apply font-mono text-sm text-text;
+    @apply font-mono text-xs text-text-muted;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .terminal-prefix {

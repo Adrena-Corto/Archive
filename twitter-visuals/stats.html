@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Archive Stats</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0a0f;
+      color: #e5e5e5;
+      font-family: 'SF Mono', 'JetBrains Mono', monospace;
+      padding: 40px;
+      min-height: 100vh;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 900px;
+      margin: 0 auto 40px;
+    }
+    .stat-card {
+      background: linear-gradient(135deg, rgba(0, 212, 212, 0.1) 0%, rgba(0, 212, 212, 0.02) 100%);
+      border: 1px solid rgba(0, 212, 212, 0.3);
+      border-radius: 12px;
+      padding: 32px 24px;
+      text-align: center;
+    }
+    .stat-number {
+      font-size: 48px;
+      font-weight: 700;
+      color: #00d4d4;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #888;
+    }
+    .chart-section {
+      max-width: 900px;
+      margin: 0 auto;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 32px;
+    }
+    .chart-title {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #00d4d4;
+      margin-bottom: 24px;
+    }
+    .bar-chart {
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      height: 120px;
+    }
+    .bar-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+    .bar {
+      width: 100%;
+      background: linear-gradient(180deg, #00d4d4 0%, #00a0a0 100%);
+      border-radius: 4px 4px 0 0;
+      min-height: 4px;
+      transition: height 0.3s ease;
+    }
+    .bar-label {
+      font-size: 10px;
+      color: #666;
+    }
+    .bar-value {
+      font-size: 11px;
+      color: #00d4d4;
+    }
+    .title {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .title h1 {
+      font-size: 24px;
+      font-weight: 400;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .title p {
+      font-size: 12px;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+    }
+    .stack-section {
+      max-width: 900px;
+      margin: 40px auto 0;
+      text-align: center;
+    }
+    .stack-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #666;
+      margin-bottom: 16px;
+    }
+    .stack-items {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+    }
+    .stack-item {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 8px 16px;
+      font-size: 13px;
+      color: #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="title">
+    <h1>The Antique Archive</h1>
+    <p>Built with Claude</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">10,175</div>
+      <div class="stat-label">Lines of Code</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">29</div>
+      <div class="stat-label">Commits</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">~20</div>
+      <div class="stat-label">Claude Sessions</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-number">30</div>
+      <div class="stat-label">Components</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">19</div>
+      <div class="stat-label">Artifacts Cataloged</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">6</div>
+      <div class="stat-label">Articles Written</div>
+    </div>
+  </div>
+
+  <div class="chart-section">
+    <div class="chart-title">// Commits Over Time</div>
+    <div class="bar-chart">
+      <div class="bar-item">
+        <div class="bar-value">6</div>
+        <div class="bar" style="height: 60%"></div>
+        <div class="bar-label">Jan 6</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">3</div>
+        <div class="bar" style="height: 30%"></div>
+        <div class="bar-label">Jan 7</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">1</div>
+        <div class="bar" style="height: 10%"></div>
+        <div class="bar-label">Jan 8</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">2</div>
+        <div class="bar" style="height: 20%"></div>
+        <div class="bar-label">Jan 10</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">1</div>
+        <div class="bar" style="height: 10%"></div>
+        <div class="bar-label">Jan 12</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">3</div>
+        <div class="bar" style="height: 30%"></div>
+        <div class="bar-label">Jan 13</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">3</div>
+        <div class="bar" style="height: 30%"></div>
+        <div class="bar-label">Jan 14</div>
+      </div>
+      <div class="bar-item">
+        <div class="bar-value">10</div>
+        <div class="bar" style="height: 100%"></div>
+        <div class="bar-label">Jan 15</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stack-section">
+    <div class="stack-title">Tech Stack</div>
+    <div class="stack-items">
+      <div class="stack-item">Astro 5</div>
+      <div class="stack-item">Tailwind CSS</div>
+      <div class="stack-item">Alpine.js</div>
+      <div class="stack-item">Pagefind</div>
+      <div class="stack-item">PixiJS</div>
+      <div class="stack-item">ThumbHash</div>
+      <div class="stack-item">Sharp</div>
+      <div class="stack-item">Service Workers</div>
+    </div>
+  </div>
+</body>
+</html>

@@ -16,7 +16,9 @@ interface Particle {
   opacityMult: number;
 }
 
-const PARTICLE_COUNT = 300; // Increased for more layers
+// Reduce particles on mobile for better performance
+const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window);
+const PARTICLE_COUNT = isMobile ? 100 : 200;
 const SPOTLIGHT_RADIUS_MIN = 100;
 const SPOTLIGHT_RADIUS_MAX = 160;
 
@@ -233,35 +235,41 @@ class MatrixEffect {
     const hasStaticLights = this.staticLights.length > 0;
     if (this.lingerIntensity <= 0 && !hasStaticLights) return;
 
+    // Set common text properties once (avoid repeated property sets)
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+
     // Particles are pre-sorted by depth, no need to sort each frame
     for (const p of this.particles) {
       const lightIntensity = this.calculateLightIntensity(p.x, p.y);
-      if (lightIntensity <= 0.01) continue;
+      if (lightIntensity <= 0.02) continue;
 
       const opacity = p.opacityMult * lightIntensity;
-      if (opacity <= 0.01) continue;
+      if (opacity <= 0.02) continue;
 
-      this.ctx.save();
       this.ctx.font = `${p.size}px "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", sans-serif`;
-      this.ctx.textAlign = 'center';
-      this.ctx.textBaseline = 'middle';
 
-      // Simulate blur with reduced opacity and slight glow for far particles (cheaper than filter)
-      if (p.blur > 0) {
-        this.ctx.shadowColor = `rgba(34, 211, 238, ${opacity * 0.6})`;
-        this.ctx.shadowBlur = p.blur * 3;
+      // Simplified rendering - skip expensive shadow effects on mobile
+      if (isMobile) {
+        this.ctx.fillStyle = `rgba(34, 211, 238, ${opacity})`;
+      } else if (p.blur > 0) {
+        // Far particles: subtle blur simulation without expensive shadowBlur
         this.ctx.fillStyle = `rgba(34, 211, 238, ${opacity * 0.7})`;
       } else {
         this.ctx.fillStyle = `rgba(34, 211, 238, ${opacity})`;
-        // Glow effect for near particles
-        if (p.depth > 0.5 && opacity > 0.15) {
-          this.ctx.shadowColor = `rgba(34, 211, 238, ${opacity * 0.6})`;
-          this.ctx.shadowBlur = 6 + (p.depth - 0.5) * 8;
+        // Glow effect only for very visible near particles
+        if (p.depth > 0.6 && opacity > 0.2) {
+          this.ctx.shadowColor = `rgba(34, 211, 238, ${opacity * 0.5})`;
+          this.ctx.shadowBlur = 4 + (p.depth - 0.6) * 6;
         }
       }
 
       this.ctx.fillText(p.char, p.x, p.y);
-      this.ctx.restore();
+
+      // Reset shadow if it was set
+      if (!isMobile && p.depth > 0.6 && opacity > 0.2) {
+        this.ctx.shadowBlur = 0;
+      }
     }
   }
 
@@ -366,8 +374,22 @@ function createAndStartEffect() {
 export async function initMatrixEffect() {
   if (typeof window === 'undefined') return;
 
-  // Create initial effect
-  createAndStartEffect();
+  // Defer initialization to avoid blocking main thread during page load
+  const startEffect = () => {
+    // Use requestIdleCallback if available, otherwise setTimeout
+    if ('requestIdleCallback' in window) {
+      (window as any).requestIdleCallback(() => createAndStartEffect(), { timeout: 2000 });
+    } else {
+      setTimeout(createAndStartEffect, 100);
+    }
+  };
+
+  // Wait for page to be fully interactive before starting
+  if (document.readyState === 'complete') {
+    startEffect();
+  } else {
+    window.addEventListener('load', startEffect, { once: true });
+  }
 
   // Only register View Transition event listeners once
   if (!eventsRegistered) {
@@ -379,7 +401,7 @@ export async function initMatrixEffect() {
 
     document.addEventListener('astro:page-load', () => {
       // Reinitialize with new canvas after page transition
-      createAndStartEffect();
+      startEffect();
     });
   }
 }

@@ -8,6 +8,9 @@ material: silver
 weight: ""
 dimensions: ""
 condition: "VF"
+empire: roman
+denomination: Denarius
+ruler: Julia Domna
 description: "Silver denarius of Empress Julia Domna, wife of Septimius Severus. Obverse features draped bust right with distinctive wavy hair arrangement and legend IVLIA AVGVSTA. Reverse depicts standing female figure, likely Pietas or Ceres."
 images:
   - dscf4542.jpg

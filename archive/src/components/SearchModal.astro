@@ -1,19 +1,64 @@
 ---
-import { getAllItems } from '../lib/items';
+import { getAllItems, getItemById } from '../lib/items';
+import { getCollection } from 'astro:content';
 
 const items = getAllItems();
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const books = await getCollection('books');
 const base = import.meta.env.BASE_URL;
+
+function url(path: string): string {
+  return `${base}${path}`.replace(/\/+/g, '/');
+}
+
+function getArticleImage(article: typeof articles[0]): string | null {
+  if (article.data.image) {
+    return url(article.data.image);
+  }
+  if (article.data.featuredItems && article.data.featuredItems.length > 0) {
+    const firstItemId = article.data.featuredItems[0];
+    const item = getItemById(firstItemId);
+    if (item && item.images && item.images.length > 0) {
+      return url(`/images/items/${item.id}/${item.images[0]}`);
+    }
+  }
+  return null;
+}
 
 const searchableItems = items.map(item => ({
   id: item.id,
   name: item.name,
+  type: 'item' as const,
   category: item.category,
-  era: item.era,
-  period: item.period,
-  material: item.material,
-  image: item.images[0] ? `${base}/images/items/${item.id}/${item.images[0]}`.replace(/\/+/g, '/') : null,
-  tags: item.tags,
+  subtitle: item.era,
+  image: item.images[0] ? url(`/images/items/${item.id}/${item.images[0]}`) : null,
+  searchText: [item.name, item.category, item.period, item.material, item.era, ...(item.tags || [])].join(' ').toLowerCase(),
+  url: url(`/item/${item.id}`),
 }));
+
+const searchableArticles = articles.map(article => ({
+  id: article.id,
+  name: article.data.title,
+  type: 'article' as const,
+  category: 'article',
+  subtitle: article.data.description.slice(0, 60) + '...',
+  image: getArticleImage(article),
+  searchText: [article.data.title, article.data.description, ...(article.data.tags || [])].join(' ').toLowerCase(),
+  url: url(`/library/articles/${article.id}`),
+}));
+
+const searchableBooks = books.map(book => ({
+  id: book.id,
+  name: book.data.title,
+  type: 'book' as const,
+  category: 'book',
+  subtitle: book.data.author,
+  image: book.data.cover ? url(`/images/books/${book.data.cover}`) : null,
+  searchText: [book.data.title, book.data.author, book.data.description, ...(book.data.tags || [])].join(' ').toLowerCase(),
+  url: url(`/library/books/${book.id}`),
+}));
+
+const allSearchable = [...searchableItems, ...searchableArticles, ...searchableBooks];
 ---
 
 <div
@@ -23,27 +68,38 @@ const searchableItems = items.map(item => ({
     query: '',
     results: [],
     selectedIndex: 0,
-    items: ${JSON.stringify(searchableItems)},
+    activeFilters: [],
+    allItems: ${JSON.stringify(allSearchable)},
     toggle() {
       this.open = !this.open;
       if (this.open) {
         this.query = '';
+        this.activeFilters = [];
         this.search();
         this.$nextTick(() => this.$refs.searchInput?.focus());
       }
     },
+    toggleFilter(type) {
+      const idx = this.activeFilters.indexOf(type);
+      if (idx > -1) {
+        this.activeFilters.splice(idx, 1);
+      } else {
+        this.activeFilters.push(type);
+      }
+      this.search();
+    },
     search() {
+      let filtered = this.allItems;
+      if (this.activeFilters.length > 0) {
+        filtered = filtered.filter(i => this.activeFilters.includes(i.type));
+      }
       if (!this.query.trim()) {
-        this.results = this.items.slice(0, 6);
+        this.results = filtered.slice(0, 6);
         return;
       }
       const q = this.query.toLowerCase();
-      this.results = this.items.filter(item =>
-        item.name.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q) ||
-        (item.period && item.period.toLowerCase().includes(q)) ||
-        item.material.toLowerCase().includes(q) ||
-        (item.tags && item.tags.some(t => t.toLowerCase().includes(q)))
+      this.results = filtered.filter(item =>
+        item.searchText.includes(q) || item.name.toLowerCase().includes(q)
       ).slice(0, 8);
       this.selectedIndex = 0;
     },
@@ -67,15 +123,23 @@ const searchableItems = items.map(item => ({
         this.selectedIndex = Math.max(this.selectedIndex - 1, 0);
       } else if (e.key === 'Enter' && this.results.length > 0) {
         e.preventDefault();
-        this.goToItem(this.results[this.selectedIndex].id);
+        this.goToResult(this.results[this.selectedIndex]);
       }
     },
-    goToItem(id) {
+    goToResult(result) {
       this.open = false;
-      window.location.href = '${base}/item/' + id;
+      window.location.href = result.url;
+    },
+    typeLabel(type) {
+      const labels = { item: 'Item', article: 'Article', book: 'Book' };
+      return labels[type] || type;
+    },
+    typeColor(type) {
+      const colors = { item: 'text-cyan-400', article: 'text-violet-400', book: 'text-amber-400' };
+      return colors[type] || 'text-accent';
     },
     categoryLabel(cat) {
-      const labels = { coin: 'Coin', jewelry: 'Jewelry', ring: 'Ring', seal: 'Seal', misc: 'Misc' };
+      const labels = { coin: 'Coin', jewelry: 'Jewelry', ring: 'Ring', seal: 'Seal', misc: 'Misc', article: 'Article', book: 'Book' };
       return labels[cat] || cat;
     }
   }`}
@@ -108,12 +172,12 @@ const searchableItems = items.map(item => ({
     x-transition:leave="transition ease-in duration-150"
     x-transition:leave-start="opacity-100 scale-100"
     x-transition:leave-end="opacity-0 scale-95"
-    class="fixed inset-x-4 top-[15vh] md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-xl"
+    class="fixed inset-x-4 top-[12vh] md:inset-x-auto md:left-1/2 md:-translate-x-1/2 md:w-full md:max-w-2xl"
     x-cloak
   >
     <div class="bg-surface border border-border rounded-xl shadow-2xl overflow-hidden">
       <!-- Search Input -->
-      <div class="flex items-center gap-3 px-4 py-3 border-b border-border">
+      <div class="flex items-center gap-3 px-5 py-4 border-b border-border">
         <svg class="w-5 h-5 text-text-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
@@ -122,25 +186,51 @@ const searchableItems = items.map(item => ({
           x-model="query"
           @input="search()"
           type="text"
-          placeholder="Search items..."
-          class="flex-1 bg-transparent text-text placeholder-text-dim outline-none font-mono text-sm"
+          placeholder="Search items, articles, books..."
+          class="flex-1 bg-transparent text-text placeholder-text-dim outline-none font-mono text-base"
         />
         <kbd class="hidden sm:flex items-center gap-1 px-2 py-1 text-[10px] font-mono text-text-dim bg-surface-light rounded border border-border">
           ESC
         </kbd>
       </div>
 
+      <!-- Type Filters -->
+      <div class="flex items-center gap-2 px-5 py-2 border-b border-border bg-surface-light/30">
+        <span class="text-[10px] font-mono text-text-dim uppercase tracking-wider mr-1">Filter:</span>
+        <button
+          @click="toggleFilter('item')"
+          :class="activeFilters.includes('item') ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-transparent border-border text-text-dim hover:border-cyan-500/30 hover:text-cyan-400'"
+          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+        >
+          Items
+        </button>
+        <button
+          @click="toggleFilter('article')"
+          :class="activeFilters.includes('article') ? 'bg-violet-500/20 border-violet-500/50 text-violet-400' : 'bg-transparent border-border text-text-dim hover:border-violet-500/30 hover:text-violet-400'"
+          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+        >
+          Articles
+        </button>
+        <button
+          @click="toggleFilter('book')"
+          :class="activeFilters.includes('book') ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-transparent border-border text-text-dim hover:border-amber-500/30 hover:text-amber-400'"
+          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+        >
+          Books
+        </button>
+      </div>
+
       <!-- Results -->
       <div class="max-h-[50vh] overflow-y-auto">
         <template x-if="results.length === 0 && query.trim()">
           <div class="px-4 py-8 text-center">
-            <p class="font-mono text-sm text-text-dim">No items found</p>
+            <p class="font-mono text-sm text-text-dim">No results found</p>
           </div>
         </template>
 
         <template x-for="(item, index) in results" :key="item.id">
           <button
-            @click="goToItem(item.id)"
+            @click="goToResult(item)"
             @mouseenter="selectedIndex = index"
             :class="selectedIndex === index ? 'bg-accent/10 border-l-accent' : 'border-l-transparent hover:bg-surface-light'"
             class="w-full flex items-center gap-4 px-4 py-3 border-l-2 transition-colors"
@@ -150,19 +240,31 @@ const searchableItems = items.map(item => ({
                 <img :src="item.image" :alt="item.name" class="w-full h-full object-cover" />
               </template>
               <template x-if="!item.image">
-                <div class="w-full h-full flex items-center justify-center">
-                  <svg class="w-5 h-5 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
+                <div class="w-full h-full flex items-center justify-center" :class="typeColor(item.type)">
+                  <template x-if="item.type === 'article'">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                    </svg>
+                  </template>
+                  <template x-if="item.type === 'book'">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                  </template>
+                  <template x-if="item.type === 'item'">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                  </template>
                 </div>
               </template>
             </div>
             <div class="flex-1 text-left min-w-0">
               <p class="text-text font-medium truncate" x-text="item.name"></p>
-              <p class="text-text-dim text-xs font-mono">
-                <span x-text="categoryLabel(item.category)" class="text-accent"></span>
-                <span class="mx-1">·</span>
-                <span x-text="item.era"></span>
+              <p class="text-text-dim text-xs font-mono flex items-center gap-1">
+                <span x-text="typeLabel(item.type)" :class="typeColor(item.type)"></span>
+                <span class="mx-0.5">·</span>
+                <span x-text="item.subtitle" class="truncate"></span>
               </p>
             </div>
             <svg class="w-4 h-4 text-text-dim flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -185,7 +287,8 @@ const searchableItems = items.map(item => ({
           </span>
         </div>
         <a
-          href={`${base}/search`}
+          href="/search"
+          @click="open = false"
           class="text-[10px] font-mono text-accent hover:underline"
         >
           Full search →

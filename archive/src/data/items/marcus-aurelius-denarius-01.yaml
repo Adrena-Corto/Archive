@@ -8,6 +8,9 @@ material: silver
 weight: ""
 dimensions: ""
 condition: "VF"
+empire: roman
+denomination: Denarius
+ruler: Marcus Aurelius
 description: "Silver denarius of Emperor Marcus Aurelius. Obverse features laureate bust right with legend M ANTONINVS AVG. Reverse depicts Concordia seated left, holding patera, with legend CONCORD AVG TR P XVI COS III."
 images:
   - dscf4431.jpg

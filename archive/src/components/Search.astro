@@ -1,9 +1,11 @@
 ---
-import { getAllItems, getArtifactCategories } from '../lib/items';
-import ItemCard from './ItemCard.astro';
+import { getAllItems, getArtifactCategories, getItemById } from '../lib/items';
+import { getCollection } from 'astro:content';
 
 const base = import.meta.env.BASE_URL || '/';
 const items = getAllItems();
+const articles = await getCollection('articles', ({ data }) => !data.draft);
+const books = await getCollection('books');
 const artifactCategories = getArtifactCategories();
 
 const categoryLabels: Record<string, string> = {
@@ -14,6 +16,12 @@ const categoryLabels: Record<string, string> = {
   misc: 'Miscellaneous',
 };
 
+const typeLabels: Record<string, string> = {
+  item: 'Item',
+  article: 'Article',
+  book: 'Book',
+};
+
 const popularTags = ['roman', 'greek', 'silver', 'gold', 'ancient'];
 const recentItems = items.slice(0, 3);
 
@@ -21,23 +29,68 @@ function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 
-// Prepare items data for client-side search
-const itemsData = JSON.stringify(items.map(item => ({
+function getArticleImage(article: typeof articles[0]): string | null {
+  if (article.data.image) {
+    return url(article.data.image);
+  }
+  if (article.data.featuredItems && article.data.featuredItems.length > 0) {
+    const firstItemId = article.data.featuredItems[0];
+    const item = getItemById(firstItemId);
+    if (item && item.images && item.images.length > 0) {
+      return url(`/images/items/${item.id}/${item.images[0]}`);
+    }
+  }
+  return null;
+}
+
+// Prepare unified search data
+const searchableItems = items.map(item => ({
   id: item.id,
   name: item.name,
+  type: 'item',
   category: item.category,
-  era: item.era,
-  period: item.period,
-  origin: item.origin,
-  material: item.material,
-  weight: item.weight,
+  subtitle: item.era,
   description: item.description,
-  images: item.images,
-  tags: item.tags,
-})));
+  image: item.images[0] ? url(`/images/items/${item.id}/${item.images[0]}`) : null,
+  url: url(`/item/${item.id}`),
+  searchText: [item.name, item.description, item.category, item.material, item.origin, item.period, item.era, ...(item.tags || [])].join(' ').toLowerCase(),
+  material: item.material,
+  period: item.period,
+}));
+
+const searchableArticles = articles.map(article => ({
+  id: article.id,
+  name: article.data.title,
+  type: 'article',
+  category: 'article',
+  subtitle: article.data.description.slice(0, 80) + '...',
+  description: article.data.description,
+  image: getArticleImage(article),
+  url: url(`/library/articles/${article.id}`),
+  searchText: [article.data.title, article.data.description, ...(article.data.tags || [])].join(' ').toLowerCase(),
+  material: null,
+  period: null,
+}));
+
+const searchableBooks = books.map(book => ({
+  id: book.id,
+  name: book.data.title,
+  type: 'book',
+  category: 'book',
+  subtitle: book.data.author,
+  description: book.data.description,
+  image: book.data.cover ? url(`/images/books/${book.data.cover}`) : null,
+  url: url(`/library/books/${book.id}`),
+  searchText: [book.data.title, book.data.author, book.data.description, ...(book.data.tags || [])].join(' ').toLowerCase(),
+  material: null,
+  period: null,
+}));
+
+const allSearchable = [...searchableItems, ...searchableArticles, ...searchableBooks];
+const searchData = JSON.stringify(allSearchable);
 ---
 
-<div id="search-wrapper" class="search-wrapper" data-base-url={base} data-items={itemsData}>
+<div id="search-wrapper" class="search-wrapper" data-base-url={base} data-items={searchData}>
   <!-- Custom search input -->
   <div class="search-input-container">
     <div class="search-input-wrapper">
@@ -48,11 +101,30 @@ const itemsData = JSON.stringify(items.map(item => ({
         type="text"
         id="search-input"
         class="search-input"
-        placeholder="Search items..."
+        placeholder="Search items, articles, books..."
         autocomplete="off"
       />
       <button id="search-clear" class="search-clear" style="display: none;">
         × Clear
+      </button>
+    </div>
+  </div>
+
+  <!-- Type filters (persists during search, so visually distinct) -->
+  <div class="type-filters">
+    <span class="filter-label">// Search in</span>
+    <div class="flex flex-wrap gap-2">
+      <button class="type-toggle active" data-type="item">
+        <span class="toggle-indicator"></span>
+        Items
+      </button>
+      <button class="type-toggle active" data-type="article">
+        <span class="toggle-indicator"></span>
+        Articles
+      </button>
+      <button class="type-toggle active" data-type="book">
+        <span class="toggle-indicator"></span>
+        Books
       </button>
     </div>
   </div>
@@ -75,17 +147,11 @@ const itemsData = JSON.stringify(items.map(item => ({
     <div>
       <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Browse Collections</h3>
       <div class="flex flex-wrap gap-2">
-        <button
-          class="browse-btn px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
-          data-category="coin"
-        >
+        <button class="browse-btn" data-category="coin">
           {categoryLabels['coin']}
         </button>
         {artifactCategories.map((cat) => (
-          <button
-            class="browse-btn px-4 py-2 bg-surface-light border border-border rounded-lg font-mono text-sm text-text-muted hover:border-accent hover:text-accent transition-all duration-200"
-            data-category={cat}
-          >
+          <button class="browse-btn" data-category={cat}>
             {categoryLabels[cat]}
           </button>
         ))}
@@ -97,10 +163,7 @@ const itemsData = JSON.stringify(items.map(item => ({
       <h3 class="font-mono text-xs uppercase tracking-wider text-accent mb-4">// Popular Searches</h3>
       <div class="flex flex-wrap gap-2">
         {popularTags.map((tag) => (
-          <button
-            class="search-tag-btn px-3 py-1.5 bg-surface border border-border rounded font-mono text-xs text-text-dim hover:border-accent hover:text-accent transition-all duration-200"
-            data-search-term={tag}
-          >
+          <button class="search-tag-btn" data-search-term={tag}>
             {tag}
           </button>
         ))}
@@ -122,7 +185,7 @@ const itemsData = JSON.stringify(items.map(item => ({
             <p class="text-text group-hover:text-accent transition-colors mt-1">
               {item.name}
             </p>
-            <p class="font-mono text-xs text-text-dim mt-1">{item.era}</p>
+            <p class="data-label mt-1">{item.era}</p>
           </a>
         ))}
       </div>
@@ -131,19 +194,31 @@ const itemsData = JSON.stringify(items.map(item => ({
 </div>
 
 <script>
-  interface ItemData {
+  interface SearchableItem {
     id: string;
     name: string;
+    type: 'item' | 'article' | 'book';
     category: string;
-    era: string;
-    period: string;
-    origin: string;
-    material: string;
-    weight?: string;
+    subtitle: string;
     description: string;
-    images: string[];
-    tags: string[];
+    image: string | null;
+    url: string;
+    searchText: string;
+    material: string | null;
+    period: string | null;
   }
+
+  const typeLabels: Record<string, string> = {
+    item: 'ITEM',
+    article: 'ARTICLE',
+    book: 'BOOK',
+  };
+
+  const typeColors: Record<string, string> = {
+    item: 'text-cyan-400',
+    article: 'text-violet-400',
+    book: 'text-amber-400',
+  };
 
   const categoryLabels: Record<string, string> = {
     coin: 'COIN',
@@ -166,97 +241,164 @@ const itemsData = JSON.stringify(items.map(item => ({
 
     if (!wrapper || !searchInput) return;
 
-    const baseUrl = wrapper.dataset.baseUrl || '/';
-    const items: ItemData[] = JSON.parse(wrapper.dataset.items || '[]');
+    const allItems: SearchableItem[] = JSON.parse(wrapper.dataset.items || '[]');
 
-    function url(path: string): string {
-      return `${baseUrl}${path}`.replace(/\/+/g, '/');
+    // Type filter state
+    const activeTypes = new Set<string>(['item', 'article', 'book']);
+
+    function getArticleMinimap(): string {
+      return `
+        <div class="article-minimap-preview">
+          <div class="minimap-line heading" style="width: 60%"></div>
+          <div class="minimap-line" style="width: 100%"></div>
+          <div class="minimap-line" style="width: 90%"></div>
+          <div class="minimap-line" style="width: 100%"></div>
+          <div class="minimap-line heading" style="width: 50%; margin-top: 6px"></div>
+          <div class="minimap-line" style="width: 100%"></div>
+          <div class="minimap-line" style="width: 85%"></div>
+          <div class="minimap-line" style="width: 100%"></div>
+          <div class="minimap-line" style="width: 75%"></div>
+          <div class="minimap-line heading" style="width: 55%; margin-top: 6px"></div>
+          <div class="minimap-line" style="width: 100%"></div>
+          <div class="minimap-line" style="width: 92%"></div>
+        </div>
+      `;
     }
 
-    function renderItemCard(item: ItemData): string {
-      const imagePath = item.images[0] ? url(`/images/items/${item.id}/${item.images[0]}`) : null;
+    function getBookIcon(): string {
+      return `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+      </svg>`;
+    }
+
+    function getItemIcon(): string {
+      return `<svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+      </svg>`;
+    }
+
+    // Cache for rendered card elements (avoid re-rendering and image reloading)
+    const cardCache = new Map<string, HTMLElement>();
+
+    function renderResultCard(item: SearchableItem): string {
+      const typeColor = typeColors[item.type] || 'text-accent';
+      const typeLabel = item.type === 'item'
+        ? (categoryLabels[item.category] || item.category.toUpperCase())
+        : typeLabels[item.type];
 
       return `
-        <a href="${url(`/item/${item.id}`)}" class="group block glass-panel-solid overflow-hidden card-hover">
+        <a href="${item.url}" class="search-result-card group block glass-panel-solid overflow-hidden card-hover" data-item-id="${item.id}" data-item-type="${item.type}">
           <div class="aspect-[4/3] bg-surface-light overflow-hidden relative">
-            ${imagePath ? `
-              <div class="relative w-full h-full">
-                <div class="absolute inset-0 skeleton-pulse"></div>
+            ${item.type === 'article' && item.image ? `
+              <div class="relative w-full h-full article-card-preview">
+                <div class="search-img-skeleton absolute inset-0 skeleton-pulse"></div>
                 <img
-                  src="${imagePath}"
+                  src="${item.image}"
                   alt="${item.name}"
                   width="400"
                   height="300"
-                  class="img-fade-in w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-[filter] duration-300"
+                  class="search-img absolute inset-0 w-full h-full object-cover brightness-90 group-hover:brightness-100 transition-all duration-300"
                   loading="lazy"
-                  onload="this.classList.add('loaded')"
+                  onload="this.style.opacity='1'; this.previousElementSibling.style.opacity='0';"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-violet-950/80 via-violet-950/20 to-transparent"></div>
+              </div>
+            ` : item.image ? `
+              <div class="relative w-full h-full search-img-wrapper">
+                <div class="search-img-skeleton absolute inset-0 skeleton-pulse"></div>
+                <img
+                  src="${item.image}"
+                  alt="${item.name}"
+                  width="400"
+                  height="300"
+                  class="search-img absolute inset-0 w-full h-full object-cover brightness-90 group-hover:brightness-110 transition-all duration-300"
+                  loading="lazy"
+                  onload="this.style.opacity='0.9'; this.previousElementSibling.style.opacity='0';"
                 />
               </div>
+            ` : item.type === 'article' ? `
+              <div class="w-full h-full flex items-center justify-center bg-surface/50 p-6">
+                ${getArticleMinimap()}
+              </div>
             ` : `
-              <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface">
-                <svg class="w-8 h-8 text-text-dim" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span class="font-mono text-[10px] text-text-dim uppercase tracking-wider">No Image</span>
+              <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface ${typeColor}">
+                ${item.type === 'book' ? getBookIcon() : getItemIcon()}
+                <span class="font-mono text-[10px] uppercase tracking-wider opacity-60">${typeLabels[item.type]}</span>
               </div>
             `}
             <div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </div>
           <div class="p-4 space-y-3">
             <div class="flex items-center gap-2">
-              <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
-                ${categoryLabels[item.category] || item.category.toUpperCase()}
+              <span class="font-mono text-[10px] uppercase tracking-wider ${typeColor}">
+                ${typeLabel}
               </span>
-              <span class="text-text-dim">·</span>
-              <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim">
-                ${item.period}
-              </span>
+              ${item.period ? `
+                <span class="text-text-dim">·</span>
+                <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim">
+                  ${item.period}
+                </span>
+              ` : ''}
             </div>
             <div class="border-t border-border pt-3">
-              <h3 class="text-lg text-text leading-tight group-hover:text-accent transition-colors duration-300">
+              <h3 class="text-lg text-text leading-tight group-hover:text-accent transition-colors duration-300 line-clamp-2 min-h-[2.5rem]">
                 ${item.name}
               </h3>
             </div>
-            <div class="space-y-1.5 pt-2">
-              <div class="flex items-center justify-between">
-                <span class="data-label">Era</span>
-                <span class="data-value">${item.era}</span>
-              </div>
-              <div class="flex items-center justify-between">
-                <span class="data-label">Material</span>
-                <span class="data-value capitalize">${item.material}</span>
-              </div>
-            </div>
+            <p class="text-sm text-text-dim line-clamp-2">${item.subtitle}</p>
           </div>
         </a>
       `;
     }
 
-    function searchItems(query: string): ItemData[] {
+    function getOrCreateCard(item: SearchableItem): HTMLElement {
+      if (cardCache.has(item.id)) {
+        return cardCache.get(item.id)!;
+      }
+      const template = document.createElement('template');
+      template.innerHTML = renderResultCard(item).trim();
+      const card = template.content.firstChild as HTMLElement;
+      cardCache.set(item.id, card);
+      return card;
+    }
+
+    function searchItems(query: string): SearchableItem[] {
       if (!query.trim()) return [];
-
       const q = query.toLowerCase();
-      return items.filter(item => {
-        return (
-          item.name.toLowerCase().includes(q) ||
-          item.description.toLowerCase().includes(q) ||
-          item.category.toLowerCase().includes(q) ||
-          item.material.toLowerCase().includes(q) ||
-          item.origin.toLowerCase().includes(q) ||
-          item.period.toLowerCase().includes(q) ||
-          item.era.toLowerCase().includes(q) ||
-          item.tags.some(tag => tag.toLowerCase().includes(q))
-        );
-      });
+      return allItems
+        .filter(item => activeTypes.has(item.type))
+        .filter(item => item.searchText.includes(q) || item.name.toLowerCase().includes(q));
     }
 
-    function filterByCategory(category: string): ItemData[] {
-      return items.filter(item => item.category === category);
+    function filterByCategory(category: string): SearchableItem[] {
+      return allItems
+        .filter(item => activeTypes.has(item.type))
+        .filter(item => item.category === category);
     }
 
-    function showResults(results: ItemData[], query: string, isCategory = false) {
+    // Track currently displayed result IDs to avoid unnecessary DOM manipulation
+    let currentResultIds = new Set<string>();
+
+    function showResults(results: SearchableItem[], query: string, isCategory = false) {
       if (resultsGrid) {
-        resultsGrid.innerHTML = results.map(renderItemCard).join('');
+        const newResultIds = new Set(results.map(r => r.id));
+
+        // Check if results are exactly the same (same items in same order)
+        const currentIds = Array.from(resultsGrid.querySelectorAll('.search-result-card'))
+          .map(el => (el as HTMLElement).dataset.itemId);
+        const newIds = results.map(r => r.id);
+        const isSameOrder = currentIds.length === newIds.length &&
+          currentIds.every((id, i) => id === newIds[i]);
+
+        if (!isSameOrder) {
+          // Rebuild grid - but reuse cached card elements (preserves loaded images)
+          resultsGrid.innerHTML = '';
+          results.forEach(item => {
+            const card = getOrCreateCard(item);
+            resultsGrid.appendChild(card);
+          });
+          currentResultIds = newResultIds;
+        }
       }
 
       if (searchStatus && searchCount && searchTermEl) {
@@ -278,8 +420,32 @@ const itemsData = JSON.stringify(items.map(item => ({
       }
     }
 
+    // Track current search state
+    let currentCategory: string | null = null;
+    let lastSearchQuery: string | null = null;
+
     function handleSearch() {
       const query = searchInput.value.trim();
+
+      // If query changed, clear the card cache
+      if (query !== lastSearchQuery) {
+        cardCache.clear();
+        currentResultIds.clear();
+        lastSearchQuery = query;
+      }
+
+      // Check if this is a category filter
+      if (query.startsWith('category:')) {
+        const category = query.replace('category:', '');
+        currentCategory = category;
+        const results = filterByCategory(category);
+        const label = categoryLabels[category.toUpperCase()] || category;
+        showResults(results, label, true);
+        return;
+      }
+
+      currentCategory = null;
+
       if (!query) {
         showResults([], '');
         return;
@@ -327,6 +493,31 @@ const itemsData = JSON.stringify(items.map(item => ({
         }
       });
     });
+
+    // Type toggle buttons
+    document.querySelectorAll('.type-toggle').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const type = (btn as HTMLElement).dataset.type;
+        if (!type) return;
+
+        if (activeTypes.has(type)) {
+          // Don't allow disabling all types
+          if (activeTypes.size > 1) {
+            activeTypes.delete(type);
+            btn.classList.remove('active');
+          }
+        } else {
+          activeTypes.add(type);
+          btn.classList.add('active');
+        }
+
+        // Re-run search with new filters
+        handleSearch();
+      });
+    });
+
+    // Auto-focus the search input
+    searchInput.focus();
   }
 
   // Initialize on page load and after View Transitions
@@ -421,5 +612,218 @@ const itemsData = JSON.stringify(items.map(item => ({
 
   .search-results {
     margin-top: 8px;
+  }
+
+  /* Article minimap preview (fallback when no image) */
+  .article-minimap-preview {
+    width: 100%;
+    max-width: 120px;
+    padding: 12px;
+    background: rgba(15, 15, 20, 0.8);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .minimap-line {
+    height: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 1px;
+  }
+
+  .minimap-line.heading {
+    height: 4px;
+    background: rgba(167, 139, 250, 0.5);
+  }
+
+  .group:hover .article-minimap-preview {
+    border-color: rgba(167, 139, 250, 0.3);
+  }
+
+  .group:hover .minimap-line.heading {
+    background: rgba(167, 139, 250, 0.7);
+  }
+
+  /* Article corner badge */
+  .article-corner-badge {
+    display: inline-block;
+    padding: 4px 10px;
+    background: rgba(167, 139, 250, 0.9);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.3s ease;
+  }
+
+  .group:hover .article-corner-badge {
+    background: rgba(167, 139, 250, 1);
+    box-shadow: 0 2px 12px rgba(167, 139, 250, 0.5);
+  }
+
+  /* Type filters panel - persists during search */
+  .type-filters {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background: rgba(18, 18, 26, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    border-radius: 10px;
+  }
+
+  .filter-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #22d3ee;
+    white-space: nowrap;
+  }
+
+  /* Unified chip button base */
+  .chip-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #71717a;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .chip-btn:hover {
+    background: rgba(34, 211, 238, 0.08);
+    border-color: rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+  }
+
+  .chip-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Type toggles - extend chip-btn with colored indicators */
+  .type-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #71717a;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .type-toggle .toggle-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.25s ease;
+    flex-shrink: 0;
+  }
+
+  .type-toggle:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  /* Item type - cyan */
+  .type-toggle[data-type="item"].active {
+    color: #22d3ee;
+  }
+
+  .type-toggle[data-type="item"].active .toggle-indicator {
+    background: #22d3ee;
+    box-shadow: 0 0 6px rgba(34, 211, 238, 0.6);
+  }
+
+  /* Article type - violet */
+  .type-toggle[data-type="article"].active {
+    color: #a78bfa;
+  }
+
+  .type-toggle[data-type="article"].active .toggle-indicator {
+    background: #a78bfa;
+    box-shadow: 0 0 6px rgba(167, 139, 250, 0.6);
+  }
+
+  /* Book type - amber */
+  .type-toggle[data-type="book"].active {
+    color: #fbbf24;
+  }
+
+  .type-toggle[data-type="book"].active .toggle-indicator {
+    background: #fbbf24;
+    box-shadow: 0 0 6px rgba(251, 191, 36, 0.6);
+  }
+
+  /* Inactive state */
+  .type-toggle:not(.active) {
+    opacity: 0.5;
+  }
+
+  .type-toggle:not(.active):hover {
+    opacity: 0.75;
+  }
+
+  /* Browse & search tag buttons - use same base as chip-btn */
+  .browse-btn,
+  .search-tag-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: #71717a;
+    cursor: pointer;
+    transition: all 0.25s ease;
+  }
+
+  .browse-btn:hover,
+  .search-tag-btn:hover {
+    background: rgba(34, 211, 238, 0.08);
+    border-color: rgba(34, 211, 238, 0.3);
+    color: #22d3ee;
+  }
+
+  .browse-btn:active,
+  .search-tag-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Search result image loading */
+  .search-img-wrapper {
+    background: rgba(30, 30, 40, 0.5);
+  }
+
+  .search-img {
+    opacity: 0;
+    transition: opacity 0.4s ease-out, filter 0.3s ease;
+  }
+
+  .search-img-skeleton {
+    pointer-events: none;
+    transition: opacity 0.3s ease-out;
   }
 </style>

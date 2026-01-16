@@ -37,6 +37,10 @@ public/
     items/        # Item photographs
 ```
 
+## Site Map
+
+See `SITEMAP.md` for a visual map of all pages, routes, and navigation flows. **Keep this file up to date** when adding or modifying pages.
+
 ## Item Schema
 
 Each item in `src/data/items/*.yaml`:
@@ -57,6 +61,46 @@ images:
   - filename.jpg
 tags: [tag1, tag2]
 ```
+
+### Coin-Specific Fields (Required for Coins)
+
+Coins have additional fields that power the hierarchical filter system on `/coins`:
+
+```yaml
+# Add these fields to coin items:
+empire: roman | byzantine | greek | persian | islamic | other
+denomination: "Denarius" | "Tetarteron" | "Solidus" | "Drachm" | etc.
+ruler: "Marcus Aurelius" | "Constantine IX" | etc.
+```
+
+**Important:** The filter UI auto-generates from this data:
+- New empires appear as pill buttons automatically
+- New denominations/rulers appear as sub-filters under their empire
+- Counts update automatically based on collection data
+
+**Example coin YAML:**
+```yaml
+id: septimius-severus-denarius
+name: "Septimius Severus Denarius"
+category: coin
+era: "193-211 AD"
+period: "Roman Imperial"
+origin: "Rome"
+material: silver
+condition: "VF"
+empire: roman           # <- Required for coins
+denomination: Denarius  # <- Required for coins
+ruler: Septimius Severus # <- Required for coins
+description: "Silver denarius of Emperor..."
+images:
+  - obverse.jpg
+  - reverse.jpg
+tags: [roman, denarius, silver, severan]
+```
+
+**Valid empire values:** `roman`, `byzantine`, `greek`, `persian`, `islamic`, `other`
+
+When adding new empires, update `empireLabels` in `src/components/CoinFilterBar.astro` to add a display name.
 
 ## Commands
 

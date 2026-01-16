@@ -3,7 +3,7 @@ title: "Marcus Aurelius: The Philosopher-Emperor in Silver"
 description: "Tracing the life and apotheosis of Rome's philosopher-emperor through his coinage, from living ruler to divine ancestor."
 publishDate: 2026-01-15
 tags: [coins, roman, marcus aurelius, antonine, history]
-featuredItems: [marcus-aurelius-denarius-01, divus-marcus-aurelius-denarius]
+featuredItems: [divus-marcus-aurelius-denarius, marcus-aurelius-denarius-01]
 ---
 
 Marcus Aurelius ruled Rome from 161 to 180 AD, and his silver denarii tell the story of his reign in miniature. But Roman imperial coinage didn't end with an emperor's death—it marked a transformation from mortal ruler to god.

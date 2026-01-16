@@ -3,7 +3,7 @@ title: "Understanding Coin Grades: From VG to AU"
 description: "A practical guide to the standard coin grading scale, what each grade means, and how to assess wear on ancient coins."
 publishDate: 2025-01-11
 tags: [coins, grading, guide, collecting]
-featuredItems: [marcus-aurelius-denarius-01]
+featuredItems: [septimius-severus-denarius]
 ---
 
 Coin grading is part science, part art. Understanding the standard scale helps you evaluate coins accurately—and avoid overpaying for pieces that don't match their description.

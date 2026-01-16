@@ -7,9 +7,18 @@ import sitemap from '@astrojs/sitemap';
 export default defineConfig({
   integrations: [
     tailwind(),
-    alpinejs(),
+    alpinejs({ entrypoint: '/src/entrypoint' }),
     sitemap(),
   ],
   site: 'https://theantiquearchive.com',
   // base: '/Archive', // Not needed with custom domain
+  build: {
+    inlineStylesheets: 'auto',
+  },
+  vite: {
+    build: {
+      cssCodeSplit: true,
+      cssMinify: true,
+    },
+  },
 });

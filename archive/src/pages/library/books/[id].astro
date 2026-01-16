@@ -66,21 +66,21 @@ const categoryLabels: Record<string, string> = {
           <div class="glass-panel p-6 mb-8">
             <dl class="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Publisher</dt>
-                <dd class="text-text">{book.data.publisher}</dd>
+                <dt class="data-label mb-1">Publisher</dt>
+                <dd class="data-value">{book.data.publisher}</dd>
               </div>
               <div>
-                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Year</dt>
-                <dd class="text-text">{book.data.year}</dd>
+                <dt class="data-label mb-1">Year</dt>
+                <dd class="data-value">{book.data.year}</dd>
               </div>
               <div>
-                <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">ISBN</dt>
-                <dd class="text-text font-mono text-xs">{book.data.isbn}</dd>
+                <dt class="data-label mb-1">ISBN</dt>
+                <dd class="data-value">{book.data.isbn}</dd>
               </div>
               {book.data.pages && (
                 <div>
-                  <dt class="text-text-dim font-mono text-xs uppercase tracking-wider mb-1">Pages</dt>
-                  <dd class="text-text">{book.data.pages}</dd>
+                  <dt class="data-label mb-1">Pages</dt>
+                  <dd class="data-value">{book.data.pages}</dd>
                 </div>
               )}
             </dl>

@@ -2,6 +2,8 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'yaml';
 
+export type Empire = 'roman' | 'byzantine' | 'greek' | 'persian' | 'islamic' | 'other';
+
 export interface Item {
   id: string;
   name: string;
@@ -19,6 +21,7 @@ export interface Item {
   featured?: boolean;
   dateAdded?: string;
   // Coin-specific fields
+  empire?: Empire;
   denomination?: string;
   ruler?: string;
   obverse?: string;
@@ -27,6 +30,7 @@ export interface Item {
 
 export type CoinItem = Item & {
   category: 'coin';
+  empire?: Empire;
   denomination?: string;
   ruler?: string;
   obverse?: string;
@@ -99,6 +103,37 @@ export function getAllDenominations(): string[] {
   const coins = getCoins();
   const denominations = new Set(coins.map(coin => coin.denomination).filter((d): d is string => !!d));
   return Array.from(denominations).sort();
+}
+
+export function getAllEmpires(): Empire[] {
+  const coins = getCoins();
+  const empires = new Set(coins.map(coin => coin.empire).filter((e): e is Empire => !!e));
+  return Array.from(empires).sort();
+}
+
+export function getDenominationsByEmpire(empire: Empire | 'all'): string[] {
+  const coins = getCoins();
+  const filtered = empire === 'all' ? coins : coins.filter(c => c.empire === empire);
+  const denominations = new Set(filtered.map(c => c.denomination).filter((d): d is string => !!d));
+  return Array.from(denominations).sort();
+}
+
+export function getRulersByEmpire(empire: Empire | 'all'): string[] {
+  const coins = getCoins();
+  const filtered = empire === 'all' ? coins : coins.filter(c => c.empire === empire);
+  const rulers = new Set(filtered.map(c => c.ruler).filter((r): r is string => !!r));
+  return Array.from(rulers).sort();
+}
+
+export function getCoinCountByEmpire(): Record<Empire | 'all', number> {
+  const coins = getCoins();
+  const counts: Record<string, number> = { all: coins.length };
+  coins.forEach(coin => {
+    if (coin.empire) {
+      counts[coin.empire] = (counts[coin.empire] || 0) + 1;
+    }
+  });
+  return counts as Record<Empire | 'all', number>;
 }
 
 export function getArtifactCategories(): Exclude<Item['category'], 'coin'>[] {

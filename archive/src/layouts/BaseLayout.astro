@@ -54,8 +54,8 @@ function isActive(path: string): boolean {
     <link rel="alternate" type="application/rss+xml" title="The Archive Articles" href={url('/rss.xml')} />
 
     <!-- Preload critical fonts -->
-    <link rel="preload" href={url('/fonts/space-grotesk-variable.woff2')} as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href={url('/fonts/JetBrainsMono-Regular.woff2')} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -85,28 +85,28 @@ function isActive(path: string): boolean {
         font-style: normal;
         font-weight: 300 700;
         font-display: swap;
-        src: url('${base}/fonts/space-grotesk-variable.woff2') format('woff2');
+        src: url('/fonts/space-grotesk-variable.woff2') format('woff2');
       }
       @font-face {
         font-family: 'JetBrains Mono';
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url('${base}/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+        src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
       }
       @font-face {
         font-family: 'Noto Sans Cuneiform';
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url('${base}/fonts/noto-sans-cuneiform.woff2') format('woff2');
+        src: url('/fonts/noto-sans-cuneiform.woff2') format('woff2');
       }
       @font-face {
         font-family: 'Noto Sans Egyptian Hieroglyphs';
         font-style: normal;
         font-weight: 400;
         font-display: swap;
-        src: url('${base}/fonts/noto-sans-egyptian-hieroglyphs.woff2') format('woff2');
+        src: url('/fonts/noto-sans-egyptian-hieroglyphs.woff2') format('woff2');
       }
     `} />
     <title>{title}</title>
@@ -168,33 +168,40 @@ function isActive(path: string): boolean {
               class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
               aria-current={isActive('/about') ? 'page' : undefined}
             >About</a>
-            <button
-              @click="window.dispatchEvent(new CustomEvent('toggle-search'))"
-              class="nav-link font-mono text-xs uppercase tracking-widest flex items-center gap-1.5"
-              aria-label="Search (Cmd+K)"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <span>Search</span>
-              <kbd class="ml-1 px-1.5 py-0.5 text-[9px] bg-surface-light/50 rounded border border-border text-text-dim">⌘K</kbd>
-            </button>
+            <div class="flex items-center">
+              <a
+                href={url('/search')}
+                class="nav-link font-mono text-xs uppercase tracking-widest flex items-center gap-1.5"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <span>Search</span>
+              </a>
+              <button
+                @click="window.dispatchEvent(new CustomEvent('toggle-search'))"
+                class="ml-2 px-2.5 py-1 text-[10px] font-mono bg-surface-light/50 rounded border border-accent/30 text-accent/70 shadow-[0_0_6px_rgba(34,211,238,0.15)] hover:border-accent/50 hover:text-accent hover:shadow-[0_0_12px_rgba(34,211,238,0.35)] transition-all"
+                aria-label="Quick search (Cmd+K)"
+              >⌘K</button>
+            </div>
           </div>
 
           <!-- Mobile Menu Button -->
           <button
-            @click.prevent="mobileMenuOpen = !mobileMenuOpen"
+            x-ref="menuBtn"
+            @click="mobileMenuOpen = !mobileMenuOpen"
             type="button"
-            class="md:hidden relative z-50 w-12 h-12 flex items-center justify-center text-text-muted hover:text-accent active:text-accent transition-colors rounded-lg active:bg-white/10 touch-manipulation"
+            class="md:hidden relative z-50 w-14 h-14 -mr-2 flex items-center justify-center text-text-muted hover:text-accent active:text-accent transition-colors rounded-lg active:bg-white/10"
+            style="-webkit-tap-highlight-color: transparent; touch-action: manipulation;"
             :class="mobileMenuOpen && 'text-accent'"
             :aria-expanded="mobileMenuOpen"
             aria-label="Toggle navigation menu"
           >
             <span class="sr-only" x-text="mobileMenuOpen ? 'Close menu' : 'Open menu'"></span>
-            <div class="w-5 h-4 flex flex-col justify-between pointer-events-none">
+            <div class="w-6 h-5 flex flex-col justify-between pointer-events-none">
               <span
                 class="block h-0.5 bg-current rounded-full transition-all duration-300 origin-center"
-                :class="mobileMenuOpen ? 'translate-y-[7px] rotate-45' : ''"
+                :class="mobileMenuOpen ? 'translate-y-[9px] rotate-45' : ''"
               ></span>
               <span
                 class="block h-0.5 bg-current rounded-full transition-all duration-300"
@@ -202,7 +209,7 @@ function isActive(path: string): boolean {
               ></span>
               <span
                 class="block h-0.5 bg-current rounded-full transition-all duration-300 origin-center"
-                :class="mobileMenuOpen ? '-translate-y-[7px] -rotate-45' : ''"
+                :class="mobileMenuOpen ? '-translate-y-[9px] -rotate-45' : ''"
               ></span>
             </div>
           </button>
@@ -372,6 +379,79 @@ function isActive(path: string): boolean {
           }
         }
       });
+
+      // Reinitialize Alpine after View Transitions if needed
+      document.addEventListener('astro:after-swap', () => {
+        // Ensure the menu button is responsive after transition
+        const menuBtn = document.querySelector('[x-ref="menuBtn"]');
+        if (menuBtn) {
+          menuBtn.blur();
+        }
+      });
+
+      // Update nav active state after View Transitions (header persists so we need client-side update)
+      function updateNavActiveState() {
+        const pathname = window.location.pathname;
+        const base = import.meta.env.BASE_URL || '/';
+
+        function url(path: string): string {
+          return `${base}${path}`.replace(/\/+/g, '/');
+        }
+
+        function isActive(path: string): boolean {
+          const fullPath = url(path);
+          return pathname === fullPath || pathname === fullPath.replace(/\/$/, '') || pathname === fullPath + '/';
+        }
+
+        // Desktop nav links
+        document.querySelectorAll('header nav a.nav-link').forEach((link) => {
+          const href = link.getAttribute('href');
+          if (!href) return;
+
+          // Extract the path from href
+          let path = href.replace(base, '/').replace(/\/+/g, '/');
+          if (path !== '/' && path.endsWith('/')) path = path.slice(0, -1);
+
+          // Special case for library (uses startsWith)
+          const isLibrary = path === '/library' || path === url('/library');
+          const shouldBeActive = isLibrary
+            ? pathname.startsWith(url('/library'))
+            : isActive(path);
+
+          if (shouldBeActive) {
+            link.classList.add('nav-link-active');
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.classList.remove('nav-link-active');
+            link.removeAttribute('aria-current');
+          }
+        });
+
+        // Mobile nav links
+        document.querySelectorAll('.mobile-nav-link').forEach((link) => {
+          const href = link.getAttribute('href');
+          if (!href) return;
+
+          let path = href.replace(base, '/').replace(/\/+/g, '/');
+          if (path !== '/' && path.endsWith('/')) path = path.slice(0, -1);
+
+          const isLibrary = path === '/library' || path === url('/library');
+          const shouldBeActive = isLibrary
+            ? pathname.startsWith(url('/library'))
+            : isActive(path);
+
+          if (shouldBeActive) {
+            link.classList.add('text-accent', 'border-accent');
+            link.setAttribute('aria-current', 'page');
+          } else {
+            link.classList.remove('text-accent', 'border-accent');
+            link.removeAttribute('aria-current');
+          }
+        });
+      }
+
+      // Run on initial load and after each View Transition
+      document.addEventListener('astro:page-load', updateNavActiveState);
     </script>
 
     <script>
@@ -401,6 +481,13 @@ function isActive(path: string): boolean {
 
       initRevealObserver();
       document.addEventListener('astro:page-load', initRevealObserver);
+    </script>
+
+    <!-- Service Worker for aggressive caching -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js').catch(() => {});
+      }
     </script>
 
     <!-- GoatCounter Analytics (privacy-friendly, no cookies) -->

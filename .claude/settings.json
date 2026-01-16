@@ -4,6 +4,7 @@
       "Read(**)",
       "Write(src/**)",
       "Write(tests/**)",
+      "Write(.claude/handoffs/**)",
       "Bash(pnpm:*)",
       "Bash(npm:*)",
       "Bash(git:*)",

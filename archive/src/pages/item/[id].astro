@@ -112,8 +112,10 @@ const itemStructuredData = {
           activeImage: 0,
           lightboxOpen: false,
           totalImages: ${item.images.length},
-          magnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 150 },
-          lbMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 3, size: 200 },
+          magnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 150, viewX: 0, viewY: 0, viewW: 0, viewH: 0 },
+          lbMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 3, size: 200, viewX: 0, viewY: 0, viewW: 0, viewH: 0 },
+          touchMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 120 },
+          swipe: { startX: 0, startY: 0, startTime: 0, swiping: false },
           openLightbox(index) {
             this.activeImage = index;
             this.lightboxOpen = true;
@@ -143,6 +145,10 @@ const itemStructuredData = {
             this.magnifier.bgW = rect.width * zoom;
             this.magnifier.bgH = rect.height * zoom;
             this.magnifier.imgSrc = img.src;
+            this.magnifier.viewX = (x / rect.width) * 100;
+            this.magnifier.viewY = (y / rect.height) * 100;
+            this.magnifier.viewW = (size / zoom / rect.width) * 100;
+            this.magnifier.viewH = (size / zoom / rect.height) * 100;
           },
           showMagnifier(e) {
             this.magnifier.active = true;
@@ -165,6 +171,10 @@ const itemStructuredData = {
             this.lbMagnifier.bgW = rect.width * zoom;
             this.lbMagnifier.bgH = rect.height * zoom;
             this.lbMagnifier.imgSrc = img.src;
+            this.lbMagnifier.viewX = (x / rect.width) * 100;
+            this.lbMagnifier.viewY = (y / rect.height) * 100;
+            this.lbMagnifier.viewW = (size / zoom / rect.width) * 100;
+            this.lbMagnifier.viewH = (size / zoom / rect.height) * 100;
           },
           showLbMagnifier(e) {
             this.lbMagnifier.active = true;
@@ -172,6 +182,62 @@ const itemStructuredData = {
           },
           hideLbMagnifier() {
             this.lbMagnifier.active = false;
+          },
+          handleTouchStart(e) {
+            if (e.touches.length === 1) {
+              this.swipe.startX = e.touches[0].clientX;
+              this.swipe.startY = e.touches[0].clientY;
+              this.swipe.startTime = Date.now();
+              this.swipe.swiping = true;
+            }
+          },
+          handleTouchMove(e) {
+            if (!this.swipe.swiping || e.touches.length !== 1) return;
+            const deltaX = e.touches[0].clientX - this.swipe.startX;
+            const deltaY = Math.abs(e.touches[0].clientY - this.swipe.startY);
+            if (Math.abs(deltaX) > 10 && deltaY < 50) {
+              e.preventDefault();
+            }
+          },
+          handleTouchEnd(e) {
+            if (!this.swipe.swiping) return;
+            const touch = e.changedTouches[0];
+            const deltaX = touch.clientX - this.swipe.startX;
+            const deltaY = Math.abs(touch.clientY - this.swipe.startY);
+            const deltaTime = Date.now() - this.swipe.startTime;
+            this.swipe.swiping = false;
+            if (deltaTime < 300 && Math.abs(deltaX) > 50 && deltaY < 100 && this.totalImages > 1) {
+              if (deltaX > 0) {
+                this.prevImage();
+              } else {
+                this.nextImage();
+              }
+            }
+          },
+          handleTouchMagnifier(e) {
+            if (e.touches.length !== 1) return;
+            const touch = e.touches[0];
+            const img = e.target;
+            const rect = img.getBoundingClientRect();
+            const x = touch.clientX - rect.left;
+            const y = touch.clientY - rect.top;
+            const zoom = this.touchMagnifier.zoom;
+            const size = this.touchMagnifier.size;
+            this.touchMagnifier.x = touch.clientX - size / 2;
+            this.touchMagnifier.y = touch.clientY - size - 40;
+            this.touchMagnifier.bgX = -(x * zoom - size / 2);
+            this.touchMagnifier.bgY = -(y * zoom - size / 2);
+            this.touchMagnifier.bgW = rect.width * zoom;
+            this.touchMagnifier.bgH = rect.height * zoom;
+            this.touchMagnifier.imgSrc = img.src;
+          },
+          showTouchMagnifier(e) {
+            e.preventDefault();
+            this.touchMagnifier.active = true;
+            this.handleTouchMagnifier(e);
+          },
+          hideTouchMagnifier() {
+            this.touchMagnifier.active = false;
           }
         }`}
         @keydown.arrow-left.window="if(lightboxOpen) prevImage(); else if(totalImages > 1) { activeImage = (activeImage - 1 + totalImages) % totalImages }"
@@ -181,7 +247,10 @@ const itemStructuredData = {
           {item.images.length > 0 ? (
             <>
               <div
-                class="glass-panel overflow-hidden w-full rounded-lg relative"
+                class="glass-panel overflow-hidden w-full rounded-lg relative touch-manipulation"
+                @touchstart="handleTouchStart($event)"
+                @touchmove="handleTouchMove($event)"
+                @touchend="handleTouchEnd($event)"
               >
                 {imageThumbhashes.map(({ path, thumbhash }, index) => (
                   <div
@@ -193,7 +262,7 @@ const itemStructuredData = {
                   >
                     {thumbhash && (
                       <canvas
-                        class="detail-placeholder absolute inset-0 w-full h-full object-cover"
+                        class="detail-placeholder absolute inset-0 w-full h-full object-cover pointer-events-none"
                         data-thumbhash={thumbhash}
                         style="filter: blur(20px); transform: scale(1.1);"
                         aria-hidden="true"
@@ -204,22 +273,56 @@ const itemStructuredData = {
                       @mousemove="handleMagnifier($event)"
                       @mouseleave="hideMagnifier()"
                       @click="openLightbox(activeImage)"
+                      @touchstart.passive="showTouchMagnifier($event)"
+                      @touchmove.prevent="handleTouchMagnifier($event)"
+                      @touchend="hideTouchMagnifier()"
                       src={path}
                       alt={`${item.name} - Image ${index + 1}`}
                       class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
                       loading={index === 0 ? 'eager' : 'lazy'}
+                      draggable="false"
                       onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100'); this.previousElementSibling?.classList.add('opacity-0')"
                     />
                   </div>
                 ))}
+
+                <!-- Minimap (on image frame) -->
+                <div
+                  x-show="magnifier.active"
+                  x-cloak
+                  x-transition:enter="transition ease-out duration-200"
+                  x-transition:enter-start="opacity-0 scale-95"
+                  x-transition:enter-end="opacity-100 scale-100"
+                  x-transition:leave="transition ease-in duration-150"
+                  x-transition:leave-start="opacity-100"
+                  x-transition:leave-end="opacity-0"
+                  class="absolute top-3 right-3 w-36 h-28 border border-accent/40 rounded-lg overflow-hidden bg-void/90 backdrop-blur-sm z-40 hidden md:block shadow-lg shadow-accent/10"
+                >
+                  <img
+                    :src="magnifier.imgSrc"
+                    alt="Minimap"
+                    class="w-full h-full object-contain opacity-70"
+                  />
+                  <div
+                    class="absolute border-2 border-accent rounded-sm shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+                    :style="`left: ${magnifier.viewX - magnifier.viewW/2}%; top: ${magnifier.viewY - magnifier.viewH/2}%; width: ${magnifier.viewW}%; height: ${magnifier.viewH}%;`"
+                  ></div>
+                </div>
               </div>
 
-              <!-- Magnifier Lens -->
+              <!-- Magnifier Lens (Desktop) -->
               <div
                 x-show="magnifier.active"
                 x-cloak
                 class="pointer-events-none fixed rounded-full border-2 border-accent/50 shadow-lg shadow-accent/20 z-50 hidden md:block"
                 :style="`left: ${magnifier.x}px; top: ${magnifier.y}px; width: ${magnifier.size}px; height: ${magnifier.size}px; background-image: url('${magnifier.imgSrc}'); background-size: ${magnifier.bgW}px ${magnifier.bgH}px; background-position: ${magnifier.bgX}px ${magnifier.bgY}px;`"
+              ></div>
+              <!-- Touch Magnifier Lens (Mobile) -->
+              <div
+                x-show="touchMagnifier.active"
+                x-cloak
+                class="pointer-events-none fixed rounded-full border-2 border-accent/50 shadow-lg shadow-accent/20 z-50 md:hidden"
+                :style="`left: ${touchMagnifier.x}px; top: ${touchMagnifier.y}px; width: ${touchMagnifier.size}px; height: ${touchMagnifier.size}px; background-image: url('${touchMagnifier.imgSrc}'); background-size: ${touchMagnifier.bgW}px ${touchMagnifier.bgH}px; background-position: ${touchMagnifier.bgX}px ${touchMagnifier.bgY}px;`"
               ></div>
               {item.images.length > 1 && (
                 <div
@@ -307,7 +410,12 @@ const itemStructuredData = {
             )}
 
             <!-- Image container -->
-            <div class="max-w-[90vw] max-h-[90vh] relative">
+            <div
+              class="max-w-[90vw] max-h-[90vh] relative touch-manipulation"
+              @touchstart="handleTouchStart($event)"
+              @touchmove="handleTouchMove($event)"
+              @touchend="handleTouchEnd($event)"
+            >
               {item.images.map((image, index) => (
                 <img
                   x-show={`activeImage === ${index}`}
@@ -320,8 +428,32 @@ const itemStructuredData = {
                   src={url(`/images/items/${item.id}/${image}`)}
                   alt={`${item.name} - Image ${index + 1}`}
                   class="max-w-full max-h-[85vh] object-contain cursor-crosshair"
+                  draggable="false"
                 />
               ))}
+
+              <!-- Minimap (on image frame) -->
+              <div
+                x-show="lbMagnifier.active"
+                x-cloak
+                x-transition:enter="transition ease-out duration-200"
+                x-transition:enter-start="opacity-0 scale-95"
+                x-transition:enter-end="opacity-100 scale-100"
+                x-transition:leave="transition ease-in duration-150"
+                x-transition:leave-start="opacity-100"
+                x-transition:leave-end="opacity-0"
+                class="absolute top-3 right-3 w-40 h-32 border border-accent/40 rounded-lg overflow-hidden bg-void/90 backdrop-blur-sm z-[110] hidden md:block shadow-lg shadow-accent/10"
+              >
+                <img
+                  :src="lbMagnifier.imgSrc"
+                  alt="Minimap"
+                  class="w-full h-full object-contain opacity-70"
+                />
+                <div
+                  class="absolute border-2 border-accent rounded-sm shadow-[0_0_8px_rgba(34,211,238,0.5)]"
+                  :style="`left: ${lbMagnifier.viewX - lbMagnifier.viewW/2}%; top: ${lbMagnifier.viewY - lbMagnifier.viewH/2}%; width: ${lbMagnifier.viewW}%; height: ${lbMagnifier.viewH}%;`"
+                ></div>
+              </div>
             </div>
 
             <!-- Lightbox Magnifier Lens -->
@@ -364,7 +496,7 @@ const itemStructuredData = {
           <span data-pagefind-meta={`material:${item.material}`} class="hidden"></span>
 
           <div class="glass-panel p-6">
-            <p class="text-text-muted leading-relaxed">{item.description}</p>
+            <p class="text-text-muted text-[15px] md:text-base leading-[1.8] md:leading-relaxed tracking-[0.01em]">{item.description}</p>
           </div>
 
           <div class="glass-panel p-6 mt-4">
@@ -479,7 +611,7 @@ const itemStructuredData = {
                 <h3 class="text-lg text-text group-hover:text-accent transition-colors">
                   {related.name}
                 </h3>
-                <p class="font-mono text-xs text-text-dim mt-1">{related.era}</p>
+                <p class="data-label mt-1">{related.era}</p>
               </a>
             ))}
           </div>

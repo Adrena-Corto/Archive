@@ -8,6 +8,9 @@ material: silver
 weight: ""
 dimensions: ""
 condition: "VF+"
+empire: roman
+denomination: Denarius
+ruler: Marcus Aurelius
 description: "Silver denarius of Emperor Marcus Aurelius. Obverse features laureate head right with legend M AVREL ANTONINVS AVG. Reverse depicts standing figure (likely Providentia or Annona) with legend TR POT...COS visible."
 images:
   - dscf4546.jpg

@@ -140,9 +140,14 @@ const structuredData = {
       const hero = document.getElementById('hero-content');
       if (!hero) return;
 
-      // Only enable parallax on devices that prefer motion
+      // Disable parallax on mobile devices and when reduced motion is preferred
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      if (prefersReducedMotion) return;
+      const isMobile = window.innerWidth < 768 || 'ontouchstart' in window;
+      if (prefersReducedMotion || isMobile) {
+        hero.style.transform = '';
+        hero.style.opacity = '';
+        return;
+      }
 
       let ticking = false;
 
@@ -150,12 +155,10 @@ const structuredData = {
         const scrollY = window.scrollY;
         const heroHeight = hero.offsetHeight + hero.offsetTop;
 
-        // Only apply parallax while hero is visible
+        // Fade hero as user scrolls (no movement)
         if (scrollY < heroHeight) {
-          const translateY = scrollY * 0.3;
-          const opacity = 1 - (scrollY / heroHeight) * 0.5;
-          hero.style.transform = `translateY(${translateY}px)`;
-          hero.style.opacity = String(Math.max(opacity, 0.5));
+          const opacity = 1 - (scrollY / heroHeight) * 0.6;
+          hero.style.opacity = String(Math.max(opacity, 0.3));
         }
 
         ticking = false;

@@ -1,37 +1,32 @@
 ---
-import { getCoins, getAllRulers, getAllDenominations, getAllMaterials, getAllPeriods } from '../lib/items';
+import { getCoins, getAllRulers, getAllDenominations, getAllMaterials, getAllEmpires, getCoinCountByEmpire, getDenominationsByEmpire, getRulersByEmpire, type Empire } from '../lib/items';
 
 const coins = getCoins();
+const empires = getAllEmpires();
+const empireCounts = getCoinCountByEmpire();
 const rulers = getAllRulers();
 const denominations = getAllDenominations();
 const materials = [...new Set(coins.map(c => c.material))].sort();
-const periods = [...new Set(coins.map(c => c.period))].sort();
 const tags = [...new Set(coins.flatMap(c => c.tags))].sort();
 const totalCoins = coins.length;
 
-const rulerOptions = [
-  { value: 'all', label: 'All Rulers' },
-  ...rulers.map(r => ({ value: r, label: r }))
-];
-
-const denominationOptions = [
-  { value: 'all', label: 'All Denominations' },
-  ...denominations.map(d => ({ value: d, label: d }))
-];
+const empireLabels: Record<Empire, string> = {
+  roman: 'Roman',
+  byzantine: 'Byzantine',
+  greek: 'Greek',
+  persian: 'Persian',
+  islamic: 'Islamic',
+  other: 'Other'
+};
 
 const materialOptions = [
   { value: 'all', label: 'All Materials' },
   ...materials.map(m => ({ value: m, label: m.charAt(0).toUpperCase() + m.slice(1) }))
 ];
 
-const periodOptions = [
-  { value: 'all', label: 'All Periods' },
-  ...periods.map(p => ({ value: p, label: p }))
-];
-
 const tagOptions = [
   { value: 'all', label: 'All Tags' },
-  ...tags.map(t => ({ value: t, label: t.charAt(0).toUpperCase() + t.slice(1) }))
+  ...tags.map(t => ({ value: t, label: t.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') }))
 ];
 
 const sortOptions = [
@@ -40,50 +35,130 @@ const sortOptions = [
   { value: 'era-newest', label: 'Era (Newest)' },
   { value: 'recent', label: 'Recently Added' },
 ];
+
+const denominationsByEmpire: Record<string, string[]> = {
+  all: denominations,
+  ...Object.fromEntries(empires.map(e => [e, getDenominationsByEmpire(e)]))
+};
+
+const rulersByEmpire: Record<string, string[]> = {
+  all: rulers,
+  ...Object.fromEntries(empires.map(e => [e, getRulersByEmpire(e)]))
+};
+
+function getRulerCountByEmpire(empire: string): Record<string, number> {
+  const filtered = empire === 'all' ? coins : coins.filter(c => c.empire === empire);
+  const counts: Record<string, number> = {};
+  filtered.forEach(coin => {
+    if (coin.ruler) {
+      counts[coin.ruler] = (counts[coin.ruler] || 0) + 1;
+    }
+  });
+  return counts;
+}
+
+function getDenomCountByEmpire(empire: string): Record<string, number> {
+  const filtered = empire === 'all' ? coins : coins.filter(c => c.empire === empire);
+  const counts: Record<string, number> = {};
+  filtered.forEach(coin => {
+    if (coin.denomination) {
+      counts[coin.denomination] = (counts[coin.denomination] || 0) + 1;
+    }
+  });
+  return counts;
+}
+
+const rulerCountsByEmpire: Record<string, Record<string, number>> = {
+  all: getRulerCountByEmpire('all'),
+  ...Object.fromEntries(empires.map(e => [e, getRulerCountByEmpire(e)]))
+};
+
+const denomCountsByEmpire: Record<string, Record<string, number>> = {
+  all: getDenomCountByEmpire('all'),
+  ...Object.fromEntries(empires.map(e => [e, getDenomCountByEmpire(e)]))
+};
 ---
 
 <div
   x-data={`{
-    ruler: 'all',
+    empire: 'all',
     denomination: 'all',
+    ruler: 'all',
     material: 'all',
-    period: 'all',
     tag: 'all',
     sort: 'name',
-    rulerOpen: false,
-    denominationOpen: false,
+    showSubFilters: false,
     materialOpen: false,
-    periodOpen: false,
     tagOpen: false,
     sortOpen: false,
     visibleCount: ${totalCoins},
     totalCoins: ${totalCoins},
-    rulerOptions: ${JSON.stringify(rulerOptions)},
-    denominationOptions: ${JSON.stringify(denominationOptions)},
+    empireCounts: ${JSON.stringify(empireCounts)},
+    empireLabels: ${JSON.stringify(empireLabels)},
+    denominationsByEmpire: ${JSON.stringify(denominationsByEmpire)},
+    rulersByEmpire: ${JSON.stringify(rulersByEmpire)},
+    rulerCountsByEmpire: ${JSON.stringify(rulerCountsByEmpire)},
+    denomCountsByEmpire: ${JSON.stringify(denomCountsByEmpire)},
     materialOptions: ${JSON.stringify(materialOptions)},
-    periodOptions: ${JSON.stringify(periodOptions)},
     tagOptions: ${JSON.stringify(tagOptions)},
     sortOptions: ${JSON.stringify(sortOptions)},
     init() {
       const params = new URLSearchParams(window.location.search);
-      if (params.get('ruler')) this.ruler = params.get('ruler');
+      if (params.get('empire')) this.empire = params.get('empire');
       if (params.get('denomination')) this.denomination = params.get('denomination');
+      if (params.get('ruler')) this.ruler = params.get('ruler');
       if (params.get('material')) this.material = params.get('material');
-      if (params.get('period')) this.period = params.get('period');
       if (params.get('tag')) this.tag = params.get('tag');
       if (params.get('sort')) this.sort = params.get('sort');
       this.filterAndSort();
     },
     updateURL() {
       const params = new URLSearchParams();
-      if (this.ruler !== 'all') params.set('ruler', this.ruler);
+      if (this.empire !== 'all') params.set('empire', this.empire);
       if (this.denomination !== 'all') params.set('denomination', this.denomination);
+      if (this.ruler !== 'all') params.set('ruler', this.ruler);
       if (this.material !== 'all') params.set('material', this.material);
-      if (this.period !== 'all') params.set('period', this.period);
       if (this.tag !== 'all') params.set('tag', this.tag);
       if (this.sort !== 'name') params.set('sort', this.sort);
       const newURL = params.toString() ? '?' + params.toString() : window.location.pathname;
       window.history.replaceState({}, '', newURL);
+    },
+    setEmpire(value) {
+      if (this.empire === value) {
+        this.showSubFilters = !this.showSubFilters;
+      } else {
+        this.empire = value;
+        this.showSubFilters = value !== 'all';
+        const availableDenoms = this.denominationsByEmpire[value] || [];
+        const availableRulers = this.rulersByEmpire[value] || [];
+        if (this.denomination !== 'all' && !availableDenoms.includes(this.denomination)) {
+          this.denomination = 'all';
+        }
+        if (this.ruler !== 'all' && !availableRulers.includes(this.ruler)) {
+          this.ruler = 'all';
+        }
+      }
+      this.filterAndSort();
+    },
+    setDenomination(value) {
+      this.denomination = value;
+      this.filterAndSort();
+    },
+    setRuler(value) {
+      this.ruler = value;
+      this.filterAndSort();
+    },
+    getDenominations() {
+      return this.denominationsByEmpire[this.empire] || [];
+    },
+    getRulers() {
+      return this.rulersByEmpire[this.empire] || [];
+    },
+    getRulerCount(ruler) {
+      return (this.rulerCountsByEmpire[this.empire] || {})[ruler] || 0;
+    },
+    getDenomCount(denom) {
+      return (this.denomCountsByEmpire[this.empire] || {})[denom] || 0;
     },
     filtering: false,
     filterAndSort() {
@@ -96,12 +171,12 @@ const sortOptions = [
         let count = 0;
 
         items.forEach(item => {
-          const matchRuler = this.ruler === 'all' || item.dataset.ruler === this.ruler;
+          const matchEmpire = this.empire === 'all' || item.dataset.empire === this.empire;
           const matchDenomination = this.denomination === 'all' || item.dataset.denomination === this.denomination;
+          const matchRuler = this.ruler === 'all' || item.dataset.ruler === this.ruler;
           const matchMaterial = this.material === 'all' || item.dataset.material === this.material;
-          const matchPeriod = this.period === 'all' || item.dataset.period === this.period;
           const matchTag = this.tag === 'all' || (item.dataset.tags && item.dataset.tags.split(',').includes(this.tag));
-          const visible = matchRuler && matchDenomination && matchMaterial && matchPeriod && matchTag;
+          const visible = matchEmpire && matchDenomination && matchRuler && matchMaterial && matchTag;
           item.style.display = visible ? '' : 'none';
           if (visible) count++;
         });
@@ -135,21 +210,18 @@ const sortOptions = [
       });
     },
     clearFilters() {
-      this.ruler = 'all';
+      this.empire = 'all';
       this.denomination = 'all';
+      this.ruler = 'all';
       this.material = 'all';
-      this.period = 'all';
       this.tag = 'all';
       this.filterAndSort();
     },
     hasActiveFilters() {
-      return this.ruler !== 'all' || this.denomination !== 'all' || this.material !== 'all' || this.period !== 'all' || this.tag !== 'all';
+      return this.empire !== 'all' || this.denomination !== 'all' || this.ruler !== 'all' || this.material !== 'all' || this.tag !== 'all';
     },
     closeAll() {
-      this.rulerOpen = false;
-      this.denominationOpen = false;
       this.materialOpen = false;
-      this.periodOpen = false;
       this.tagOpen = false;
       this.sortOpen = false;
     },
@@ -162,110 +234,102 @@ const sortOptions = [
   @keydown.escape.window="closeAll()"
   class="glass-panel p-4 mb-8 overflow-visible relative z-40"
 >
-  <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 md:gap-6">
-    <!-- Ruler Dropdown -->
-    {rulers.length > 0 && (
-      <div class="relative" @click.outside="rulerOpen = false">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Ruler</label>
+  <!-- Row 1: Empire Pills -->
+  <div class="filter-row">
+    <label class="filter-label">Empire</label>
+    <div class="flex flex-wrap gap-2">
+      <button
+        type="button"
+        @click="setEmpire('all')"
+        class="filter-pill"
+        :class="{ 'filter-pill-active': empire === 'all' }"
+      >
+        <span>All</span>
+        <span class="filter-pill-count" x-text="empireCounts.all || 0"></span>
+      </button>
+      {empires.map(emp => (
         <button
           type="button"
-          @click="rulerOpen = !rulerOpen; denominationOpen = false; materialOpen = false; periodOpen = false"
-          class="custom-select group"
-          :class="{ 'custom-select-active': ruler !== 'all', 'custom-select-open': rulerOpen }"
-          aria-haspopup="listbox"
-          :aria-expanded="rulerOpen"
+          @click={`setEmpire('${emp}')`}
+          class="filter-pill"
+          :class={`{ 'filter-pill-active': empire === '${emp}' }`}
         >
-          <span x-text="getLabel(rulerOptions, ruler)" class="truncate"></span>
-          <svg class="select-chevron" :class="{ 'rotate-180': rulerOpen }" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-          </svg>
+          <span>{empireLabels[emp]}</span>
+          <span class="filter-pill-count">{empireCounts[emp] || 0}</span>
         </button>
-        <div
-          x-show="rulerOpen"
-          x-transition:enter="transition ease-out duration-200"
-          x-transition:enter-start="opacity-0 -translate-y-2"
-          x-transition:enter-end="opacity-100 translate-y-0"
-          x-transition:leave="transition ease-in duration-150"
-          x-transition:leave-start="opacity-100 translate-y-0"
-          x-transition:leave-end="opacity-0 -translate-y-2"
-          class="select-dropdown"
-          role="listbox"
-          x-cloak
-        >
-          <template x-for="option in rulerOptions" :key="option.value">
+      ))}
+    </div>
+  </div>
+
+  <!-- Sub-filters container with smooth height animation -->
+  <div
+    class="sub-filters-wrapper"
+    :class="{ 'sub-filters-open': showSubFilters && (getDenominations().length > 0 || getRulers().length > 0) }"
+  >
+    <div class="sub-filters-inner">
+      <!-- Row 2: Type Pills -->
+      <div class="filter-row filter-row-sub" x-show="getDenominations().length > 0">
+        <label class="filter-label">Type</label>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            @click="setDenomination('all')"
+            class="filter-pill filter-pill-sm"
+            :class="{ 'filter-pill-active': denomination === 'all' }"
+          >
+            <span>All</span>
+          </button>
+          <template x-for="denom in getDenominations()" :key="denom">
             <button
               type="button"
-              @click="ruler = option.value; rulerOpen = false; filterAndSort()"
-              class="select-option"
-              :class="{ 'select-option-selected': ruler === option.value }"
-              role="option"
-              :aria-selected="ruler === option.value"
+              @click="setDenomination(denom)"
+              class="filter-pill filter-pill-sm"
+              :class="{ 'filter-pill-active': denomination === denom }"
             >
-              <span x-text="option.label"></span>
-              <svg x-show="ruler === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-              </svg>
+              <span x-text="denom"></span>
+              <span class="filter-pill-count" x-text="getDenomCount(denom)"></span>
             </button>
           </template>
         </div>
       </div>
-    )}
 
-    <!-- Denomination Dropdown -->
-    {denominations.length > 0 && (
-      <div class="relative" @click.outside="denominationOpen = false">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Denomination</label>
-        <button
-          type="button"
-          @click="denominationOpen = !denominationOpen; rulerOpen = false; materialOpen = false; periodOpen = false"
-          class="custom-select group"
-          :class="{ 'custom-select-active': denomination !== 'all', 'custom-select-open': denominationOpen }"
-          aria-haspopup="listbox"
-          :aria-expanded="denominationOpen"
-        >
-          <span x-text="getLabel(denominationOptions, denomination)" class="truncate"></span>
-          <svg class="select-chevron" :class="{ 'rotate-180': denominationOpen }" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <div
-          x-show="denominationOpen"
-          x-transition:enter="transition ease-out duration-200"
-          x-transition:enter-start="opacity-0 -translate-y-2"
-          x-transition:enter-end="opacity-100 translate-y-0"
-          x-transition:leave="transition ease-in duration-150"
-          x-transition:leave-start="opacity-100 translate-y-0"
-          x-transition:leave-end="opacity-0 -translate-y-2"
-          class="select-dropdown"
-          role="listbox"
-          x-cloak
-        >
-          <template x-for="option in denominationOptions" :key="option.value">
+      <!-- Row 3: Ruler Pills -->
+      <div class="filter-row filter-row-sub" x-show="getRulers().length > 0">
+        <label class="filter-label">Ruler</label>
+        <div class="flex flex-wrap gap-2">
+          <button
+            type="button"
+            @click="setRuler('all')"
+            class="filter-pill filter-pill-sm"
+            :class="{ 'filter-pill-active': ruler === 'all' }"
+          >
+            <span>All</span>
+          </button>
+          <template x-for="r in getRulers()" :key="r">
             <button
               type="button"
-              @click="denomination = option.value; denominationOpen = false; filterAndSort()"
-              class="select-option"
-              :class="{ 'select-option-selected': denomination === option.value }"
-              role="option"
-              :aria-selected="denomination === option.value"
+              @click="setRuler(r)"
+              class="filter-pill filter-pill-sm"
+              :class="{ 'filter-pill-active': ruler === r }"
             >
-              <span x-text="option.label"></span>
-              <svg x-show="denomination === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-              </svg>
+              <span x-text="r"></span>
+              <span class="filter-pill-count" x-text="getRulerCount(r)"></span>
             </button>
           </template>
         </div>
       </div>
-    )}
+    </div>
+  </div>
 
+  <!-- Row 4: Additional Filters (Dropdowns) + Sort + Count -->
+  <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 md:gap-6 pt-4 mt-4 border-t border-white/5">
     <!-- Material Dropdown -->
-    {materials.length > 0 && (
+    {materials.length > 1 && (
       <div class="relative" @click.outside="materialOpen = false">
         <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Material</label>
         <button
           type="button"
-          @click="materialOpen = !materialOpen; rulerOpen = false; denominationOpen = false; periodOpen = false"
+          @click="closeAll(); materialOpen = !materialOpen"
           class="custom-select group"
           :class="{ 'custom-select-active': material !== 'all', 'custom-select-open': materialOpen }"
           aria-haspopup="listbox"
@@ -299,54 +363,6 @@ const sortOptions = [
             >
               <span x-text="option.label"></span>
               <svg x-show="material === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
-              </svg>
-            </button>
-          </template>
-        </div>
-      </div>
-    )}
-
-    <!-- Period Dropdown -->
-    {periods.length > 0 && (
-      <div class="relative" @click.outside="periodOpen = false">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Period</label>
-        <button
-          type="button"
-          @click="closeAll(); periodOpen = !periodOpen"
-          class="custom-select group"
-          :class="{ 'custom-select-active': period !== 'all', 'custom-select-open': periodOpen }"
-          aria-haspopup="listbox"
-          :aria-expanded="periodOpen"
-        >
-          <span x-text="getLabel(periodOptions, period)" class="truncate"></span>
-          <svg class="select-chevron" :class="{ 'rotate-180': periodOpen }" viewBox="0 0 20 20" fill="currentColor">
-            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd" />
-          </svg>
-        </button>
-        <div
-          x-show="periodOpen"
-          x-transition:enter="transition ease-out duration-200"
-          x-transition:enter-start="opacity-0 -translate-y-2"
-          x-transition:enter-end="opacity-100 translate-y-0"
-          x-transition:leave="transition ease-in duration-150"
-          x-transition:leave-start="opacity-100 translate-y-0"
-          x-transition:leave-end="opacity-0 -translate-y-2"
-          class="select-dropdown"
-          role="listbox"
-          x-cloak
-        >
-          <template x-for="option in periodOptions" :key="option.value">
-            <button
-              type="button"
-              @click="period = option.value; periodOpen = false; filterAndSort()"
-              class="select-option"
-              :class="{ 'select-option-selected': period === option.value }"
-              role="option"
-              :aria-selected="period === option.value"
-            >
-              <span x-text="option.label"></span>
-              <svg x-show="period === option.value" class="select-check" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 01.143 1.052l-8 10.5a.75.75 0 01-1.127.075l-4.5-4.5a.75.75 0 011.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 011.05-.143z" clip-rule="evenodd" />
               </svg>
             </button>
@@ -449,15 +465,21 @@ const sortOptions = [
       </div>
     </div>
 
-    <div class="flex items-center gap-4 sm:ml-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-white/5">
-      <span class="font-mono text-xs text-text-muted" role="status" aria-live="polite">
+    <div class="flex items-center gap-3 sm:ml-auto sm:self-end pb-0.5">
+      <span class="font-mono text-xs text-text-muted whitespace-nowrap" role="status" aria-live="polite">
         <span class="text-accent">></span>
         <span x-text="visibleCount"></span> coins
       </span>
       <button
         x-show="hasActiveFilters()"
+        x-transition:enter="transition ease-out duration-150"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="transition ease-in duration-100"
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0"
         @click="clearFilters()"
-        class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
+        class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors whitespace-nowrap"
       >
         [Clear]
       </button>
@@ -496,6 +518,73 @@ const sortOptions = [
 </script>
 
 <style>
+  .filter-row {
+    @apply mb-3;
+  }
+
+  .sub-filters-wrapper {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.2s ease-out;
+    opacity: 0;
+  }
+
+  .sub-filters-inner {
+    overflow: hidden;
+  }
+
+  .sub-filters-wrapper.sub-filters-open {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+
+  .filter-row-sub {
+    @apply pl-4 border-l-2 border-accent/20 ml-2;
+  }
+
+  .filter-label {
+    @apply font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-2;
+  }
+
+  .filter-pill {
+    @apply inline-flex items-center gap-1.5;
+    @apply px-3 py-1.5;
+    @apply bg-surface-light/30 backdrop-blur-sm;
+    @apply border border-border rounded-full;
+    @apply font-mono text-xs text-text-muted;
+    @apply transition-all duration-200 ease-out;
+    @apply cursor-pointer;
+  }
+
+  .filter-pill:hover {
+    @apply bg-surface-light border-border-light text-text;
+  }
+
+  .filter-pill-active {
+    @apply bg-accent/10 border-accent/50 text-accent;
+    box-shadow: 0 0 12px rgba(34, 211, 238, 0.15);
+  }
+
+  .filter-pill-active:hover {
+    @apply bg-accent/15 border-accent/60;
+  }
+
+  .filter-pill-sm {
+    @apply px-2.5 py-1 text-[11px];
+  }
+
+  .filter-pill-count {
+    @apply inline-flex items-center justify-center;
+    @apply min-w-[16px] h-[16px] px-1;
+    @apply bg-white/5 rounded-full;
+    @apply text-[9px] text-text-dim;
+    @apply transition-all duration-200;
+  }
+
+  .filter-pill-active .filter-pill-count {
+    @apply bg-accent/20 text-accent;
+  }
+
   .custom-select {
     @apply relative flex items-center justify-between gap-2;
     @apply min-w-[140px] px-3 py-2;
