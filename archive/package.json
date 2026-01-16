@@ -8,7 +8,11 @@
     "prebuild": "node scripts/generate-thumbnails.mjs && node scripts/generate-thumbhash.mjs && node scripts/generate-og-image.mjs",
     "build": "astro build && pagefind --site dist",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:update": "playwright test --update-snapshots"
   },
   "dependencies": {
     "@astrojs/alpinejs": "^0.4.9",
@@ -25,6 +29,8 @@
     "yaml": "^2.8.2"
   },
   "devDependencies": {
-    "pagefind": "^1.4.0"
+    "@playwright/test": "^1.57.0",
+    "pagefind": "^1.4.0",
+    "serve": "^14.2.5"
   }
 }

@@ -110,6 +110,56 @@ pnpm build        # Production build
 pnpm preview      # Preview production build
 ```
 
+## Testing
+
+The site uses Playwright for visual regression and E2E tests.
+
+### Running Tests
+
+```bash
+cd archive
+
+pnpm test           # Run all tests (requires build first)
+pnpm test:ui        # Interactive UI mode
+pnpm test:headed    # Run with visible browser
+pnpm test:update    # Update visual snapshots
+```
+
+### Test Structure
+
+```
+tests/
+├── visual-regression.spec.ts  # Screenshot comparisons for key pages
+├── coin-filters.spec.ts       # E2E tests for /coins filter system
+├── artifact-filters.spec.ts   # E2E tests for /artifacts filters
+└── search.spec.ts             # E2E tests for search modal & page
+```
+
+### Visual Regression
+
+Screenshots are stored in `tests/__screenshots__/`. When UI changes:
+
+1. Run `pnpm test` to see failures
+2. Review the diff in `playwright-report/`
+3. If changes are intentional: `pnpm test:update`
+4. Commit updated snapshots
+
+### Writing New Tests
+
+```typescript
+import { test, expect } from '@playwright/test';
+
+test('feature works', async ({ page }) => {
+  await page.goto('/page');
+  await page.click('button');
+  await expect(page.locator('.result')).toBeVisible();
+});
+```
+
+### CI Integration
+
+Tests run automatically on PR via GitHub Actions (add `.github/workflows/test.yml` when ready).
+
 ## Adding New Items
 
 ### Quick Method (Recommended)

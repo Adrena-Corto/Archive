@@ -51,9 +51,9 @@
   }
 
   /* Ensure header wrapper with mobile menu has higher z-index */
+  /* Note: Using static positioning to avoid iOS Safari issues with fixed children */
   body > [x-data] {
-    position: relative;
-    z-index: 50;
+    position: static;
   }
 
 

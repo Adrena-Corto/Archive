@@ -226,8 +226,8 @@ function isActive(path: string): boolean {
         x-transition:leave="transition ease-in duration-150"
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0"
-        class="fixed inset-x-0 top-[57px] bottom-0 z-[9999] md:hidden overflow-y-auto"
-        style="background-color: #0a0a0f;"
+        class="md:hidden"
+        style="position: fixed; top: 57px; left: 0; right: 0; bottom: 0; z-index: 9999; background-color: #0a0a0f; overflow-y: auto; -webkit-overflow-scrolling: touch;"
         @keydown.escape.window="mobileMenuOpen = false"
       >
         <nav class="container-narrow py-6 flex flex-col gap-1">
