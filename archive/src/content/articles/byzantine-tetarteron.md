@@ -14,10 +14,10 @@ For centuries, the Byzantine *solidus*—later called the *nomisma* or *histamen
 
 But sometime around 963 CE, Emperor Nikephoros II Phokas created a second gold coin. It looked almost identical to the histamenon: same imperial portrait, same religious imagery, same Greek inscriptions. Only one thing was different—it was lighter.
 
-This new coin was called the *tetarteron*, meaning roughly "quarter short" (though it was actually only about 2 grams lighter, not a quarter). And it immediately complicated life for everyone who handled Byzantine money.
+This new coin was called the *tetarteron*—roughly "reduced coin"—struck at around 4 grams versus the histamenon's 4.5 grams. A small difference, but one that immediately complicated life for everyone who handled Byzantine money.
 
 <div class="collection-embed">
-  <a href="/item/constantine-ix-tetarteron">
+  <a href="/items/constantine-ix-tetarteron">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/constantine-ix-tetarteron/02.jpg" alt="Constantine IX tetarteron obverse with Christ" />
       <img src="/images/items/constantine-ix-tetarteron/01.jpg" alt="Constantine IX tetarteron reverse with emperor" />
@@ -26,7 +26,7 @@ This new coin was called the *tetarteron*, meaning roughly "quarter short" (thou
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">A gold tetarteron of Constantine IX Monomachus (1042-1055 CE). Christ Pantokrator appears on the obverse; the emperor in full regalia on the reverse. Note the smaller flan compared to contemporary histamena.</p>
-    <a href="/item/constantine-ix-tetarteron" class="collection-embed-link">
+    <a href="/items/constantine-ix-tetarteron" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

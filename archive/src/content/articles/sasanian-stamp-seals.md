@@ -15,7 +15,7 @@ The ancient Near East had used seals for millennia, but where Mesopotamians favo
 This wasn't merely aesthetic preference. Stamp seals were faster to use, easier to carry, and better suited to the wax seals that had become common for correspondence. They could be worn as rings, hung from cords, or carried in pouches—always at hand when needed.
 
 <div class="collection-embed">
-  <a href="/item/sasanian-stone-stamp-seal">
+  <a href="/items/sasanian-stone-stamp-seal">
     <div class="collection-embed-images">
       <img src="/images/items/sasanian-stone-stamp-seal/01.jpg" alt="Sasanian green stone stamp seal with bearded portrait" />
     </div>
@@ -23,7 +23,7 @@ This wasn't merely aesthetic preference. Stamp seals were faster to use, easier 
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">A Sasanian stamp seal (c. 200-400 CE) carved from green stone, showing a bearded man in profile with the stylized linear treatment characteristic of the period.</p>
-    <a href="/item/sasanian-stone-stamp-seal" class="collection-embed-link">
+    <a href="/items/sasanian-stone-stamp-seal" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>

@@ -19,7 +19,7 @@ This hierarchy became a principle. Islamic seals might bear personal names, reli
 Where other cultures might depict images, Islamic artistic tradition elevated writing itself to high art. The Arabic script—with its flowing forms, its capacity for compression and extension, its potential for geometric transformation—became the primary medium for aesthetic expression.
 
 <div class="collection-embed">
-  <a href="/item/islamic-silver-seal">
+  <a href="/items/islamic-silver-seal">
     <div class="collection-embed-images grid-cols-2">
       <img src="/images/items/islamic-silver-seal/01.jpg" alt="Islamic silver seal with carnelian and bird finial" />
       <img src="/images/items/islamic-silver-seal/02.jpg" alt="Detail of Arabic calligraphy on carnelian intaglio" />
@@ -28,7 +28,7 @@ Where other cultures might depict images, Islamic artistic tradition elevated wr
   <div class="collection-embed-info">
     <span class="collection-embed-label">From the Collection</span>
     <p class="collection-embed-caption">An Ottoman or Safavid silver seal (c. 1600-1900) with carnelian intaglio bearing Arabic calligraphy. The bird finial adds an unexpected figural element to this functional object.</p>
-    <a href="/item/islamic-silver-seal" class="collection-embed-link">
+    <a href="/items/islamic-silver-seal" class="collection-embed-link">
       View full item details
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
     </a>
