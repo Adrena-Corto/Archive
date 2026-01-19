@@ -13,7 +13,9 @@ export default defineConfig({
   site: 'https://theantiquearchive.com',
   // base: '/Archive', // Not needed with custom domain
   build: {
-    inlineStylesheets: 'auto',
+    // Inline ALL stylesheets to eliminate render-blocking CSS requests
+    // This trades larger HTML for faster FCP/LCP on slow connections
+    inlineStylesheets: 'always',
   },
   vite: {
     build: {
