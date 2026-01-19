@@ -192,6 +192,7 @@ const itemsDataJson = JSON.stringify(
                           src={url(`/images/items/${item.id}/${item.images[0]}`)}
                           alt={item.name}
                           class="w-full h-full object-cover"
+                          loading="lazy"
                         />
                         <span class="absolute inset-0 bg-black/80 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center p-1">
                           <span class="text-[10px] text-white text-center leading-tight line-clamp-3">{item.name}</span>
