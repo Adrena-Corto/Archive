@@ -53,9 +53,12 @@ function isActive(path: string): boolean {
     <link rel="apple-touch-icon" sizes="180x180" href={url('/apple-touch-icon.png')} />
     <link rel="alternate" type="application/rss+xml" title="The Archive Articles" href={url('/rss.xml')} />
 
-    <!-- Preload critical fonts -->
+    <!-- Preload critical fonts (primary + nav) -->
     <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Prefetch specialty fonts (lower priority - used sparingly) -->
+    <link rel="prefetch" href="/fonts/noto-sans-cuneiform.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="prefetch" href="/fonts/noto-sans-egyptian-hieroglyphs.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />

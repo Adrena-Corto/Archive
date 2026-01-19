@@ -22,7 +22,14 @@
 
 @layer base {
   html {
-    @apply scroll-smooth overflow-x-hidden;
+    @apply overflow-x-hidden;
+  }
+
+  /* Only enable smooth scroll on devices that prefer it and support it well */
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
   }
 
   body {
@@ -138,8 +145,18 @@
   }
 
   .glass-panel {
-    @apply bg-surface/40 backdrop-blur-md;
+    @apply bg-surface/40;
     @apply border border-white/10 rounded-lg;
+    /* Lighter blur on mobile for better performance */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  @media (min-width: 768px) {
+    .glass-panel {
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
   }
 
   .glass-panel-solid {

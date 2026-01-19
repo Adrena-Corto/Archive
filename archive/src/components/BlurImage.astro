@@ -75,48 +75,83 @@ const srcset = `${optimized.thumb} 400w, ${optimized.medium} 800w`;
     return bytes;
   }
 
-  function initBlurImages() {
-    const containers = document.querySelectorAll('.blur-image-container');
+  function processContainer(container: Element) {
+    const canvas = container.querySelector<HTMLCanvasElement>('.blur-image-placeholder');
+    const img = container.querySelector<HTMLImageElement>('.blur-image');
 
-    containers.forEach(container => {
-      const canvas = container.querySelector<HTMLCanvasElement>('.blur-image-placeholder');
-      const img = container.querySelector<HTMLImageElement>('.blur-image');
+    if (!canvas || !img) return;
 
-      if (!canvas || !img) return;
+    const thumbhash = canvas.dataset.thumbhash;
+    if (thumbhash) {
+      try {
+        const hash = base64ToBytes(thumbhash);
+        const dataUrl = thumbHashToDataURL(hash);
 
-      const thumbhash = canvas.dataset.thumbhash;
-      if (thumbhash) {
-        try {
-          const hash = base64ToBytes(thumbhash);
-          const dataUrl = thumbHashToDataURL(hash);
-
-          const placeholderImg = new Image();
-          placeholderImg.onload = () => {
-            const ctx = canvas.getContext('2d');
-            if (ctx) {
-              canvas.width = canvas.offsetWidth;
-              canvas.height = canvas.offsetHeight;
-              ctx.drawImage(placeholderImg, 0, 0, canvas.width, canvas.height);
-            }
-          };
-          placeholderImg.src = dataUrl;
-        } catch (e) {
-          console.warn('Failed to decode thumbhash:', e);
-        }
+        const placeholderImg = new Image();
+        placeholderImg.onload = () => {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            canvas.width = canvas.offsetWidth;
+            canvas.height = canvas.offsetHeight;
+            ctx.drawImage(placeholderImg, 0, 0, canvas.width, canvas.height);
+          }
+        };
+        placeholderImg.src = dataUrl;
+      } catch (e) {
+        // Silently fail - image will load without placeholder
       }
+    }
 
-      if (img.complete && img.naturalWidth > 0) {
+    if (img.complete && img.naturalWidth > 0) {
+      img.classList.remove('opacity-0');
+      img.classList.add('opacity-100');
+      canvas?.classList.add('opacity-0');
+    } else {
+      img.addEventListener('load', () => {
         img.classList.remove('opacity-0');
         img.classList.add('opacity-100');
-        canvas?.classList.add('opacity-0');
-      } else {
-        img.addEventListener('load', () => {
-          img.classList.remove('opacity-0');
-          img.classList.add('opacity-100');
-          canvas?.classList.add('opacity-0', 'transition-opacity', 'duration-500');
-        }, { once: true });
+        canvas?.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+      }, { once: true });
+    }
+  }
+
+  function initBlurImages() {
+    const containers = document.querySelectorAll('.blur-image-container');
+    if (containers.length === 0) return;
+
+    // Batch process with requestIdleCallback to avoid blocking main thread
+    if ('requestIdleCallback' in window) {
+      const containerArray = Array.from(containers);
+      let index = 0;
+      const batchSize = 4;
+
+      const processBatch = (deadline: IdleDeadline) => {
+        while (index < containerArray.length && deadline.timeRemaining() > 0) {
+          const end = Math.min(index + batchSize, containerArray.length);
+          for (let i = index; i < end; i++) {
+            processContainer(containerArray[i]);
+          }
+          index = end;
+        }
+
+        if (index < containerArray.length) {
+          (window as any).requestIdleCallback(processBatch, { timeout: 3000 });
+        }
+      };
+
+      (window as any).requestIdleCallback(processBatch, { timeout: 3000 });
+    } else {
+      // Fallback: process in batches with setTimeout
+      const containerArray = Array.from(containers);
+      const batchSize = 4;
+
+      for (let i = 0; i < containerArray.length; i += batchSize) {
+        const batch = containerArray.slice(i, i + batchSize);
+        setTimeout(() => {
+          batch.forEach(processContainer);
+        }, Math.floor(i / batchSize) * 50);
       }
-    });
+    }
   }
 
   // Run on initial load

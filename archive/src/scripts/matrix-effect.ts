@@ -18,7 +18,8 @@ interface Particle {
 
 // Reduce particles on mobile for better performance
 const isMobile = typeof window !== 'undefined' && (window.innerWidth < 768 || 'ontouchstart' in window);
-const PARTICLE_COUNT = isMobile ? 100 : 200;
+const isLowEndDevice = typeof navigator !== 'undefined' && 'deviceMemory' in navigator && (navigator as any).deviceMemory <= 4;
+const PARTICLE_COUNT = isMobile && isLowEndDevice ? 50 : isMobile ? 80 : 150;
 const SPOTLIGHT_RADIUS_MIN = 100;
 const SPOTLIGHT_RADIUS_MAX = 160;
 
@@ -374,13 +375,47 @@ function createAndStartEffect() {
 export async function initMatrixEffect() {
   if (typeof window === 'undefined') return;
 
-  // Defer initialization to avoid blocking main thread during page load
+  // Skip entirely on very small screens (phones under 375px width) or single-core devices
+  const shouldSkip = () => {
+    if (window.innerWidth < 375) return true;
+    if ('hardwareConcurrency' in navigator && navigator.hardwareConcurrency === 1) return true;
+    return false;
+  };
+
+  // Defer initialization until AFTER LCP to avoid competing for resources
   const startEffect = () => {
-    // Use requestIdleCallback if available, otherwise setTimeout
-    if ('requestIdleCallback' in window) {
-      (window as any).requestIdleCallback(() => createAndStartEffect(), { timeout: 2000 });
+    if (shouldSkip()) return;
+
+    // Wait for LCP to complete before starting matrix effect
+    if ('PerformanceObserver' in window) {
+      let lcpObserved = false;
+      try {
+        const observer = new PerformanceObserver((list) => {
+          for (const entry of list.getEntries()) {
+            if (entry.entryType === 'largest-contentful-paint') {
+              lcpObserved = true;
+              observer.disconnect();
+              // Add small delay after LCP to ensure paint is complete
+              setTimeout(createAndStartEffect, 150);
+              break;
+            }
+          }
+        });
+        observer.observe({ type: 'largest-contentful-paint', buffered: true });
+        // Fallback timeout after 4s if LCP never fires
+        setTimeout(() => {
+          if (!lcpObserved) {
+            observer.disconnect();
+            createAndStartEffect();
+          }
+        }, 4000);
+      } catch (e) {
+        // Fallback for browsers without LCP support
+        setTimeout(createAndStartEffect, 500);
+      }
     } else {
-      setTimeout(createAndStartEffect, 100);
+      // Fallback with longer delay for older browsers
+      setTimeout(createAndStartEffect, 500);
     }
   };
 
