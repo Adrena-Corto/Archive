@@ -9,3 +9,8 @@ twitter-visuals/screenshots/homepage-hero.png
 twitter-visuals/screenshots/item-detail-scarab.png
 twitter-visuals/screenshots/stats.png
 twitter-visuals/screenshots/timeline.png
+
+# Private outreach files (keep local only)
+OUTREACH-LIST.md
+COLD-EMAIL-TEMPLATES.md
+archive/src/pages/support.astro
