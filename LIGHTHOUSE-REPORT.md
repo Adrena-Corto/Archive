@@ -12,22 +12,22 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 100/100
+**Performance Score:** 99/100
 
 **Core Web Vitals:**
-- FCP: 1.4 s
-- LCP: 1.4 s
-- TBT: 40 ms
-- CLS: 0.015
-- Speed Index: 1.7 s
+- FCP: 1.7 s
+- LCP: 1.7 s
+- TBT: 20 ms
+- CLS: 0
+- Speed Index: 2.0 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
-2. Max Potential First Input Delay
-3. Time to Interactive
-4. Minimize main-thread work
-5. Avoid enormous network payloads
+2. Largest Contentful Paint
+3. Speed Index
+4. Max Potential First Input Delay
+5. Time to Interactive
 
 ### Desktop 🟢
 
@@ -35,10 +35,10 @@
 
 **Core Web Vitals:**
 - FCP: 0.4 s
-- LCP: 0.4 s
+- LCP: 0.5 s
 - TBT: 0 ms
 - CLS: 0.004
-- Speed Index: 1.1 s
+- Speed Index: 1.0 s
 
 **Top Opportunities:**
 
@@ -61,11 +61,11 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 93/100
+**Performance Score:** 94/100
 
 **Core Web Vitals:**
 - FCP: 1.3 s
-- LCP: 3.1 s
+- LCP: 3.0 s
 - TBT: 60 ms
 - CLS: 0.001
 - Speed Index: 2.0 s
@@ -80,14 +80,14 @@
 
 ### Desktop 🟢
 
-**Performance Score:** 95/100
+**Performance Score:** 96/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
+- FCP: 0.3 s
 - LCP: 1.3 s
 - TBT: 0 ms
 - CLS: 0.001
-- Speed Index: 1.5 s
+- Speed Index: 1.3 s
 
 **Top Opportunities:**
 
@@ -108,16 +108,16 @@
 
 **URL:** https://theantiquearchive.com/artifacts/
 
-### Mobile 🟡
+### Mobile 🟢
 
-**Performance Score:** 87/100
+**Performance Score:** 92/100
 
 **Core Web Vitals:**
-- FCP: 1.6 s
-- LCP: 3.7 s
-- TBT: 110 ms
+- FCP: 1.5 s
+- LCP: 3.3 s
+- TBT: 90 ms
 - CLS: 0.001
-- Speed Index: 2.5 s
+- Speed Index: 2.2 s
 
 **Key Diagnostics:**
 
@@ -132,11 +132,11 @@
 **Performance Score:** 96/100
 
 **Core Web Vitals:**
-- FCP: 0.3 s
-- LCP: 1.2 s
+- FCP: 0.4 s
+- LCP: 1.3 s
 - TBT: 0 ms
 - CLS: 0.002
-- Speed Index: 1.5 s
+- Speed Index: 1.3 s
 
 **Top Opportunities:**
 
@@ -149,7 +149,7 @@
 2. Speed Index
 3. Use efficient cache lifetimes
 4. Improve image delivery
-5. LCP breakdown
+5. Network dependency tree
 
 ---
 
@@ -159,33 +159,33 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 84/100
+**Performance Score:** 86/100
 
 **Core Web Vitals:**
-- FCP: 1.6 s
-- LCP: 4.0 s
-- TBT: 160 ms
+- FCP: 1.4 s
+- LCP: 3.8 s
+- TBT: 180 ms
 - CLS: 0
-- Speed Index: 2.0 s
+- Speed Index: 1.7 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
-3. Speed Index
-4. Total Blocking Time
-5. Max Potential First Input Delay
+3. Total Blocking Time
+4. Max Potential First Input Delay
+5. Time to Interactive
 
 ### Desktop 🟢
 
-**Performance Score:** 100/100
+**Performance Score:** 96/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
-- LCP: 0.4 s
+- FCP: 1.0 s
+- LCP: 1.0 s
 - TBT: 0 ms
 - CLS: 0
-- Speed Index: 1.1 s
+- Speed Index: 1.5 s
 
 **Top Opportunities:**
 
@@ -194,11 +194,11 @@
 
 **Key Diagnostics:**
 
-1. Speed Index
-2. Avoid enormous network payloads
-3. Use efficient cache lifetimes
-4. Improve image delivery
-5. Network dependency tree
+1. First Contentful Paint
+2. Largest Contentful Paint
+3. Speed Index
+4. Avoid enormous network payloads
+5. Use efficient cache lifetimes
 
 ---
 
@@ -208,14 +208,14 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 65/100
+**Performance Score:** 87/100
 
 **Core Web Vitals:**
-- FCP: 1.5 s
-- LCP: 8.2 s
-- TBT: 30 ms
+- FCP: 1.3 s
+- LCP: 2.6 s
+- TBT: 40 ms
 - CLS: 0.203
-- Speed Index: 2.9 s
+- Speed Index: 2.0 s
 
 **Key Diagnostics:**
 
@@ -227,12 +227,12 @@
 
 ### Desktop 🟢
 
-**Performance Score:** 94/100
+**Performance Score:** 99/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
-- LCP: 1.5 s
-- TBT: 0 ms
+- FCP: 0.3 s
+- LCP: 0.7 s
+- TBT: 60 ms
 - CLS: 0.06
 - Speed Index: 1.2 s
 
@@ -245,9 +245,9 @@
 
 1. Largest Contentful Paint
 2. Speed Index
-3. Cumulative Layout Shift
-4. Time to Interactive
-5. Avoid enormous network payloads
+3. Max Potential First Input Delay
+4. Cumulative Layout Shift
+5. Use efficient cache lifetimes
 
 ---
 
@@ -255,10 +255,10 @@
 
 | Page | Mobile | Desktop |
 |------|--------|--------|
-| Homepage | 🟢 100 | 🟢 100 |
-| Coins | 🟢 93 | 🟢 95 |
-| Artifacts | 🟡 87 | 🟢 96 |
-| Articles | 🟡 84 | 🟢 100 |
-| Sample Item | 🟡 65 | 🟢 94 |
+| Homepage | 🟢 99 | 🟢 100 |
+| Coins | 🟢 94 | 🟢 96 |
+| Artifacts | 🟢 92 | 🟢 96 |
+| Articles | 🟡 86 | 🟢 96 |
+| Sample Item | 🟡 87 | 🟢 99 |
 
 **Legend:** 🟢 Good (90+) | 🟡 Needs Improvement (50-89) | 🔴 Poor (<50)

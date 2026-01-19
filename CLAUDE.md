@@ -405,6 +405,82 @@ This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on bo
 - `LIGHTHOUSE-REPORT.md` - Latest test results
 - `PAGESPEED-WORKFLOW.md` - Manual testing workflow
 
+## Design Consistency Testing
+
+Automated design consistency auditing to ensure visual coherence across the site.
+
+### Running Design Audit
+
+```bash
+# Run automated design consistency audit
+node scripts/design-audit.mjs
+```
+
+This scans all components and pages for:
+
+- Arbitrary values (non-token spacing, sizes)
+- Deprecated color usage
+- Border opacity consistency
+- Typography scale adherence
+
+### Design Workflow
+
+1. **Run Audit**
+
+   ```bash
+   node scripts/design-audit.mjs
+   ```
+
+2. **Review Report**
+
+   ```bash
+   cat DESIGN-AUDIT-REPORT.md
+   ```
+
+3. **Fix Issues** - Address red issues first, then review warnings
+
+4. **Re-audit** - Target score: 90+
+
+### Current Design Score (2026-01-20)
+
+| Metric       | Status                                   |
+|--------------|------------------------------------------|
+| Design Score | 89/100                                   |
+| Issues       | 0                                        |
+| Warnings     | 32 (mostly layout-specific constraints)  |
+
+### Design Documentation
+
+- `DESIGN-SYSTEM.md` - Color tokens, typography, spacing guidelines
+- `DESIGN-CHECKLIST.md` - Manual visual review checklist
+- `DESIGN-WORKFLOW.md` - Complete workflow guide
+- `DESIGN-AUDIT-REPORT.md` - Latest audit results
+
+### Design Tokens
+
+```text
+Colors:     void, surface, surface-light, text, text-muted, text-dim, accent, gold
+Fonts:      font-sans (Space Grotesk), font-mono (JetBrains Mono)
+Typography: text-micro (10px), text-tiny (11px), text-xs, text-sm, text-base...
+Spacing:    Use Tailwind scale (p-4, gap-6, etc.) + custom spacing-4.5
+Borders:    border-white/5, border-white/10, border-border
+```
+
+### Custom Typography Tokens
+
+Added to `tailwind.config.mjs` to replace arbitrary `text-[10px]` and `text-[11px]`:
+
+```js
+fontSize: {
+  'micro': ['10px', { lineHeight: '1.4' }],  // Badges, counts, dense UI
+  'tiny': ['11px', { lineHeight: '1.4' }],   // Secondary labels
+}
+```
+
+Use `text-micro` instead of `text-[10px]` throughout the codebase.
+
+See `DESIGN-SYSTEM.md` for full reference.
+
 ## Agents
 
 Specialized agents in `.claude/agents/`. Use these by asking Claude to "use the [agent] agent" or referencing the task type.

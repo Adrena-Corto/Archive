@@ -23,8 +23,13 @@ export default {
         mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
         cuneiform: ['Noto Sans Cuneiform', 'serif'],
       },
+      fontSize: {
+        'micro': ['10px', { lineHeight: '1.4' }],
+        'tiny': ['11px', { lineHeight: '1.4' }],
+      },
       spacing: {
         '128': '32rem',
+        '4.5': '1.125rem',
       },
       boxShadow: {
         'glow-cyan': '0 0 20px rgba(34, 211, 238, 0.15)',

@@ -189,32 +189,32 @@ const allSearchable = [...searchableItems, ...searchableArticles, ...searchableB
           placeholder="Search items, articles, books..."
           class="flex-1 bg-transparent text-text placeholder-text-dim outline-none font-mono text-base"
         />
-        <kbd class="hidden sm:flex items-center gap-1 px-2 py-1 text-[10px] font-mono text-text-dim bg-surface-light rounded border border-border">
+        <kbd class="hidden sm:flex items-center gap-1 px-2 py-1 text-micro font-mono text-text-dim bg-surface-light rounded border border-border">
           ESC
         </kbd>
       </div>
 
       <!-- Type Filters -->
       <div class="flex items-center gap-2 px-5 py-2 border-b border-border bg-surface-light/30">
-        <span class="text-[10px] font-mono text-text-dim uppercase tracking-wider mr-1">Filter:</span>
+        <span class="text-micro font-mono text-text-dim uppercase tracking-wider mr-1">Filter:</span>
         <button
           @click="toggleFilter('item')"
           :class="activeFilters.includes('item') ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-transparent border-border text-text-dim hover:border-cyan-500/30 hover:text-cyan-400'"
-          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+          class="px-2.5 py-1 text-micro font-mono uppercase tracking-wider border rounded-full transition-all"
         >
           Items
         </button>
         <button
           @click="toggleFilter('article')"
           :class="activeFilters.includes('article') ? 'bg-violet-500/20 border-violet-500/50 text-violet-400' : 'bg-transparent border-border text-text-dim hover:border-violet-500/30 hover:text-violet-400'"
-          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+          class="px-2.5 py-1 text-micro font-mono uppercase tracking-wider border rounded-full transition-all"
         >
           Articles
         </button>
         <button
           @click="toggleFilter('book')"
           :class="activeFilters.includes('book') ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-transparent border-border text-text-dim hover:border-amber-500/30 hover:text-amber-400'"
-          class="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider border rounded-full transition-all"
+          class="px-2.5 py-1 text-micro font-mono uppercase tracking-wider border rounded-full transition-all"
         >
           Books
         </button>
@@ -276,7 +276,7 @@ const allSearchable = [...searchableItems, ...searchableArticles, ...searchableB
 
       <!-- Footer -->
       <div class="px-4 py-2 border-t border-border bg-surface-light/50 flex items-center justify-between">
-        <div class="flex items-center gap-3 text-[10px] font-mono text-text-dim">
+        <div class="flex items-center gap-3 text-micro font-mono text-text-dim">
           <span class="flex items-center gap-1">
             <kbd class="px-1.5 py-0.5 bg-surface rounded border border-border">↑↓</kbd>
             navigate
@@ -289,7 +289,7 @@ const allSearchable = [...searchableItems, ...searchableArticles, ...searchableB
         <a
           href="/search"
           @click="open = false"
-          class="text-[10px] font-mono text-accent hover:underline"
+          class="text-micro font-mono text-accent hover:underline"
         >
           Full search →
         </a>

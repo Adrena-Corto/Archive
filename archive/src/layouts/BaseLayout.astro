@@ -183,7 +183,7 @@ function isActive(path: string): boolean {
             </a>
             <button
               @click="window.dispatchEvent(new CustomEvent('toggle-search'))"
-              class="ml-2 px-2.5 py-1 text-[10px] font-mono bg-surface-light/50 rounded border border-accent/30 text-accent/70 shadow-[0_0_6px_rgba(34,211,238,0.15)] hover:border-accent/50 hover:text-accent hover:shadow-[0_0_12px_rgba(34,211,238,0.35)] transition-all"
+              class="ml-2 px-2.5 py-1 text-micro font-mono bg-surface-light/50 rounded border border-accent/30 text-accent/70 shadow-[0_0_6px_rgba(34,211,238,0.15)] hover:border-accent/50 hover:text-accent hover:shadow-[0_0_12px_rgba(34,211,238,0.35)] transition-all"
               aria-label="Quick search (Cmd+K)"
             >⌘K</button>
           </div>
@@ -317,9 +317,14 @@ function isActive(path: string): boolean {
         <p class="font-mono text-xs text-text-dim tracking-wide">
           <span class="text-accent">></span> Personal Collection Display
         </p>
-        <p class="font-mono text-xs text-text-dim">
-          Hong Kong, {new Date().getFullYear()}
-        </p>
+        <div class="flex items-center gap-4">
+          <a href={url('/support')} class="font-mono text-xs text-text-dim hover:text-accent transition-colors">
+            Support
+          </a>
+          <p class="font-mono text-xs text-text-dim">
+            Hong Kong, {new Date().getFullYear()}
+          </p>
+        </div>
       </div>
     </footer>
 

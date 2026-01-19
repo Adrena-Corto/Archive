@@ -2,6 +2,7 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { getItemById, getAllItems, type Item } from '../../../lib/items';
+import BlurImage from '../../../components/BlurImage.astro';
 
 const articles = (await getCollection('articles'))
   .filter(article => !article.data.draft)
@@ -137,7 +138,7 @@ const itemsDataJson = JSON.stringify(
               <button
                 x-show="activeTag !== 'all'"
                 @click="activeTag = 'all'; filter()"
-                class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
+                class="font-mono text-micro uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
               >
                 [Clear]
               </button>
@@ -188,14 +189,16 @@ const itemsDataJson = JSON.stringify(
                         class="featured-item relative group/item w-14 h-14 rounded overflow-hidden bg-surface-elevated border border-border/30 hover:border-accent/50 transition-colors cursor-pointer"
                         title={item.name}
                       >
-                        <img
-                          src={url(`/images/items/${item.id}/${item.images[0]}`)}
+                        <BlurImage
+                          src={`/images/items/${item.id}/${item.images[0]}`}
                           alt={item.name}
-                          class="w-full h-full object-cover"
+                          width={56}
+                          height={56}
+                          sizes="56px"
                           loading="lazy"
                         />
                         <span class="absolute inset-0 bg-black/80 opacity-0 group-hover/item:opacity-100 transition-opacity flex items-center justify-center p-1">
-                          <span class="text-[10px] text-white text-center leading-tight line-clamp-3">{item.name}</span>
+                          <span class="text-micro text-white text-center leading-tight line-clamp-3">{item.name}</span>
                         </span>
                       </span>
                     ))}
@@ -243,10 +246,12 @@ const itemsDataJson = JSON.stringify(
   </div>
 
   <script is:inline define:vars={{ itemsDataJson, base }}>
-    const data = {
-      items: JSON.parse(itemsDataJson),
-      baseUrl: base,
-    };
+    // Defer non-critical popup initialization to reduce TBT
+    function initArticlesPage() {
+      const data = {
+        items: JSON.parse(itemsDataJson),
+        baseUrl: base,
+      };
 
       function initArticlesPopup() {
         const popup = document.getElementById('item-popup');
@@ -346,33 +351,39 @@ const itemsDataJson = JSON.stringify(
         });
       }
 
-      // Run on initial load
-      if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', initArticlesPopup);
-      } else {
-        initArticlesPopup();
+      // Horizontal scroll with mouse wheel
+      function initTagScroll() {
+        const tagScroll = document.getElementById('tag-scroll');
+        if (tagScroll) {
+          tagScroll.addEventListener('wheel', (e) => {
+            if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+              e.preventDefault();
+              tagScroll.scrollBy({ left: e.deltaY, behavior: 'smooth' });
+            }
+          }, { passive: false });
+        }
       }
 
-    // Re-run on Astro page transitions
-    document.addEventListener('astro:page-load', initArticlesPopup);
-
-    // Horizontal scroll with mouse wheel
-    function initTagScroll() {
-      const tagScroll = document.getElementById('tag-scroll');
-      if (tagScroll) {
-        tagScroll.addEventListener('wheel', (e) => {
-          if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-            e.preventDefault();
-            tagScroll.scrollBy({ left: e.deltaY, behavior: 'smooth' });
-          }
-        }, { passive: false });
-      }
-    }
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initTagScroll);
-    } else {
+      initArticlesPopup();
       initTagScroll();
     }
-    document.addEventListener('astro:page-load', initTagScroll);
+
+    // Defer all initialization to reduce TBT
+    function scheduleInit() {
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(initArticlesPage, { timeout: 2000 });
+      } else {
+        setTimeout(initArticlesPage, 100);
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', scheduleInit);
+    } else {
+      scheduleInit();
+    }
+
+    // Re-run on Astro page transitions
+    document.addEventListener('astro:page-load', scheduleInit);
   </script>
 </BaseLayout>

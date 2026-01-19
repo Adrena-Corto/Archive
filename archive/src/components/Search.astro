@@ -179,7 +179,7 @@ const searchData = JSON.stringify(allSearchable);
             href={url(`/item/${item.id}`)}
             class="glass-panel p-4 hover:border-accent/50 transition-all duration-200 group"
           >
-            <span class="font-mono text-[10px] uppercase tracking-wider text-accent">
+            <span class="font-mono text-micro uppercase tracking-wider text-accent">
               {categoryLabels[item.category]}
             </span>
             <p class="text-text group-hover:text-accent transition-colors mt-1">
@@ -323,19 +323,19 @@ const searchData = JSON.stringify(allSearchable);
             ` : `
               <div class="w-full h-full flex flex-col items-center justify-center gap-2 bg-surface ${typeColor}">
                 ${item.type === 'book' ? getBookIcon() : getItemIcon()}
-                <span class="font-mono text-[10px] uppercase tracking-wider opacity-60">${typeLabels[item.type]}</span>
+                <span class="font-mono text-micro uppercase tracking-wider opacity-60">${typeLabels[item.type]}</span>
               </div>
             `}
             <div class="absolute inset-0 bg-gradient-to-t from-surface/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
           </div>
           <div class="p-4 space-y-3">
             <div class="flex items-center gap-2">
-              <span class="font-mono text-[10px] uppercase tracking-wider ${typeColor}">
+              <span class="font-mono text-micro uppercase tracking-wider ${typeColor}">
                 ${typeLabel}
               </span>
               ${item.period ? `
                 <span class="text-text-dim">·</span>
-                <span class="font-mono text-[10px] uppercase tracking-wider text-text-dim">
+                <span class="font-mono text-micro uppercase tracking-wider text-text-dim">
                   ${item.period}
                 </span>
               ` : ''}

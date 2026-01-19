@@ -108,7 +108,7 @@ const periodOptions = [
   <div class="flex flex-col sm:flex-row sm:flex-wrap sm:items-center gap-4 md:gap-6">
     <!-- Category Dropdown -->
     <div class="relative" @click.outside="categoryOpen = false">
-      <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Category</label>
+      <label class="font-mono text-micro uppercase tracking-wider text-text-dim block mb-1.5">Category</label>
       <button
         type="button"
         @click="categoryOpen = !categoryOpen; materialOpen = false; periodOpen = false"
@@ -155,7 +155,7 @@ const periodOptions = [
     <!-- Material Dropdown -->
     {materials.length > 0 && (
       <div class="relative" @click.outside="materialOpen = false">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Material</label>
+        <label class="font-mono text-micro uppercase tracking-wider text-text-dim block mb-1.5">Material</label>
         <button
           type="button"
           @click="materialOpen = !materialOpen; categoryOpen = false; periodOpen = false"
@@ -203,7 +203,7 @@ const periodOptions = [
     <!-- Period Dropdown -->
     {periods.length > 0 && (
       <div class="relative" @click.outside="periodOpen = false">
-        <label class="font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-1.5">Period</label>
+        <label class="font-mono text-micro uppercase tracking-wider text-text-dim block mb-1.5">Period</label>
         <button
           type="button"
           @click="periodOpen = !periodOpen; categoryOpen = false; materialOpen = false"
@@ -256,7 +256,7 @@ const periodOptions = [
       <button
         x-show="hasActiveFilters()"
         @click="clearFilters()"
-        class="font-mono text-[10px] uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
+        class="font-mono text-micro uppercase tracking-wider text-text-dim hover:text-accent transition-colors"
       >
         [Clear]
       </button>

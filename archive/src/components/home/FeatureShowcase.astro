@@ -94,7 +94,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
             </div>
             <div>
               <p class="font-mono text-xs uppercase tracking-wider text-accent">Collection</p>
-              <p class="font-mono text-[10px] text-text-dim">{allItems.length} items catalogued</p>
+              <p class="font-mono text-micro text-text-dim">{allItems.length} items catalogued</p>
             </div>
           </div>
           <h3 class="text-2xl md:text-3xl text-text mb-2 group-hover:text-accent transition-colors">
@@ -165,7 +165,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
             </div>
             <div>
               <p class="font-mono text-xs uppercase tracking-wider text-gold">Timeline</p>
-              <p class="font-mono text-[10px] text-text-dim">6,000 years visualized</p>
+              <p class="font-mono text-micro text-text-dim">6,000 years visualized</p>
             </div>
           </div>
           <h3 class="text-2xl md:text-3xl text-text mb-2 group-hover:text-gold transition-colors">
@@ -196,7 +196,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
           <div class="library-scroll flex gap-4 px-4 animate-scroll-left">
             {[...articles, ...articles].map((article, i) => (
               <div class="flex-shrink-0 w-64 glass-panel-solid p-4 rounded-lg">
-                <p class="font-mono text-[10px] text-accent mb-1">ARTICLE</p>
+                <p class="font-mono text-micro text-accent mb-1">ARTICLE</p>
                 <p class="text-sm text-text-muted line-clamp-2">{article.data.title}</p>
               </div>
             ))}
@@ -231,7 +231,7 @@ function getThumbnail(itemId: string, imageName: string, size: 'thumb' | 'medium
               </div>
               <div>
                 <p class="font-mono text-xs uppercase tracking-wider text-purple-400">Library</p>
-                <p class="font-mono text-[10px] text-text-dim">{articles.length} articles · {books.length} books</p>
+                <p class="font-mono text-micro text-text-dim">{articles.length} articles · {books.length} books</p>
               </div>
             </div>
             <h3 class="text-2xl md:text-3xl text-text mb-2 group-hover:text-purple-400 transition-colors">
