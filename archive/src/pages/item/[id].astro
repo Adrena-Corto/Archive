@@ -42,9 +42,19 @@ function getThumbhash(imagePath: string): string | null {
   return (thumbhashManifest as Record<string, string>)[imagePath] || null;
 }
 
+function getOptimizedSrc(imageName: string) {
+  const basePath = `/images/items/${item.id}/${imageName.replace(/\.(jpg|jpeg|png)$/i, '')}`;
+  return {
+    thumb: `${basePath}-thumb.webp`,
+    medium: `${basePath}-medium.webp`,
+    original: `/images/items/${item.id}/${imageName}`,
+  };
+}
+
 const imageThumbhashes = item.images.map(image => {
   const path = `/images/items/${item.id}/${image}`;
-  return { path, thumbhash: getThumbhash(path) };
+  const optimized = getOptimizedSrc(image);
+  return { path, thumbhash: getThumbhash(path), optimized };
 });
 
 const siteUrl = 'https://theantiquearchive.com';
@@ -252,7 +262,7 @@ const itemStructuredData = {
                 @touchmove="handleTouchMove($event)"
                 @touchend="handleTouchEnd($event)"
               >
-                {imageThumbhashes.map(({ path, thumbhash }, index) => (
+                {imageThumbhashes.map(({ path, thumbhash, optimized }, index) => (
                   <div
                     x-show={`activeImage === ${index}`}
                     x-transition:enter="transition ease-out duration-300"
@@ -268,24 +278,31 @@ const itemStructuredData = {
                         aria-hidden="true"
                       />
                     )}
-                    <img
-                      @mouseenter="showMagnifier($event)"
-                      @mousemove="handleMagnifier($event)"
-                      @mouseleave="hideMagnifier()"
-                      @click="openLightbox(activeImage)"
-                      @touchstart.passive="showTouchMagnifier($event)"
-                      @touchmove.prevent="handleTouchMagnifier($event)"
-                      @touchend="hideTouchMagnifier()"
-                      src={path}
-                      alt={`${item.name} - Image ${index + 1}`}
-                      width="1400"
-                      height="933"
-                      class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
-                      loading={index === 0 ? 'eager' : 'lazy'}
-                      fetchpriority={index === 0 ? 'high' : undefined}
-                      draggable="false"
-                      onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100'); this.previousElementSibling?.classList.add('opacity-0')"
-                    />
+                    <picture>
+                      <source
+                        type="image/webp"
+                        srcset={`${optimized.thumb} 400w, ${optimized.medium} 800w`}
+                        sizes="(max-width: 1024px) 100vw, 50vw"
+                      />
+                      <img
+                        @mouseenter="showMagnifier($event)"
+                        @mousemove="handleMagnifier($event)"
+                        @mouseleave="hideMagnifier()"
+                        @click="openLightbox(activeImage)"
+                        @touchstart.passive="showTouchMagnifier($event)"
+                        @touchmove.prevent="handleTouchMagnifier($event)"
+                        @touchend="hideTouchMagnifier()"
+                        src={optimized.medium}
+                        alt={`${item.name} - Image ${index + 1}`}
+                        width="1400"
+                        height="933"
+                        class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
+                        loading={index === 0 ? 'eager' : 'lazy'}
+                        fetchpriority={index === 0 ? 'high' : undefined}
+                        draggable="false"
+                        onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100'); this.previousElementSibling?.classList.add('opacity-0')"
+                      />
+                    </picture>
                   </div>
                 ))}
 
@@ -333,22 +350,25 @@ const itemStructuredData = {
                   class="flex gap-3 overflow-x-auto pb-2"
                   x-effect="$nextTick(() => { const btn = $refs.thumbnailStrip?.children[activeImage]; if(btn) btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }) })"
                 >
-                  {item.images.map((image, index) => (
-                    <button
-                      @click={`activeImage = ${index}`}
-                      :class={`activeImage === ${index} ? 'border-accent' : 'border-transparent opacity-60 hover:opacity-100'`}
-                      class="flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-lg overflow-hidden transition-all duration-200 border-2"
-                    >
-                      <img
-                        src={url(`/images/items/${item.id}/${image}`)}
-                        alt={`Thumbnail ${index + 1}`}
-                        width="80"
-                        height="80"
-                        class="w-full h-full object-cover"
-                        loading="lazy"
-                      />
-                    </button>
-                  ))}
+                  {item.images.map((image, index) => {
+                    const optimized = getOptimizedSrc(image);
+                    return (
+                      <button
+                        @click={`activeImage = ${index}`}
+                        :class={`activeImage === ${index} ? 'border-accent' : 'border-transparent opacity-60 hover:opacity-100'`}
+                        class="flex-shrink-0 w-20 h-20 min-w-[44px] min-h-[44px] rounded-lg overflow-hidden transition-all duration-200 border-2"
+                      >
+                        <img
+                          src={optimized.thumb}
+                          alt={`Thumbnail ${index + 1}`}
+                          width="80"
+                          height="80"
+                          class="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
               )}
             </>
@@ -421,23 +441,26 @@ const itemStructuredData = {
               @touchmove="handleTouchMove($event)"
               @touchend="handleTouchEnd($event)"
             >
-              {item.images.map((image, index) => (
-                <img
-                  x-show={`activeImage === ${index}`}
-                  x-transition:enter="transition ease-out duration-300"
-                  x-transition:enter-start="opacity-0 scale-95"
-                  x-transition:enter-end="opacity-100 scale-100"
-                  @mouseenter="showLbMagnifier($event)"
-                  @mousemove="handleLbMagnifier($event)"
-                  @mouseleave="hideLbMagnifier()"
-                  src={url(`/images/items/${item.id}/${image}`)}
-                  alt={`${item.name} - Image ${index + 1}`}
-                  width="1400"
-                  height="933"
-                  class="max-w-full max-h-[85vh] object-contain cursor-crosshair"
-                  draggable="false"
-                />
-              ))}
+              {item.images.map((image, index) => {
+                const optimized = getOptimizedSrc(image);
+                return (
+                  <img
+                    x-show={`activeImage === ${index}`}
+                    x-transition:enter="transition ease-out duration-300"
+                    x-transition:enter-start="opacity-0 scale-95"
+                    x-transition:enter-end="opacity-100 scale-100"
+                    @mouseenter="showLbMagnifier($event)"
+                    @mousemove="handleLbMagnifier($event)"
+                    @mouseleave="hideLbMagnifier()"
+                    src={optimized.medium}
+                    alt={`${item.name} - Image ${index + 1}`}
+                    width="1400"
+                    height="933"
+                    class="max-w-full max-h-[85vh] object-contain cursor-crosshair"
+                    draggable="false"
+                  />
+                );
+              })}
 
               <!-- Minimap (on image frame) -->
               <div
