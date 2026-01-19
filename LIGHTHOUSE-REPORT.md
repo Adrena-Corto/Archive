@@ -17,17 +17,17 @@
 **Core Web Vitals:**
 - FCP: 1.7 s
 - LCP: 1.7 s
-- TBT: 20 ms
+- TBT: 50 ms
 - CLS: 0
-- Speed Index: 2.0 s
+- Speed Index: 1.9 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
-3. Speed Index
-4. Max Potential First Input Delay
-5. Time to Interactive
+3. Max Potential First Input Delay
+4. Time to Interactive
+5. Minimize main-thread work
 
 ### Desktop 🟢
 
@@ -35,10 +35,10 @@
 
 **Core Web Vitals:**
 - FCP: 0.4 s
-- LCP: 0.5 s
+- LCP: 0.4 s
 - TBT: 0 ms
 - CLS: 0.004
-- Speed Index: 1.0 s
+- Speed Index: 0.9 s
 
 **Top Opportunities:**
 
@@ -61,33 +61,33 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 94/100
+**Performance Score:** 93/100
 
 **Core Web Vitals:**
 - FCP: 1.3 s
-- LCP: 3.0 s
-- TBT: 60 ms
+- LCP: 3.1 s
+- TBT: 80 ms
 - CLS: 0.001
-- Speed Index: 2.0 s
+- Speed Index: 2.1 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
 3. Speed Index
-4. Max Potential First Input Delay
-5. Time to Interactive
+4. Total Blocking Time
+5. Max Potential First Input Delay
 
 ### Desktop 🟢
 
-**Performance Score:** 96/100
+**Performance Score:** 95/100
 
 **Core Web Vitals:**
-- FCP: 0.3 s
+- FCP: 0.5 s
 - LCP: 1.3 s
 - TBT: 0 ms
 - CLS: 0.001
-- Speed Index: 1.3 s
+- Speed Index: 1.4 s
 
 **Top Opportunities:**
 
@@ -98,9 +98,9 @@
 
 1. Largest Contentful Paint
 2. Speed Index
-3. Use efficient cache lifetimes
-4. LCP breakdown
-5. Network dependency tree
+3. Time to Interactive
+4. Use efficient cache lifetimes
+5. LCP breakdown
 
 ---
 
@@ -108,16 +108,16 @@
 
 **URL:** https://theantiquearchive.com/artifacts/
 
-### Mobile 🟢
+### Mobile 🟡
 
-**Performance Score:** 92/100
+**Performance Score:** 88/100
 
 **Core Web Vitals:**
-- FCP: 1.5 s
-- LCP: 3.3 s
-- TBT: 90 ms
+- FCP: 1.6 s
+- LCP: 3.4 s
+- TBT: 200 ms
 - CLS: 0.001
-- Speed Index: 2.2 s
+- Speed Index: 2.3 s
 
 **Key Diagnostics:**
 
@@ -132,11 +132,11 @@
 **Performance Score:** 96/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
-- LCP: 1.3 s
+- FCP: 0.3 s
+- LCP: 1.2 s
 - TBT: 0 ms
 - CLS: 0.002
-- Speed Index: 1.3 s
+- Speed Index: 1.4 s
 
 **Top Opportunities:**
 
@@ -149,7 +149,7 @@
 2. Speed Index
 3. Use efficient cache lifetimes
 4. Improve image delivery
-5. Network dependency tree
+5. LCP breakdown
 
 ---
 
@@ -159,46 +159,44 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 86/100
+**Performance Score:** 87/100
 
 **Core Web Vitals:**
-- FCP: 1.4 s
+- FCP: 1.5 s
 - LCP: 3.8 s
-- TBT: 180 ms
+- TBT: 130 ms
 - CLS: 0
-- Speed Index: 1.7 s
-
-**Key Diagnostics:**
-
-1. First Contentful Paint
-2. Largest Contentful Paint
-3. Total Blocking Time
-4. Max Potential First Input Delay
-5. Time to Interactive
-
-### Desktop 🟢
-
-**Performance Score:** 96/100
-
-**Core Web Vitals:**
-- FCP: 1.0 s
-- LCP: 1.0 s
-- TBT: 0 ms
-- CLS: 0
-- Speed Index: 1.5 s
-
-**Top Opportunities:**
-
-1. **Reduce unused CSS** (Save ~Est savings of 14 KiB)
-   - Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).
+- Speed Index: 2.1 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
 3. Speed Index
-4. Avoid enormous network payloads
-5. Use efficient cache lifetimes
+4. Total Blocking Time
+5. Max Potential First Input Delay
+
+### Desktop 🟢
+
+**Performance Score:** 99/100
+
+**Core Web Vitals:**
+- FCP: 0.4 s
+- LCP: 0.4 s
+- TBT: 0 ms
+- CLS: 0
+- Speed Index: 1.1 s
+
+**Top Opportunities:**
+
+1. **Reduce unused CSS** (Save ~Est savings of 13 KiB)
+   - Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).
+
+**Key Diagnostics:**
+
+1. Speed Index
+2. Use efficient cache lifetimes
+3. Network dependency tree
 
 ---
 
@@ -208,22 +206,22 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 87/100
+**Performance Score:** 86/100
 
 **Core Web Vitals:**
-- FCP: 1.3 s
-- LCP: 2.6 s
-- TBT: 40 ms
+- FCP: 1.5 s
+- LCP: 2.7 s
+- TBT: 80 ms
 - CLS: 0.203
-- Speed Index: 2.0 s
+- Speed Index: 2.2 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
 3. Speed Index
-4. Max Potential First Input Delay
-5. Cumulative Layout Shift
+4. Total Blocking Time
+5. Max Potential First Input Delay
 
 ### Desktop 🟢
 
@@ -231,8 +229,8 @@
 
 **Core Web Vitals:**
 - FCP: 0.3 s
-- LCP: 0.7 s
-- TBT: 60 ms
+- LCP: 0.4 s
+- TBT: 0 ms
 - CLS: 0.06
 - Speed Index: 1.2 s
 
@@ -243,11 +241,10 @@
 
 **Key Diagnostics:**
 
-1. Largest Contentful Paint
-2. Speed Index
-3. Max Potential First Input Delay
-4. Cumulative Layout Shift
-5. Use efficient cache lifetimes
+1. Speed Index
+2. Cumulative Layout Shift
+3. Use efficient cache lifetimes
+4. Network dependency tree
 
 ---
 
@@ -256,9 +253,9 @@
 | Page | Mobile | Desktop |
 |------|--------|--------|
 | Homepage | 🟢 99 | 🟢 100 |
-| Coins | 🟢 94 | 🟢 96 |
-| Artifacts | 🟢 92 | 🟢 96 |
-| Articles | 🟡 86 | 🟢 96 |
-| Sample Item | 🟡 87 | 🟢 99 |
+| Coins | 🟢 93 | 🟢 95 |
+| Artifacts | 🟡 88 | 🟢 96 |
+| Articles | 🟡 87 | 🟢 99 |
+| Sample Item | 🟡 86 | 🟢 99 |
 
 **Legend:** 🟢 Good (90+) | 🟡 Needs Improvement (50-89) | 🔴 Poor (<50)

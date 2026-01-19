@@ -1,0 +1,30 @@
+{
+  "sender": {
+    "name": "Your Name",
+    "email": "you@yourdomain.com",
+    "telegram": "@yourtelegram"
+  },
+  "smtp": {
+    "host": "smtp.yourdomain.com",
+    "port": 587,
+    "secure": false,
+    "user": "you@yourdomain.com",
+    "pass": "your-app-password"
+  },
+  "site": {
+    "url": "https://theantiquearchive.com",
+    "supportUrl": "https://theantiquearchive.com/support"
+  },
+  "bio": {
+    "nationality": "French",
+    "yearsInHK": 7,
+    "family": "married with 2 kids born in Hong Kong",
+    "background": "founded two fintech startups",
+    "collectionSize": "1,000+",
+    "collectionFocus": "ancient Greek, Roman, and Byzantine coins, Mesopotamian cylinder seals, and historical jewelry",
+    "vision": "bringing modern technology to antiquities documentation and authentication"
+  },
+  "anthropic": {
+    "apiKey": "sk-ant-..."
+  }
+}

@@ -518,4 +518,52 @@ const structuredData = {
   .prose .collection-embed .collection-embed-link svg {
     @apply w-4 h-4;
   }
+
+  /* Visualization containers */
+  .prose .visualization-container {
+    @apply bg-surface border border-border rounded-lg p-4 overflow-hidden;
+  }
+
+  .prose .vis-header {
+    @apply flex flex-col gap-0.5 mb-3;
+  }
+
+  .prose .vis-label {
+    @apply font-mono text-xs text-accent;
+  }
+
+  .prose .vis-sublabel {
+    @apply font-mono text-micro text-text-dim;
+  }
+
+  .prose .survival-chart,
+  .prose .timeline-chart {
+    @apply w-full h-auto;
+  }
+
+  /* Math boxes */
+  .prose .math-box {
+    @apply my-6 p-4 bg-surface border-l-2 border-accent rounded-r-lg;
+  }
+
+  .prose .math-label {
+    @apply font-mono text-micro uppercase tracking-wider text-accent mb-2 block;
+  }
+
+  .prose .math-formula {
+    @apply font-mono text-lg text-text py-2;
+  }
+
+  .prose .math-explanation {
+    @apply font-mono text-xs text-text-dim mt-2;
+  }
+
+  /* Simulation container */
+  .prose .simulation-container {
+    @apply my-8;
+  }
+
+  .prose .simulation-container button:hover:not(:disabled) {
+    @apply shadow-glow-cyan;
+  }
 </style>
