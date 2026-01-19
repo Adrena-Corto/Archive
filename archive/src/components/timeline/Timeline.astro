@@ -131,8 +131,6 @@ const baseUrl = import.meta.env.BASE_URL || '';
 `}></script>
 
 <script>
-  import { PixiTimeline } from '../../lib/timeline/pixi-timeline';
-
   const ERA_BANDS = [
     { name: 'Ancient Near East', startYear: -4500, endYear: -330 },
     { name: 'Classical World', startYear: -500, endYear: 476 },
@@ -174,6 +172,9 @@ const baseUrl = import.meta.env.BASE_URL || '';
       requestAnimationFrame(() => initTimeline());
       return;
     }
+
+    // Dynamic import - only load PixiTimeline when timeline page is viewed
+    const { PixiTimeline } = await import('../../lib/timeline/pixi-timeline');
 
     const timeline = new PixiTimeline(
       canvas,
