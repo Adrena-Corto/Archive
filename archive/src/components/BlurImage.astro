@@ -18,13 +18,13 @@ const thumbhash = (thumbhashManifest as Record<string, string>)[src] || null;
 
 // Generate WebP srcset for optimized images
 function getOptimizedSrc(originalSrc: string) {
-  const ext = originalSrc.match(/\.(jpg|jpeg|png)$/i)?.[0] || '';
   const basePath = originalSrc.replace(/\.(jpg|jpeg|png)$/i, '');
 
   return {
     thumb: `${basePath}-thumb.webp`,
     medium: `${basePath}-medium.webp`,
-    original: originalSrc,
+    // Use medium WebP as fallback src (not original JPG) to avoid loading huge JPGs
+    fallback: `${basePath}-medium.webp`,
   };
 }
 
@@ -47,7 +47,7 @@ const srcset = `${optimized.thumb} 400w, ${optimized.medium} 800w`;
       sizes={sizes}
     />
     <img
-      src={optimized.original}
+      src={optimized.fallback}
       alt={alt}
       width={width}
       height={height}
@@ -91,9 +91,11 @@ const srcset = `${optimized.thumb} 400w, ${optimized.medium} 800w`;
         placeholderImg.onload = () => {
           const ctx = canvas.getContext('2d');
           if (ctx) {
-            canvas.width = canvas.offsetWidth;
-            canvas.height = canvas.offsetHeight;
-            ctx.drawImage(placeholderImg, 0, 0, canvas.width, canvas.height);
+            // Use small fixed size for placeholder - CSS scales it up with blur anyway
+            // This avoids forced reflow from reading offsetWidth/offsetHeight
+            canvas.width = 32;
+            canvas.height = 32;
+            ctx.drawImage(placeholderImg, 0, 0, 32, 32);
           }
         };
         placeholderImg.src = dataUrl;

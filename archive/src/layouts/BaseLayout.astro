@@ -56,9 +56,7 @@ function isActive(path: string): boolean {
     <!-- Preload critical fonts (primary + nav) -->
     <link rel="preload" href="/fonts/space-grotesk-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/JetBrainsMono-Regular.woff2" as="font" type="font/woff2" crossorigin />
-    <!-- Prefetch specialty fonts (lower priority - used sparingly) -->
-    <link rel="prefetch" href="/fonts/noto-sans-cuneiform.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="prefetch" href="/fonts/noto-sans-egyptian-hieroglyphs.woff2" as="font" type="font/woff2" crossorigin />
+    <!-- Specialty fonts loaded on-demand via CSS, NOT prefetched to avoid 847KB on initial load -->
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -97,18 +95,21 @@ function isActive(path: string): boolean {
         font-display: swap;
         src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
       }
+      /* Specialty fonts - use 'optional' to prevent blocking render.
+         These fonts only load if already cached, otherwise fallback is used.
+         This saves 847KB on first load. */
       @font-face {
         font-family: 'Noto Sans Cuneiform';
         font-style: normal;
         font-weight: 400;
-        font-display: swap;
+        font-display: optional;
         src: url('/fonts/noto-sans-cuneiform.woff2') format('woff2');
       }
       @font-face {
         font-family: 'Noto Sans Egyptian Hieroglyphs';
         font-style: normal;
         font-weight: 400;
-        font-display: swap;
+        font-display: optional;
         src: url('/fonts/noto-sans-egyptian-hieroglyphs.woff2') format('woff2');
       }
     `} />
