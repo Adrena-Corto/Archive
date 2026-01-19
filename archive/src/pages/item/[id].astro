@@ -269,10 +269,11 @@ const itemStructuredData = {
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
                     class="relative"
+                    style="aspect-ratio: 3/2;"
                   >
                     {thumbhash && (
                       <canvas
-                        class="detail-placeholder absolute inset-0 w-full h-full object-cover pointer-events-none"
+                        class="detail-placeholder absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
                         data-thumbhash={thumbhash}
                         style="filter: blur(20px); transform: scale(1.1);"
                         aria-hidden="true"

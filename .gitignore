@@ -13,3 +13,6 @@ twitter-visuals/screenshots/timeline.png
 # Private outreach files (keep local only)
 OUTREACH-LIST.md
 COLD-EMAIL-TEMPLATES.md
+scripts/outreach/config.json
+scripts/outreach/drafts/
+scripts/outreach/sent/

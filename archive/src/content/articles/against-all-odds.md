@@ -247,46 +247,37 @@ Stone tools dominate museum collections not because ancient people mainly used s
 
 The objects in any collection represent the survivors of a brutal selection process. They are not a random sample of ancient material culture. They are what was durable enough, hidden enough, or forgotten enough to persist.
 
-<div id="survival-sim" class="simulation-container" style="margin: 2.5rem 0; padding: 1.5rem; background: #12121a; border: 1px solid #2a2a3a; border-radius: 8px;">
-  <div class="vis-header" style="margin-bottom: 1rem;">
-    <span class="vis-label">// Monte Carlo Survival Simulation</span>
-    <span class="vis-sublabel">Watch 1,000 objects face the odds over millennia</span>
-  </div>
-  <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-    <div style="flex: 1; min-width: 200px;">
-      <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #a1a1aa; margin-bottom: 0.25rem;">Annual Risk %</label>
-      <input type="range" id="sim-risk" min="0.1" max="2" step="0.1" value="0.5" style="width: 100%; accent-color: #22d3ee;">
-      <span id="sim-risk-val" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #22d3ee;">0.5%</span>
+<div id="survival-sim" class="simulation-container" style="margin: 2.5rem 0; padding: 1.25rem; background: #12121a; border: 1px solid #2a2a3a; border-radius: 8px;">
+  <div id="sim-grid" style="position: relative; height: 200px; background: #0a0a0f; border-radius: 4px; overflow: hidden; display: grid; gap: 3px; padding: 10px;"></div>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; gap: 1rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 1.5rem;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
+        Year <span id="sim-year" style="color: #22d3ee; font-size: 13px; margin-left: 2px;">0</span>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
+        Survivors <span id="sim-survivors" style="color: #22d3ee; font-size: 13px; margin-left: 2px;">0</span>
+      </div>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
+        Rate <span id="sim-rate" style="color: #fbbf24; font-size: 13px; margin-left: 2px;">100%</span>
+      </div>
     </div>
-    <div style="flex: 1; min-width: 200px;">
-      <label style="display: block; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #a1a1aa; margin-bottom: 0.25rem;">Years to Simulate</label>
-      <input type="range" id="sim-years" min="500" max="5000" step="500" value="3000" style="width: 100%; accent-color: #22d3ee;">
-      <span id="sim-years-val" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #22d3ee;">3000 years</span>
-    </div>
-  </div>
-  <button id="sim-run-btn" style="background: linear-gradient(135deg, #22d3ee 0%, #06b6d4 100%); color: #0a0a0f; font-family: 'JetBrains Mono', monospace; font-size: 11px; font-weight: 600; padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 1rem;">Run Simulation</button>
-  <div id="sim-grid" style="position: relative; height: 140px; background: #0a0a0f; border-radius: 4px; overflow: hidden; margin-bottom: 1rem; display: flex; flex-wrap: wrap; gap: 2px; padding: 8px; align-content: flex-start;"></div>
-  <div style="display: flex; justify-content: space-between; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-bottom: 1rem;">
-    <span>Year: <span id="sim-year" style="color: #22d3ee;">0</span></span>
-  </div>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; text-align: center;">
-    <div>
-      <div id="sim-survivors" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #22d3ee;">1000</div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em;">Survivors</div>
-    </div>
-    <div>
-      <div id="sim-rate" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #fbbf24;">100%</div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em;">Survival Rate</div>
-    </div>
-    <div>
-      <div id="sim-theoretical" style="font-family: 'JetBrains Mono', monospace; font-size: 20px; color: #a1a1aa;">100%</div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; text-transform: uppercase; letter-spacing: 0.1em;">Theoretical</div>
+    <div style="display: flex; align-items: center; gap: 0.75rem;">
+      <div style="display: flex; align-items: center; gap: 0.35rem;">
+        <input type="range" id="sim-risk" min="0.1" max="2" step="0.1" value="0.5" style="width: 60px; height: 3px; accent-color: #22d3ee; cursor: pointer;">
+        <span id="sim-risk-val" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; min-width: 28px;">0.5%</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 0.35rem;">
+        <input type="range" id="sim-years" min="1000" max="5000" step="1000" value="3000" style="width: 60px; height: 3px; accent-color: #22d3ee; cursor: pointer;">
+        <span id="sim-years-val" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; min-width: 32px;">3000y</span>
+      </div>
+      <button id="sim-run-btn" style="background: transparent; color: #71717a; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.25rem 0.5rem; border: 1px solid #2a2a3a; border-radius: 3px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#22d3ee';this.style.color='#22d3ee'" onmouseout="this.style.borderColor='#2a2a3a';this.style.color='#71717a'">Reset</button>
     </div>
   </div>
 </div>
 
 <script type="module">
 (function() {
+  const container = document.getElementById('survival-sim');
   const grid = document.getElementById('sim-grid');
   const riskInput = document.getElementById('sim-risk');
   const yearsInput = document.getElementById('sim-years');
@@ -296,26 +287,43 @@ The objects in any collection represent the survivors of a brutal selection proc
   const yearDisplay = document.getElementById('sim-year');
   const survivorsDisplay = document.getElementById('sim-survivors');
   const rateDisplay = document.getElementById('sim-rate');
-  const theoreticalDisplay = document.getElementById('sim-theoretical');
 
-  if (!grid) return;
+  if (!grid || !container) return;
 
   let objects = [];
-  const N = 500;
+  let N = 0;
+  let running = false;
+  let hasRun = false;
+
+  function calculateGridSize() {
+    const gridWidth = grid.clientWidth - 20;
+    const gridHeight = grid.clientHeight - 20;
+    const dotSize = 6;
+    const gap = 3;
+    const cols = Math.floor((gridWidth + gap) / (dotSize + gap));
+    const rows = Math.floor((gridHeight + gap) / (dotSize + gap));
+    return { cols, rows, total: cols * rows, dotSize };
+  }
 
   function initGrid() {
+    const { cols, rows, total, dotSize } = calculateGridSize();
+    N = total;
     grid.innerHTML = '';
+    grid.style.gridTemplateColumns = `repeat(${cols}, ${dotSize}px)`;
+    grid.style.gridTemplateRows = `repeat(${rows}, ${dotSize}px)`;
+    grid.style.justifyContent = 'center';
+    grid.style.alignContent = 'center';
     objects = [];
     for (let i = 0; i < N; i++) {
       const dot = document.createElement('div');
-      dot.style.cssText = 'width: 8px; height: 8px; border-radius: 1px; background: #22d3ee; transition: background 0.2s;';
+      dot.style.cssText = `width: ${dotSize}px; height: ${dotSize}px; border-radius: 1px; background: #22d3ee; transition: background 0.15s;`;
       grid.appendChild(dot);
       objects.push({ el: dot, alive: true });
     }
     yearDisplay.textContent = '0';
     survivorsDisplay.textContent = N;
     rateDisplay.textContent = '100%';
-    theoreticalDisplay.textContent = '100%';
+    hasRun = false;
   }
 
   riskInput.addEventListener('input', () => {
@@ -323,19 +331,17 @@ The objects in any collection represent the survivors of a brutal selection proc
   });
 
   yearsInput.addEventListener('input', () => {
-    yearsVal.textContent = yearsInput.value + ' years';
+    yearsVal.textContent = yearsInput.value + 'y';
   });
 
-  runBtn.addEventListener('click', async () => {
-    runBtn.disabled = true;
-    runBtn.style.opacity = '0.5';
-    runBtn.textContent = 'Simulating...';
-
-    initGrid();
+  async function runSimulation() {
+    if (running) return;
+    running = true;
+    hasRun = true;
 
     const risk = parseFloat(riskInput.value) / 100;
     const totalYears = parseInt(yearsInput.value);
-    const steps = 60;
+    const steps = 50;
     const stepSize = Math.ceil(totalYears / steps);
 
     for (let year = 0; year <= totalYears; year += stepSize) {
@@ -354,17 +360,33 @@ The objects in any collection represent the survivors of a brutal selection proc
       const survivors = objects.filter(o => o.alive).length;
       survivorsDisplay.textContent = survivors;
       rateDisplay.textContent = ((survivors / N) * 100).toFixed(1) + '%';
-      theoreticalDisplay.textContent = (Math.pow(1 - risk, year) * 100).toFixed(4) + '%';
 
-      await new Promise(r => setTimeout(r, 50));
+      await new Promise(r => setTimeout(r, 40));
     }
 
-    runBtn.disabled = false;
-    runBtn.style.opacity = '1';
-    runBtn.textContent = 'Run Again';
+    running = false;
+  }
+
+  runBtn.addEventListener('click', () => {
+    initGrid();
+    runSimulation();
   });
 
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting && !hasRun && !running) {
+        runSimulation();
+      }
+    });
+  }, { threshold: 0.5 });
+
+  observer.observe(container);
+
   initGrid();
+
+  window.addEventListener('resize', () => {
+    if (!running) initGrid();
+  });
 })();
 </script>
 
