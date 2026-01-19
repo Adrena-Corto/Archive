@@ -248,31 +248,37 @@ Stone tools dominate museum collections not because ancient people mainly used s
 The objects in any collection represent the survivors of a brutal selection process. They are not a random sample of ancient material culture. They are what was durable enough, hidden enough, or forgotten enough to persist.
 
 <div id="survival-sim" class="simulation-container" style="margin: 2.5rem 0; padding: 1.25rem; background: #12121a; border: 1px solid #2a2a3a; border-radius: 8px;">
-  <div id="sim-grid" style="position: relative; height: 200px; background: #0a0a0f; border-radius: 4px; overflow: hidden; display: grid; gap: 3px; padding: 10px;"></div>
-  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 1rem; gap: 1rem; flex-wrap: wrap;">
-    <div style="display: flex; align-items: center; gap: 1.5rem;">
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
-        Year <span id="sim-year" style="color: #22d3ee; font-size: 13px; margin-left: 2px;">0</span>
+  <div style="margin-bottom: 0.75rem;">
+    <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #22d3ee; text-transform: uppercase; letter-spacing: 0.05em;">// Survival Simulation</div>
+    <div id="sim-context" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 4px;">Each dot is an ancient object. Watch them face millennia of risk.</div>
+  </div>
+  <div id="sim-grid" style="position: relative; height: 180px; background: #0a0a0f; border-radius: 4px; overflow: hidden; display: grid; gap: 3px; padding: 10px;"></div>
+  <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 0.75rem;">
+    <div style="display: flex; align-items: center; gap: 1.25rem;">
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #52525b;">
+        Year <span id="sim-year" style="color: #22d3ee; font-size: 12px;">0</span>
       </div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
-        Survivors <span id="sim-survivors" style="color: #22d3ee; font-size: 13px; margin-left: 2px;">0</span>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #52525b;">
+        Surviving <span id="sim-survivors" style="color: #22d3ee; font-size: 12px;">0</span><span style="color: #3f3f46;">/</span><span id="sim-total" style="color: #3f3f46; font-size: 10px;">0</span>
       </div>
-      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a;">
-        Rate <span id="sim-rate" style="color: #fbbf24; font-size: 13px; margin-left: 2px;">100%</span>
+      <div style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #52525b;">
+        <span id="sim-rate" style="color: #fbbf24; font-size: 12px;">100%</span>
       </div>
     </div>
     <div style="display: flex; align-items: center; gap: 0.75rem;">
       <div style="display: flex; align-items: center; gap: 0.35rem;">
-        <input type="range" id="sim-risk" min="0.1" max="2" step="0.1" value="0.5" style="width: 60px; height: 3px; accent-color: #22d3ee; cursor: pointer;">
-        <span id="sim-risk-val" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; min-width: 28px;">0.5%</span>
+        <label for="sim-risk" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #52525b;">Risk/yr</label>
+        <input type="number" id="sim-risk" min="0.1" max="5" step="0.1" value="0.5" style="width: 42px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #22d3ee; background: #0a0a0f; border: 1px solid #27272a; border-radius: 3px; text-align: right;">
+        <span style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #52525b;">%</span>
       </div>
       <div style="display: flex; align-items: center; gap: 0.35rem;">
-        <input type="range" id="sim-years" min="1000" max="5000" step="1000" value="3000" style="width: 60px; height: 3px; accent-color: #22d3ee; cursor: pointer;">
-        <span id="sim-years-val" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #71717a; min-width: 32px;">3000y</span>
+        <label for="sim-years" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #52525b;">Years</label>
+        <input type="number" id="sim-years" min="100" max="10000" step="100" value="3000" style="width: 52px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #22d3ee; background: #0a0a0f; border: 1px solid #27272a; border-radius: 3px; text-align: right;">
       </div>
-      <button id="sim-run-btn" style="background: transparent; color: #71717a; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.25rem 0.5rem; border: 1px solid #2a2a3a; border-radius: 3px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#22d3ee';this.style.color='#22d3ee'" onmouseout="this.style.borderColor='#2a2a3a';this.style.color='#71717a'">Reset</button>
+      <button id="sim-run-btn" style="background: transparent; color: #52525b; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.2rem 0.5rem; border: 1px solid #27272a; border-radius: 3px; cursor: pointer; transition: all 0.2s; opacity: 0;">Replay</button>
     </div>
   </div>
+  <div id="sim-result" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #1f1f23; opacity: 0; transition: opacity 0.3s;"></div>
 </div>
 
 <script type="module">
@@ -281,12 +287,13 @@ The objects in any collection represent the survivors of a brutal selection proc
   const grid = document.getElementById('sim-grid');
   const riskInput = document.getElementById('sim-risk');
   const yearsInput = document.getElementById('sim-years');
-  const riskVal = document.getElementById('sim-risk-val');
-  const yearsVal = document.getElementById('sim-years-val');
   const runBtn = document.getElementById('sim-run-btn');
   const yearDisplay = document.getElementById('sim-year');
   const survivorsDisplay = document.getElementById('sim-survivors');
+  const totalDisplay = document.getElementById('sim-total');
   const rateDisplay = document.getElementById('sim-rate');
+  const contextDisplay = document.getElementById('sim-context');
+  const resultDisplay = document.getElementById('sim-result');
 
   if (!grid || !container) return;
 
@@ -322,22 +329,40 @@ The objects in any collection represent the survivors of a brutal selection proc
     }
     yearDisplay.textContent = '0';
     survivorsDisplay.textContent = N;
+    totalDisplay.textContent = N;
     rateDisplay.textContent = '100%';
+    contextDisplay.textContent = 'Each dot is an ancient object. Watch them face millennia of risk.';
+    resultDisplay.style.opacity = '0';
     hasRun = false;
   }
 
-  riskInput.addEventListener('input', () => {
-    riskVal.textContent = riskInput.value + '%';
-  });
+  function showReplayButton() {
+    runBtn.style.opacity = '1';
+    runBtn.style.color = '#22d3ee';
+    runBtn.style.borderColor = '#22d3ee';
+  }
 
-  yearsInput.addEventListener('input', () => {
-    yearsVal.textContent = yearsInput.value + 'y';
-  });
+  function showResult(survivors, totalYears) {
+    const rate = ((survivors / N) * 100).toFixed(2);
+    let message = '';
+    if (survivors === 0) {
+      message = `After ${totalYears} years, nothing survived. This is the fate of most ancient objects—lost to time, recycled, or destroyed.`;
+    } else if (survivors === 1) {
+      message = `After ${totalYears} years, only 1 object out of ${N} survived (${rate}%). This lone survivor is your museum piece.`;
+    } else if (survivors <= 5) {
+      message = `After ${totalYears} years, only ${survivors} objects out of ${N} survived (${rate}%). These few survivors are what fill our museums.`;
+    } else {
+      message = `After ${totalYears} years, ${survivors} of ${N} objects survived (${rate}%). Each survivor beat extraordinary odds.`;
+    }
+    resultDisplay.textContent = message;
+    resultDisplay.style.opacity = '1';
+  }
 
   async function runSimulation() {
     if (running) return;
     running = true;
     hasRun = true;
+    contextDisplay.textContent = 'Simulating centuries of war, decay, recycling, and neglect...';
 
     const risk = parseFloat(riskInput.value) / 100;
     const totalYears = parseInt(yearsInput.value);
@@ -364,10 +389,16 @@ The objects in any collection represent the survivors of a brutal selection proc
       await new Promise(r => setTimeout(r, 40));
     }
 
+    const finalSurvivors = objects.filter(o => o.alive).length;
+    showResult(finalSurvivors, totalYears);
+    showReplayButton();
     running = false;
   }
 
   runBtn.addEventListener('click', () => {
+    runBtn.style.opacity = '0';
+    runBtn.style.color = '#52525b';
+    runBtn.style.borderColor = '#27272a';
     initGrid();
     runSimulation();
   });

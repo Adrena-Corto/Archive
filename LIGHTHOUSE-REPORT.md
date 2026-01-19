@@ -15,19 +15,19 @@
 **Performance Score:** 99/100
 
 **Core Web Vitals:**
-- FCP: 1.6 s
-- LCP: 1.6 s
-- TBT: 50 ms
+- FCP: 1.7 s
+- LCP: 1.7 s
+- TBT: 90 ms
 - CLS: 0.015
-- Speed Index: 1.8 s
+- Speed Index: 1.9 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
 2. Largest Contentful Paint
-3. Max Potential First Input Delay
-4. Time to Interactive
-5. Minimize main-thread work
+3. Total Blocking Time
+4. Max Potential First Input Delay
+5. Time to Interactive
 
 ### Desktop 🟢
 
@@ -37,8 +37,8 @@
 - FCP: 0.4 s
 - LCP: 0.4 s
 - TBT: 0 ms
-- CLS: 0.004
-- Speed Index: 0.9 s
+- CLS: 0.013
+- Speed Index: 1.0 s
 
 **Top Opportunities:**
 
@@ -61,14 +61,14 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 94/100
+**Performance Score:** 93/100
 
 **Core Web Vitals:**
 - FCP: 1.3 s
 - LCP: 3.1 s
 - TBT: 60 ms
 - CLS: 0.001
-- Speed Index: 2.0 s
+- Speed Index: 2.1 s
 
 **Key Diagnostics:**
 
@@ -80,14 +80,14 @@
 
 ### Desktop 🟢
 
-**Performance Score:** 92/100
+**Performance Score:** 95/100
 
 **Core Web Vitals:**
-- FCP: 0.7 s
-- LCP: 1.6 s
+- FCP: 0.4 s
+- LCP: 1.3 s
 - TBT: 0 ms
 - CLS: 0.001
-- Speed Index: 1.7 s
+- Speed Index: 1.4 s
 
 **Top Opportunities:**
 
@@ -96,11 +96,11 @@
 
 **Key Diagnostics:**
 
-1. First Contentful Paint
-2. Largest Contentful Paint
-3. Speed Index
-4. Time to Interactive
-5. Use efficient cache lifetimes
+1. Largest Contentful Paint
+2. Speed Index
+3. Use efficient cache lifetimes
+4. LCP breakdown
+5. Network dependency tree
 
 ---
 
@@ -136,7 +136,7 @@
 - LCP: 1.2 s
 - TBT: 0 ms
 - CLS: 0.002
-- Speed Index: 1.4 s
+- Speed Index: 1.5 s
 
 **Top Opportunities:**
 
@@ -148,8 +148,8 @@
 1. Largest Contentful Paint
 2. Speed Index
 3. Use efficient cache lifetimes
-4. Forced reflow
-5. Improve image delivery
+4. Improve image delivery
+5. LCP breakdown
 
 ---
 
@@ -159,12 +159,12 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 86/100
+**Performance Score:** 89/100
 
 **Core Web Vitals:**
-- FCP: 1.6 s
-- LCP: 3.9 s
-- TBT: 140 ms
+- FCP: 1.5 s
+- LCP: 3.6 s
+- TBT: 130 ms
 - CLS: 0
 - Speed Index: 2.1 s
 
@@ -181,11 +181,11 @@
 **Performance Score:** 99/100
 
 **Core Web Vitals:**
-- FCP: 0.3 s
+- FCP: 0.4 s
 - LCP: 0.4 s
 - TBT: 0 ms
 - CLS: 0
-- Speed Index: 1.2 s
+- Speed Index: 1.3 s
 
 **Top Opportunities:**
 
@@ -206,14 +206,14 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 86/100
+**Performance Score:** 87/100
 
 **Core Web Vitals:**
-- FCP: 1.5 s
-- LCP: 2.8 s
-- TBT: 40 ms
+- FCP: 1.3 s
+- LCP: 2.6 s
+- TBT: 30 ms
 - CLS: 0.203
-- Speed Index: 2.2 s
+- Speed Index: 2.0 s
 
 **Key Diagnostics:**
 
@@ -225,14 +225,14 @@
 
 ### Desktop 🟢
 
-**Performance Score:** 96/100
+**Performance Score:** 100/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
-- LCP: 1.2 s
+- FCP: 0.3 s
+- LCP: 0.4 s
 - TBT: 0 ms
 - CLS: 0.039
-- Speed Index: 1.3 s
+- Speed Index: 1.1 s
 
 **Top Opportunities:**
 
@@ -241,11 +241,9 @@
 
 **Key Diagnostics:**
 
-1. Largest Contentful Paint
-2. Speed Index
-3. Use efficient cache lifetimes
-4. LCP breakdown
-5. Network dependency tree
+1. Speed Index
+2. Use efficient cache lifetimes
+3. Network dependency tree
 
 ---
 
@@ -254,9 +252,9 @@
 | Page | Mobile | Desktop |
 |------|--------|--------|
 | Homepage | 🟢 99 | 🟢 100 |
-| Coins | 🟢 94 | 🟢 92 |
+| Coins | 🟢 93 | 🟢 95 |
 | Artifacts | 🟢 91 | 🟢 96 |
-| Articles | 🟡 86 | 🟢 99 |
-| Sample Item | 🟡 86 | 🟢 96 |
+| Articles | 🟡 89 | 🟢 99 |
+| Sample Item | 🟡 87 | 🟢 100 |
 
 **Legend:** 🟢 Good (90+) | 🟡 Needs Improvement (50-89) | 🔴 Poor (<50)

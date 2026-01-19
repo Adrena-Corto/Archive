@@ -258,6 +258,7 @@ const itemStructuredData = {
             <>
               <div
                 class="glass-panel overflow-hidden w-full max-w-full rounded-lg relative touch-manipulation"
+                style="aspect-ratio: 3/2;"
                 @touchstart="handleTouchStart($event)"
                 @touchmove="handleTouchMove($event)"
                 @touchend="handleTouchEnd($event)"
@@ -268,8 +269,7 @@ const itemStructuredData = {
                     x-transition:enter="transition ease-out duration-300"
                     x-transition:enter-start="opacity-0"
                     x-transition:enter-end="opacity-100"
-                    class="relative"
-                    style="aspect-ratio: 3/2;"
+                    class="absolute inset-0"
                   >
                     {thumbhash && (
                       <canvas
