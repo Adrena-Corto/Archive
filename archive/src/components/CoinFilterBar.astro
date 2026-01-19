@@ -91,6 +91,8 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
     materialOpen: false,
     tagOpen: false,
     sortOpen: false,
+    mobileSortOpen: false,
+    mobileExpanded: false,
     visibleCount: ${totalCoins},
     totalCoins: ${totalCoins},
     empireCounts: ${JSON.stringify(empireCounts)},
@@ -111,6 +113,26 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
       if (params.get('tag')) this.tag = params.get('tag');
       if (params.get('sort')) this.sort = params.get('sort');
       this.filterAndSort();
+    },
+    getFilterSummary() {
+      const parts = [];
+      if (this.empire !== 'all') parts.push(this.empireLabels[this.empire] || this.empire);
+      if (this.denomination !== 'all') parts.push(this.denomination);
+      if (this.ruler !== 'all') parts.push(this.ruler);
+      if (this.material !== 'all') parts.push(this.material.charAt(0).toUpperCase() + this.material.slice(1));
+      if (this.tag !== 'all') parts.push(this.tag);
+      if (parts.length === 0) return 'All Coins';
+      if (parts.length <= 2) return parts.join(' · ');
+      return parts.slice(0, 2).join(' · ') + ' +' + (parts.length - 2);
+    },
+    activeFilterCount() {
+      let count = 0;
+      if (this.empire !== 'all') count++;
+      if (this.denomination !== 'all') count++;
+      if (this.ruler !== 'all') count++;
+      if (this.material !== 'all') count++;
+      if (this.tag !== 'all') count++;
+      return count;
     },
     updateURL() {
       const params = new URLSearchParams();
@@ -224,6 +246,11 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
       this.materialOpen = false;
       this.tagOpen = false;
       this.sortOpen = false;
+      this.mobileSortOpen = false;
+    },
+    closeMobileFilters() {
+      this.mobileExpanded = false;
+      this.closeAll();
     },
     getLabel(options, value) {
       const opt = options.find(o => o.value === value);
@@ -231,9 +258,201 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
     }
   }`}
   x-init="init()"
-  @keydown.escape.window="closeAll()"
-  class="glass-panel p-4 mb-8 overflow-visible relative z-40"
+  @keydown.escape.window="closeAll(); mobileExpanded = false"
+  class="coin-filter-bar md:glass-panel md:p-4 mb-8 overflow-visible relative z-40"
 >
+  <!-- Mobile Collapsed Bar (visible on mobile only) -->
+  <div class="mobile-filter-header md:hidden sticky top-[57px] z-40 bg-void/95 backdrop-blur-xl border-b border-white/10">
+    <div class="flex items-center gap-3 px-4 py-3">
+      <!-- Filter Toggle Button -->
+      <button
+        type="button"
+        @click="mobileExpanded = !mobileExpanded"
+        class="flex items-center gap-2 px-3 py-2 bg-surface-light/50 border border-border rounded-lg font-mono text-xs text-text-muted hover:text-text hover:border-border-light transition-all"
+        :class="{ 'border-accent/50 text-accent': mobileExpanded || hasActiveFilters() }"
+      >
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+        </svg>
+        <span x-text="getFilterSummary()"></span>
+        <span
+          x-show="activeFilterCount() > 0"
+          x-text="activeFilterCount()"
+          class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 bg-accent/20 text-accent text-[10px] rounded-full"
+        ></span>
+      </button>
+
+      <!-- Mobile Sort Dropdown -->
+      <div class="relative ml-auto" @click.outside="mobileSortOpen = false">
+        <button
+          type="button"
+          @click="mobileSortOpen = !mobileSortOpen"
+          class="flex items-center gap-1.5 px-2.5 py-2 bg-surface-light/50 border border-border rounded-lg font-mono text-[11px] text-text-muted"
+          :class="{ 'border-accent/30 text-accent': sort !== 'name' }"
+        >
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 4h13M3 8h9m-9 4h6m4 0l4-4m0 0l4 4m-4-4v12" />
+          </svg>
+          <span x-text="getLabel(sortOptions, sort)"></span>
+        </button>
+        <div
+          x-show="mobileSortOpen"
+          x-transition:enter="transition ease-out duration-150"
+          x-transition:enter-start="opacity-0 -translate-y-1"
+          x-transition:enter-end="opacity-100 translate-y-0"
+          x-transition:leave="transition ease-in duration-100"
+          x-transition:leave-start="opacity-100"
+          x-transition:leave-end="opacity-0"
+          class="absolute right-0 top-full mt-1 min-w-[140px] py-1 bg-surface-elevated border border-border-light rounded-lg shadow-xl z-50"
+          x-cloak
+        >
+          <template x-for="option in sortOptions" :key="option.value">
+            <button
+              type="button"
+              @click="sort = option.value; mobileSortOpen = false; filterAndSort()"
+              class="w-full px-3 py-2 text-left font-mono text-[11px] text-text-muted hover:bg-white/5 hover:text-text"
+              :class="{ 'text-accent bg-accent/5': sort === option.value }"
+            >
+              <span x-text="option.label"></span>
+            </button>
+          </template>
+        </div>
+      </div>
+
+      <!-- Coin Count -->
+      <span class="font-mono text-[11px] text-text-dim whitespace-nowrap">
+        <span class="text-accent" x-text="visibleCount"></span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Mobile Expanded Filters -->
+  <div
+    x-show="mobileExpanded"
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 -translate-y-2"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 -translate-y-2"
+    class="md:hidden bg-surface/95 backdrop-blur-xl border-b border-white/10 px-4 py-4"
+    x-cloak
+  >
+    <!-- Empire Pills (Mobile) -->
+    <div class="mb-4">
+      <label class="mobile-filter-label">Empire</label>
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          @click="setEmpire('all')"
+          class="mobile-filter-pill"
+          :class="{ 'mobile-filter-pill-active': empire === 'all' }"
+        >All <span class="mobile-pill-count" x-text="empireCounts.all"></span></button>
+        {empires.map(emp => (
+          <button
+            type="button"
+            @click={`setEmpire('${emp}')`}
+            class="mobile-filter-pill"
+            :class={`{ 'mobile-filter-pill-active': empire === '${emp}' }`}
+          >{empireLabels[emp]} <span class="mobile-pill-count">{empireCounts[emp] || 0}</span></button>
+        ))}
+      </div>
+    </div>
+
+    <!-- Type Pills (Mobile) -->
+    <div class="mb-4" x-show="getDenominations().length > 0">
+      <label class="mobile-filter-label">Type</label>
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          @click="setDenomination('all')"
+          class="mobile-filter-pill"
+          :class="{ 'mobile-filter-pill-active': denomination === 'all' }"
+        >All</button>
+        <template x-for="denom in getDenominations()" :key="denom">
+          <button
+            type="button"
+            @click="setDenomination(denom)"
+            class="mobile-filter-pill"
+            :class="{ 'mobile-filter-pill-active': denomination === denom }"
+          ><span x-text="denom"></span> <span class="mobile-pill-count" x-text="getDenomCount(denom)"></span></button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Ruler Pills (Mobile) -->
+    <div class="mb-4" x-show="getRulers().length > 0">
+      <label class="mobile-filter-label">Ruler</label>
+      <div class="flex flex-wrap gap-1.5">
+        <button
+          type="button"
+          @click="setRuler('all')"
+          class="mobile-filter-pill"
+          :class="{ 'mobile-filter-pill-active': ruler === 'all' }"
+        >All</button>
+        <template x-for="r in getRulers()" :key="r">
+          <button
+            type="button"
+            @click="setRuler(r)"
+            class="mobile-filter-pill"
+            :class="{ 'mobile-filter-pill-active': ruler === r }"
+          ><span x-text="r"></span> <span class="mobile-pill-count" x-text="getRulerCount(r)"></span></button>
+        </template>
+      </div>
+    </div>
+
+    <!-- Material & Tag Row (Mobile) -->
+    <div class="flex gap-3 mb-4">
+      {materials.length > 1 && (
+        <div class="flex-1">
+          <label class="mobile-filter-label">Material</label>
+          <select
+            x-model="material"
+            @change="filterAndSort()"
+            class="w-full px-2.5 py-2 bg-surface-light/50 border border-border rounded-lg font-mono text-[11px] text-text"
+          >
+            {materialOptions.map(opt => (
+              <option value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+      {tags.length > 0 && (
+        <div class="flex-1">
+          <label class="mobile-filter-label">Tag</label>
+          <select
+            x-model="tag"
+            @change="filterAndSort()"
+            class="w-full px-2.5 py-2 bg-surface-light/50 border border-border rounded-lg font-mono text-[11px] text-text"
+          >
+            {tagOptions.map(opt => (
+              <option value={opt.value}>{opt.label}</option>
+            ))}
+          </select>
+        </div>
+      )}
+    </div>
+
+    <!-- Action Row (Mobile) -->
+    <div class="flex items-center justify-between pt-3 border-t border-white/5">
+      <button
+        x-show="hasActiveFilters()"
+        @click="clearFilters()"
+        class="font-mono text-[11px] text-text-dim hover:text-accent transition-colors"
+      >[Clear All]</button>
+      <span x-show="!hasActiveFilters()" class="font-mono text-[11px] text-text-dim">
+        <span class="text-accent" x-text="visibleCount"></span> coins
+      </span>
+      <button
+        type="button"
+        @click="closeMobileFilters()"
+        class="px-4 py-2 bg-accent/10 border border-accent/50 rounded-lg font-mono text-xs text-accent hover:bg-accent/20 transition-colors"
+      >Done</button>
+    </div>
+  </div>
+
+  <!-- Desktop Filters (hidden on mobile) -->
+  <div class="hidden md:block">
   <!-- Row 1: Empire Pills -->
   <div class="filter-row">
     <label class="filter-label">Empire</label>
@@ -485,12 +704,13 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
       </button>
     </div>
   </div>
+  </div><!-- End Desktop Filters -->
 
   <!-- Empty state message -->
   <div
     x-show="visibleCount === 0"
     x-cloak
-    class="mt-4 p-4 border border-border-light rounded-lg text-center"
+    class="mt-4 p-4 border border-border-light rounded-lg text-center mx-4 md:mx-0"
     role="status"
   >
     <p class="font-mono text-sm text-text-muted">
@@ -661,5 +881,51 @@ const denomCountsByEmpire: Record<string, Record<string, number>> = {
 
   .select-check {
     @apply w-4 h-4 text-accent flex-shrink-0;
+  }
+
+  /* Mobile Filter Styles */
+  .mobile-filter-label {
+    @apply font-mono text-[10px] uppercase tracking-wider text-text-dim block mb-2;
+  }
+
+  .mobile-filter-pill {
+    @apply inline-flex items-center gap-1;
+    @apply px-2.5 py-1.5;
+    @apply bg-surface-light/30;
+    @apply border border-border rounded-full;
+    @apply font-mono text-[11px] text-text-muted;
+    @apply transition-all duration-150;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-filter-pill:active {
+    @apply bg-surface-light;
+  }
+
+  .mobile-filter-pill-active {
+    @apply bg-accent/10 border-accent/50 text-accent;
+  }
+
+  .mobile-pill-count {
+    @apply text-[9px] text-text-dim ml-0.5;
+  }
+
+  .mobile-filter-pill-active .mobile-pill-count {
+    @apply text-accent/70;
+  }
+
+  /* Native select styling for mobile */
+  select {
+    @apply appearance-none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.25em 1.25em;
+    padding-right: 2rem;
+  }
+
+  /* Ensure mobile filter bar stays on top when sticky */
+  .mobile-filter-header {
+    -webkit-backdrop-filter: blur(16px);
   }
 </style>

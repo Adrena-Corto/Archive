@@ -46,8 +46,8 @@ async function generateThumbnails() {
 
         try {
           await sharp(imagePath)
-            .resize(size.width, size.width, {
-              fit: 'cover',
+            .resize(size.width, null, {
+              fit: 'inside',
               withoutEnlargement: true
             })
             .webp({ quality: size.quality })
