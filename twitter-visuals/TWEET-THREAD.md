@@ -7,6 +7,34 @@
 
 ---
 
+## Quick Start with Typefully
+
+### 1. Capture Screenshots
+```bash
+# Start dev server in one terminal
+cd ~/CascadeProjects/windsurf-project-3/archive && pnpm dev
+
+# Run capture script in another terminal
+cd ~/CascadeProjects/windsurf-project-3/twitter-visuals
+./capture-screenshots.sh
+```
+
+### 2. Import to Typefully
+1. Go to [typefully.com](https://typefully.com) and sign in
+2. Click "New Draft" → "Thread"
+3. Copy the content from `typefully-thread.txt`
+4. Paste into Typefully (it auto-splits on `---`)
+5. Attach images from the `screenshots/` folder to each tweet
+6. Schedule or post!
+
+### 3. Record Decipher Animation
+For tweet #8, record a 5-second GIF:
+- Use **Kap** (free) or **CleanShot X**
+- Hover over the cuneiform button on the homepage
+- Capture the decrypt animation
+
+---
+
 ## Visuals Checklist
 
 | Tweet | Visual Needed | How to Capture |
