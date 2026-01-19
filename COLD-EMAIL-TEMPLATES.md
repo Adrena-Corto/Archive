@@ -125,6 +125,19 @@ Happy to grab coffee if you're ever interested in talking antiquities.
 
 ---
 
+## Content to Showcase (Update Links When Ready)
+
+Once the "Against All Odds" article series is complete, add this to emails:
+
+> I've also started writing long-form research pieces. "Against All Odds" explores how specific objects in the collection survived millennia — the improbable journeys from ancient workshops to modern hands. You can read it here: [LINK]
+
+This demonstrates:
+- You're not just collecting, you're researching and publishing
+- The collection has stories worth telling
+- You can produce quality content (patron value)
+
+---
+
 ## Personalization Notes
 
 Before sending, customize each email with:
