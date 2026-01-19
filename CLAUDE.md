@@ -320,6 +320,91 @@ featuredItems: [item-id-1, item-id-2]
 - **Images**: Large, high-quality, neutral backgrounds
 - **Interactions**: Subtle hovers, smooth transitions
 
+## Performance Testing
+
+The site has automated performance testing using Lighthouse to ensure fast load times and excellent Core Web Vitals.
+
+### Running Performance Tests
+
+```bash
+# Run automated Lighthouse tests on all key pages
+node scripts/lighthouse-test.mjs
+```
+
+This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on both mobile and desktop, generating a detailed report at `LIGHTHOUSE-REPORT.md`.
+
+### Performance Workflow
+
+1. **Test Current State**
+   ```bash
+   node scripts/lighthouse-test.mjs
+   ```
+
+2. **Review Report**
+   ```bash
+   cat LIGHTHOUSE-REPORT.md
+   ```
+
+3. **Identify Issues**
+   - Look for scores below 90
+   - Check LCP (target: <2.5s on mobile)
+   - Check TBT (target: <200ms)
+   - Review "Top Opportunities" for fixes
+
+4. **Implement Fixes & Deploy**
+   ```bash
+   pnpm build
+   git add -A && git commit -m "Performance: [description]"
+   git push
+   ```
+
+5. **Wait & Retest** (GitHub Pages deployment takes ~3 minutes)
+   ```bash
+   sleep 180
+   node scripts/lighthouse-test.mjs
+   ```
+
+### Current Performance (2026-01-19)
+
+**Production URL:** `https://theantiquearchive.com`
+
+| Page | Mobile | Desktop |
+|------|--------|---------|
+| Homepage | 100 | 100 |
+| Coins | 92 | 95 |
+| Artifacts | 91 | 96 |
+| Articles | 87 | 100 |
+
+### Performance Best Practices
+
+**Images:**
+- ✅ Use `BlurImage` component for progressive loading with ThumbHash
+- ✅ Add `priority={true}` to first 6 cards on collection pages
+- ✅ Add `loading="lazy"` to below-fold images
+- ✅ Use WebP with responsive srcsets (400w, 800w)
+
+**JavaScript:**
+- ✅ Use `requestIdleCallback` for non-critical work (ThumbHash processing)
+- ✅ Defer non-critical scripts
+- ✅ Dynamic imports for heavy components (Timeline)
+
+**Critical Resources:**
+- ✅ `fetchpriority="high"` on LCP images
+- ✅ `loading="eager"` for above-fold images
+- ✅ Inline critical CSS
+
+### Performance Scripts
+
+- `scripts/lighthouse-test.mjs` - Automated Lighthouse testing
+- `scripts/pagespeed-test.mjs` - PageSpeed API (rate-limited, use Lighthouse instead)
+- `scripts/performance-iterate.mjs` - Test → analyze → suggest workflow
+
+### Documentation
+
+- `PERFORMANCE-WORKFLOW-SUMMARY.md` - Complete workflow guide
+- `LIGHTHOUSE-REPORT.md` - Latest test results
+- `PAGESPEED-WORKFLOW.md` - Manual testing workflow
+
 ## Agents
 
 Specialized agents in `.claude/agents/`. Use these by asking Claude to "use the [agent] agent" or referencing the task type.
