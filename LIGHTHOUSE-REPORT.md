@@ -12,22 +12,22 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 100/100
+**Performance Score:** 99/100
 
 **Core Web Vitals:**
-- FCP: 1.4 s
-- LCP: 1.4 s
-- TBT: 10 ms
+- FCP: 1.7 s
+- LCP: 1.7 s
+- TBT: 60 ms
 - CLS: 0.015
-- Speed Index: 1.6 s
+- Speed Index: 1.9 s
 
 **Key Diagnostics:**
 
 1. First Contentful Paint
-2. Time to Interactive
-3. Minimize main-thread work
-4. Avoid enormous network payloads
-5. Use efficient cache lifetimes
+2. Largest Contentful Paint
+3. Max Potential First Input Delay
+4. Time to Interactive
+5. Minimize main-thread work
 
 ### Desktop 🟢
 
@@ -61,14 +61,14 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 92/100
+**Performance Score:** 94/100
 
 **Core Web Vitals:**
-- FCP: 1.5 s
-- LCP: 3.3 s
-- TBT: 60 ms
+- FCP: 1.3 s
+- LCP: 3.1 s
+- TBT: 50 ms
 - CLS: 0.001
-- Speed Index: 2.2 s
+- Speed Index: 2.0 s
 
 **Key Diagnostics:**
 
@@ -80,14 +80,14 @@
 
 ### Desktop 🟢
 
-**Performance Score:** 95/100
+**Performance Score:** 96/100
 
 **Core Web Vitals:**
-- FCP: 0.4 s
-- LCP: 1.3 s
+- FCP: 0.3 s
+- LCP: 1.2 s
 - TBT: 0 ms
 - CLS: 0.001
-- Speed Index: 1.4 s
+- Speed Index: 1.3 s
 
 **Top Opportunities:**
 
@@ -110,7 +110,7 @@
 
 ### Mobile 🟢
 
-**Performance Score:** 91/100
+**Performance Score:** 92/100
 
 **Core Web Vitals:**
 - FCP: 1.5 s
@@ -136,7 +136,7 @@
 - LCP: 1.2 s
 - TBT: 0 ms
 - CLS: 0.002
-- Speed Index: 1.3 s
+- Speed Index: 1.2 s
 
 **Top Opportunities:**
 
@@ -159,12 +159,12 @@
 
 ### Mobile 🟡
 
-**Performance Score:** 87/100
+**Performance Score:** 84/100
 
 **Core Web Vitals:**
 - FCP: 1.5 s
-- LCP: 3.9 s
-- TBT: 110 ms
+- LCP: 4.3 s
+- TBT: 130 ms
 - CLS: 0
 - Speed Index: 1.9 s
 
@@ -204,11 +204,50 @@
 
 ## Sample Item
 
-**URL:** https://theantiquearchive.com/items/marcus-aurelius-denarius-01/
+**URL:** https://theantiquearchive.com/item/marcus-aurelius-denarius-01/
 
-### Mobile: Failed to load
+### Mobile 🟡
 
-### Desktop: Failed to load
+**Performance Score:** 67/100
+
+**Core Web Vitals:**
+- FCP: 1.3 s
+- LCP: 8.0 s
+- TBT: 30 ms
+- CLS: 0.177
+- Speed Index: 2.4 s
+
+**Key Diagnostics:**
+
+1. First Contentful Paint
+2. Largest Contentful Paint
+3. Speed Index
+4. Max Potential First Input Delay
+5. Cumulative Layout Shift
+
+### Desktop 🟢
+
+**Performance Score:** 93/100
+
+**Core Web Vitals:**
+- FCP: 0.3 s
+- LCP: 1.6 s
+- TBT: 0 ms
+- CLS: 0.075
+- Speed Index: 1.1 s
+
+**Top Opportunities:**
+
+1. **Reduce unused CSS** (Save ~Est savings of 14 KiB)
+   - Reduce unused rules from stylesheets and defer CSS not used for above-the-fold content to decrease bytes consumed by network activity. [Learn how to reduce unused CSS](https://developer.chrome.com/docs/lighthouse/performance/unused-css-rules/).
+
+**Key Diagnostics:**
+
+1. Largest Contentful Paint
+2. Speed Index
+3. Cumulative Layout Shift
+4. Time to Interactive
+5. Image elements do not have explicit `width` and `height`
 
 ---
 
@@ -216,10 +255,10 @@
 
 | Page | Mobile | Desktop |
 |------|--------|--------|
-| Homepage | 🟢 100 | 🟢 100 |
-| Coins | 🟢 92 | 🟢 95 |
-| Artifacts | 🟢 91 | 🟢 96 |
-| Articles | 🟡 87 | 🟢 100 |
-| Sample Item | ⚪ N/A | ⚪ N/A |
+| Homepage | 🟢 99 | 🟢 100 |
+| Coins | 🟢 94 | 🟢 96 |
+| Artifacts | 🟢 92 | 🟢 96 |
+| Articles | 🟡 84 | 🟢 100 |
+| Sample Item | 🟡 67 | 🟢 93 |
 
 **Legend:** 🟢 Good (90+) | 🟡 Needs Improvement (50-89) | 🔴 Poor (<50)

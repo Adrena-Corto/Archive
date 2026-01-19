@@ -278,8 +278,11 @@ const itemStructuredData = {
                       @touchend="hideTouchMagnifier()"
                       src={path}
                       alt={`${item.name} - Image ${index + 1}`}
+                      width="1400"
+                      height="933"
                       class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
                       loading={index === 0 ? 'eager' : 'lazy'}
+                      fetchpriority={index === 0 ? 'high' : undefined}
                       draggable="false"
                       onload="this.classList.remove('opacity-0'); this.classList.add('opacity-100'); this.previousElementSibling?.classList.add('opacity-0')"
                     />
@@ -339,6 +342,8 @@ const itemStructuredData = {
                       <img
                         src={url(`/images/items/${item.id}/${image}`)}
                         alt={`Thumbnail ${index + 1}`}
+                        width="80"
+                        height="80"
                         class="w-full h-full object-cover"
                         loading="lazy"
                       />
@@ -427,6 +432,8 @@ const itemStructuredData = {
                   @mouseleave="hideLbMagnifier()"
                   src={url(`/images/items/${item.id}/${image}`)}
                   alt={`${item.name} - Image ${index + 1}`}
+                  width="1400"
+                  height="933"
                   class="max-w-full max-h-[85vh] object-contain cursor-crosshair"
                   draggable="false"
                 />
