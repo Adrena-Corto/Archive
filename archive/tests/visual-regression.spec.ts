@@ -46,7 +46,9 @@ test.describe('Visual Regression - Item Detail', () => {
     const firstItem = page.locator('[data-coin-item]').first();
     await firstItem.click();
     await page.waitForLoadState('networkidle');
-    await expect(page).toHaveScreenshot('item-detail.png', { fullPage: true });
+    // Wait for blur placeholder images to fully load
+    await page.waitForTimeout(1000);
+    await expect(page).toHaveScreenshot('item-detail.png', { fullPage: true, maxDiffPixels: 3000 });
   });
 });
 

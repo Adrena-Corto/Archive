@@ -16,9 +16,16 @@ test.describe('Artifact Filters', () => {
     await expect(filterBar).toBeVisible();
   });
 
-  test('category dropdown exists', async ({ page }) => {
-    const categoryButton = page.locator('main button:has-text("All Categories")').first();
-    await expect(categoryButton).toBeVisible();
+  test('category dropdown exists', async ({ page, isMobile }) => {
+    if (isMobile) {
+      // On mobile, the filter is collapsed - check for the mobile filter header
+      const mobileFilterHeader = page.locator('.mobile-filter-header');
+      await expect(mobileFilterHeader).toBeVisible();
+    } else {
+      // On desktop, the dropdown is directly visible
+      const categoryButton = page.locator('main button:has-text("All Categories")').first();
+      await expect(categoryButton).toBeVisible();
+    }
   });
 
   test('filters by URL param - category jewelry', async ({ page }) => {

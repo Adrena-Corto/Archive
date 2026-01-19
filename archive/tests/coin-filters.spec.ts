@@ -28,9 +28,18 @@ test.describe('Coin Filters', () => {
     expect(url.searchParams.get('empire')).toBe('byzantine');
   });
 
-  test('empire button click filters coins', async ({ page }) => {
-    const romanButton = page.locator('button').filter({ hasText: 'Roman' }).first();
-    await romanButton.click();
+  test('empire button click filters coins', async ({ page, isMobile }) => {
+    if (isMobile) {
+      // On mobile, expand filter panel first, then click the mobile pill
+      await page.locator('button').filter({ hasText: 'All Coins' }).click();
+      await page.waitForTimeout(200);
+      const romanButton = page.locator('.mobile-filter-pill').filter({ hasText: 'Roman' });
+      await romanButton.click();
+    } else {
+      // On desktop, click the desktop filter pill directly
+      const romanButton = page.locator('.filter-pill').filter({ hasText: 'Roman' });
+      await romanButton.click();
+    }
     await page.waitForTimeout(500);
 
     const url = new URL(page.url());
