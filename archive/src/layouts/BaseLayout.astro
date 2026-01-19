@@ -317,9 +317,14 @@ function isActive(path: string): boolean {
         <p class="font-mono text-xs text-text-dim tracking-wide">
           <span class="text-accent">></span> Personal Collection Display
         </p>
-        <p class="font-mono text-xs text-text-dim">
-          Hong Kong, {new Date().getFullYear()}
-        </p>
+        <div class="flex items-center gap-4">
+          <a href={url('/support')} class="font-mono text-xs text-text-dim hover:text-accent transition-colors">
+            Support
+          </a>
+          <p class="font-mono text-xs text-text-dim">
+            Hong Kong, {new Date().getFullYear()}
+          </p>
+        </div>
       </div>
     </footer>
 
