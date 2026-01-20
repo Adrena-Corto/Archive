@@ -1,89 +1,77 @@
-# Handoff: Performance Optimization Complete
+# Handoff: Outreach Automation System
 
 **Date:** 2026-01-20
-**Session Focus:** Lighthouse performance optimization across all pages
+**Session Focus:** Patron outreach strategy, contact research, and email automation
 
 ---
 
 ## Summary
 
-All pages now score 🟢 90+ on mobile except Articles (87), which is limited by network LCP.
+Built a semi-automated outreach system for contacting HK collectors, foundations, and museums. Researched 18 targets with emails/contact info. Created `/support` page.
 
-## Final Lighthouse Scores
+## What Was Accomplished
 
-| Page | Mobile | Desktop | Notes |
-|------|--------|---------|-------|
-| Homepage | 99 | 100 | Excellent |
-| Coins | 92 | 95 | Good |
-| Artifacts | 93 | 95 | Good |
-| Articles | 87 | 99 | LCP limited by network |
-| Sample Item | 95 | 100 | CLS fixed (+11 points) |
-| About | 100 | 100 | Perfect |
-| Search | 98 | 99 | Excellent |
+### 1. Strategy
+- Recommended **grants/patronage first**, then sales
+- Focus on HNW collectors who might co-invest or sponsor acquisitions
+- Compiled bio for emails: French expat, 7 years HK, 2 fintech startups, 1000+ item collection
 
-## Changes Made This Session
+### 2. Files Created
 
-### 1. Articles Page (`src/pages/library/articles/index.astro`)
-- Added `BlurImage` component for featured item thumbnails (WebP instead of JPEG)
-- Added explicit dimensions (56x56) to prevent layout shift
-- Deferred popup and scroll initialization with `requestIdleCallback`
+| File | Purpose | Git Status |
+|------|---------|------------|
+| `archive/src/pages/support.astro` | Public patronage page | Committed |
+| `scripts/outreach/outreach.mjs` | Automation script | Committed |
+| `scripts/outreach/targets.json` | 18 targets with contact info | Committed |
+| `scripts/outreach/config.example.json` | Config template | Committed |
+| `OUTREACH-LIST.md` | Human-readable target list | Gitignored |
+| `COLD-EMAIL-TEMPLATES.md` | Email templates | Gitignored |
 
-### 2. Coins Filter Bar (`src/components/CoinFilterBar.astro`)
-- Deferred Alpine.js filter initialization with `requestIdleCallback`
-- Reduces TBT on page load
+### 3. Site Changes
+- `/support` page with patronage opportunities (co-acquisition, sponsorship, advisory)
+- Footer: Support link + RSS link + Newsletter signup
+- About page: Links to support page
 
-### 3. Artifacts Filter Bar (`src/components/ArtifactFilterBar.astro`)
-- Same optimization as Coins - deferred filter initialization
-- TBT dropped from 200ms → 100ms
-
-### 4. Item Detail Pages (`src/pages/item/[id].astro`)
-- **Major fix**: Added `aspect-ratio: 3/2` to outer image container
-- Changed inner image divs to `absolute inset-0` positioning
-- CLS dropped from 0.203 → 0 (huge improvement)
-- Mobile score jumped from 86 → 97
-
-### 5. Lighthouse Test Script (`scripts/lighthouse-test.mjs`)
-- Added About and Search pages to test suite
-
-## Key Performance Patterns Used
-
-1. **`requestIdleCallback`** - Defer non-critical JS initialization
-2. **`aspect-ratio`** - Reserve space for images before load (prevents CLS)
-3. **BlurImage component** - WebP with ThumbHash placeholders
-4. **Explicit dimensions** - Width/height on all images
-
-## Remaining Opportunities
-
-1. **Articles page (87)** - LCP is 3.8s on mobile, limited by network/text rendering
-2. **Unused CSS (~13-19KB)** - Would require CSS tree-shaking (larger undertaking)
-
-## How to Run Tests
+## Outreach System
 
 ```bash
-# Run Lighthouse on all 7 pages
-node scripts/lighthouse-test.mjs
-
-# View report
-cat LIGHTHOUSE-REPORT.md
+node scripts/outreach/outreach.mjs list      # See all targets
+node scripts/outreach/outreach.mjs research <id>  # AI research
+node scripts/outreach/outreach.mjs draft <id>     # AI draft email
+node scripts/outreach/outreach.mjs review         # Approve drafts
+node scripts/outreach/outreach.mjs send <id>      # Send via SMTP
 ```
 
-## Files Modified
+### Setup Required
+1. `cp scripts/outreach/config.example.json scripts/outreach/config.json`
+2. Add SMTP credentials + Anthropic API key
+3. `npm install nodemailer`
 
-- `archive/src/pages/library/articles/index.astro`
-- `archive/src/components/CoinFilterBar.astro`
-- `archive/src/components/ArtifactFilterBar.astro`
-- `archive/src/pages/item/[id].astro`
-- `scripts/lighthouse-test.mjs`
-- `LIGHTHOUSE-REPORT.md`
+## Contact Research Summary
 
-## Commits
+### Emails Found (12/18)
+- Peter Fung: visitors@liangyimuseum.com
+- Ma Tak Wo: info@hicc.hk (+ LinkedIn)
+- Stack's Bowers: info@stacksbowers.com
+- Heritage Auctions: CrisB@HA.com
+- HKADC: hkadc@hkadc.org.hk
+- Asia Society: supportHK@asiasociety.org
+- HK Palace Museum: development@hkpm.org.hk
+- HK Museum of Art: hkmoa_enquiries@lcsd.gov.hk
 
-1. `Performance: Optimize Articles page with WebP thumbnails and deferred JS`
-2. `Performance: Defer Coins filter initialization with requestIdleCallback`
-3. `Performance: Defer Artifacts filter initialization with requestIdleCallback`
-4. `Performance: Fix CLS on item pages with aspect-ratio reservation`
-5. `Performance: Move aspect-ratio to outer container for proper CLS fix`
+### Priority Targets
+1. **Betty Lo & Kenneth Chu** - Highest overlap (jewelry/adornments)
+2. **Ma Tak Wo** - Gatekeeper to HK numismatic community
+3. **Stack's Bowers / Heritage** - Industry relationships
+
+## Next Steps
+
+1. Setup `config.json` with SMTP + Anthropic API key
+2. Test with lower-stakes target (Stack's Bowers or HICC)
+3. Attend HKINF December 2025
+4. Apply to HKADC Project Grant (deadline: June 30)
+5. Finish "Against All Odds" article for emails
 
 ---
 
-**Status:** ✅ Complete - All major pages optimized
+**Status:** ✅ System built, needs config setup for first send
