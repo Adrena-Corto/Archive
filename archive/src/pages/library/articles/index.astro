@@ -3,6 +3,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { getItemById, getAllItems, type Item } from '../../../lib/items';
 import BlurImage from '../../../components/BlurImage.astro';
+import NewsletterSignup from '../../../components/NewsletterSignup.astro';
 
 const articles = (await getCollection('articles'))
   .filter(article => !article.data.draft)
@@ -225,6 +226,10 @@ const itemsDataJson = JSON.stringify(
           </div>
         </div>
       )}
+
+      <aside class="mt-12">
+        <NewsletterSignup variant="full" />
+      </aside>
     </div>
   </section>
 

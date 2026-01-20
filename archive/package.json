@@ -30,6 +30,7 @@
   },
   "devDependencies": {
     "@playwright/test": "^1.57.0",
+    "dotenv": "^17.2.3",
     "pagefind": "^1.4.0",
     "serve": "^14.2.5"
   }

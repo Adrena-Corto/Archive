@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
+import NewsletterSignup from '../../../components/NewsletterSignup.astro';
 import { getCollection, render } from 'astro:content';
 
 export async function getStaticPaths() {
@@ -133,7 +134,11 @@ const structuredData = {
         <Content />
       </div>
 
-      <footer class="mt-16 pt-8 border-t border-white/5">
+      <aside class="mt-16 pt-8 border-t border-white/5">
+        <NewsletterSignup variant="full" />
+      </aside>
+
+      <footer class="mt-8 pt-8 border-t border-white/5">
         <a
           href={url('/library/articles')}
           class="inline-flex items-center gap-2 font-mono text-sm text-text-muted hover:text-accent transition-colors"
