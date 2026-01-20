@@ -16,6 +16,53 @@ Granulation begins with making the granules themselves. Gold wire is cut into ti
 
 The Greeks typically worked with granules around 0.25mm in diameter. The Etruscans, who took the technique to its absolute peak, achieved granules as small as 0.14mm—roughly the width of two human hairs.
 
+<div class="visualization-container" style="margin: 2rem 0;">
+  <div class="vis-header">
+    <span class="vis-label">// Granule Size Comparison</span>
+    <span class="vis-sublabel">Relative scale of ancient gold granules</span>
+  </div>
+  <svg viewBox="0 0 600 160" aria-label="Size comparison of gold granules versus human hair and sand grain">
+    <!-- Scale bar -->
+    <line x1="50" y1="130" x2="550" y2="130" stroke="#2a2a3a" stroke-width="1"/>
+    <text x="300" y="150" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">1mm scale</text>
+    <!-- Tick marks -->
+    <line x1="50" y1="125" x2="50" y2="135" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="175" y1="125" x2="175" y2="135" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="300" y1="125" x2="300" y2="135" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="425" y1="125" x2="425" y2="135" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="550" y1="125" x2="550" y2="135" stroke="#3a3a4a" stroke-width="1"/>
+    <text x="50" y="145" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0</text>
+    <text x="175" y="145" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0.25</text>
+    <text x="300" y="145" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0.5</text>
+    <text x="425" y="145" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">0.75</text>
+    <text x="550" y="145" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">1mm</text>
+    <!-- Human hair (0.07mm) -->
+    <line x1="85" y1="40" x2="85" y2="110" stroke="#71717a" stroke-width="3"/>
+    <text x="85" y="30" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Human</text>
+    <text x="85" y="40" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">hair</text>
+    <text x="85" y="120" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">~0.07mm</text>
+    <!-- Etruscan granule (0.14mm) -->
+    <circle cx="170" cy="75" r="9" fill="#fbbf24"/>
+    <text x="170" y="30" fill="#fbbf24" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Etruscan</text>
+    <text x="170" y="40" fill="#fbbf24" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">granule</text>
+    <text x="170" y="120" fill="#fbbf24" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">~0.14mm</text>
+    <!-- Greek granule (0.25mm) -->
+    <circle cx="280" cy="75" r="16" fill="#22d3ee"/>
+    <text x="280" y="30" fill="#22d3ee" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Greek</text>
+    <text x="280" y="40" fill="#22d3ee" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">granule</text>
+    <text x="280" y="120" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">~0.25mm</text>
+    <!-- Sand grain (0.5mm) -->
+    <circle cx="420" cy="75" r="32" fill="#1a1a24" stroke="#a1a1aa" stroke-width="1"/>
+    <text x="420" y="75" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Sand</text>
+    <text x="420" y="30" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Fine sand</text>
+    <text x="420" y="40" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">grain</text>
+    <text x="420" y="120" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">~0.5mm</text>
+  </svg>
+  <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
+    Etruscan granules were 2× the width of a human hair. Each placed by hand with a single-hair brush.
+  </div>
+</div>
+
 <div class="collection-embed">
   <a href="/item/hellenistic-gold-earring">
     <div class="collection-embed-images grid-cols-2">

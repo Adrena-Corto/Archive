@@ -51,6 +51,61 @@ Whatever the intention, the result was confusion.
 
 The problem was visible only on close inspection. Both coins featured Christ on one side and the emperor on the other. Both bore similar inscriptions. The tetarteron was slightly smaller in diameter and slightly lighter in weight—differences obvious on a balance scale but not to a quick glance.
 
+<div class="visualization-container" style="margin: 2rem 0;">
+  <div class="vis-header">
+    <span class="vis-label">// Histamenon vs. Tetarteron</span>
+    <span class="vis-sublabel">Side-by-side comparison of the two gold denominations</span>
+  </div>
+  <svg viewBox="0 0 600 320" aria-label="Comparison chart showing histamenon and tetarteron specifications">
+    <!-- Histamenon side -->
+    <text x="150" y="30" fill="#fbbf24" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">HISTAMENON</text>
+    <text x="150" y="48" fill="#71717a" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">"standard" / full-weight</text>
+    <!-- Coin shape - curved/scyphate -->
+    <ellipse cx="150" cy="130" rx="70" ry="70" fill="none" stroke="#fbbf24" stroke-width="2"/>
+    <ellipse cx="150" cy="130" rx="65" ry="65" fill="#1a1a24"/>
+    <!-- Curved indicator -->
+    <path d="M85 130 Q150 100 215 130" fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="150" y="105" fill="#fbbf24" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">SCYPHATE</text>
+    <text x="150" y="115" fill="#fbbf24" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">(cup-shaped)</text>
+    <!-- Cross symbol -->
+    <line x1="150" y1="125" x2="150" y2="155" stroke="#3a3a4a" stroke-width="2"/>
+    <line x1="135" y1="135" x2="165" y2="135" stroke="#3a3a4a" stroke-width="2"/>
+    <!-- Specs -->
+    <text x="150" y="220" fill="#a1a1aa" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">Weight</text>
+    <text x="150" y="238" fill="#fbbf24" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">~4.5g</text>
+    <text x="150" y="265" fill="#a1a1aa" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">Diameter</text>
+    <text x="150" y="283" fill="#fbbf24" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">~25mm</text>
+    <!-- Divider -->
+    <line x1="300" y1="20" x2="300" y2="300" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+    <text x="300" y="160" fill="#52525b" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">vs</text>
+    <!-- Tetarteron side -->
+    <text x="450" y="30" fill="#22d3ee" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">TETARTERON</text>
+    <text x="450" y="48" fill="#71717a" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">"reduced" / lighter</text>
+    <!-- Coin shape - flat, smaller -->
+    <ellipse cx="450" cy="130" rx="58" ry="58" fill="none" stroke="#22d3ee" stroke-width="2"/>
+    <ellipse cx="450" cy="130" rx="53" ry="53" fill="#1a1a24"/>
+    <!-- Flat indicator -->
+    <line x1="397" y1="130" x2="503" y2="130" stroke="#22d3ee" stroke-width="1.5" stroke-dasharray="4,2"/>
+    <text x="450" y="105" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">FLAT</text>
+    <text x="450" y="115" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">(disc-shaped)</text>
+    <!-- Cross symbol -->
+    <line x1="450" y1="125" x2="450" y2="155" stroke="#3a3a4a" stroke-width="2"/>
+    <line x1="435" y1="135" x2="465" y2="135" stroke="#3a3a4a" stroke-width="2"/>
+    <!-- Specs -->
+    <text x="450" y="220" fill="#a1a1aa" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">Weight</text>
+    <text x="450" y="238" fill="#22d3ee" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">~4.0g</text>
+    <text x="450" y="265" fill="#a1a1aa" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">Diameter</text>
+    <text x="450" y="283" fill="#22d3ee" font-size="16" font-family="JetBrains Mono, monospace" text-anchor="middle">~20mm</text>
+    <!-- Difference callout -->
+    <rect x="220" y="230" width="160" height="50" rx="4" fill="#12121a" stroke="#2a2a3a" stroke-width="1"/>
+    <text x="300" y="250" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">~11% less gold</text>
+    <text x="300" y="268" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Treasury keeps difference</text>
+  </svg>
+  <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
+    After c. 1030, shape became the reliable distinguisher: curved = histamenon, flat = tetarteron.
+  </div>
+</div>
+
 By the 11th century, mints began making the distinction clearer:
 
 - **Histamena** became slightly concave (*scyphate*), giving them a cup-like shape
@@ -69,6 +124,66 @@ The reverse shows Constantine himself in full imperial regalia: crown with pendi
 ## The Beginning of the End
 
 The tetarteron survived until the Latin conquest of Constantinople in 1204. But its creation marked the beginning of a long monetary decline. Where the solidus had been stable for seven centuries, the 11th century saw repeated debasements. By 1081, the gold content of Byzantine coins had fallen by nearly half.
+
+<div class="visualization-container" style="margin: 2rem 0;">
+  <div class="vis-header">
+    <span class="vis-label">// Byzantine Gold Purity Collapse</span>
+    <span class="vis-sublabel">Seven centuries of stability, then rapid decline</span>
+  </div>
+  <svg viewBox="0 0 600 250" aria-label="Timeline showing Byzantine gold coin purity declining from 98% to 50% between 963 and 1081 CE">
+    <defs>
+      <linearGradient id="goldGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#fbbf24;stop-opacity:0.3"/>
+        <stop offset="70%" style="stop-color:#fbbf24;stop-opacity:0.3"/>
+        <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0.3"/>
+      </linearGradient>
+    </defs>
+    <!-- Y-axis -->
+    <line x1="60" y1="30" x2="60" y2="180" stroke="#2a2a3a" stroke-width="1"/>
+    <text x="55" y="40" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">100%</text>
+    <text x="55" y="80" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">75%</text>
+    <text x="55" y="120" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">50%</text>
+    <text x="55" y="160" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">25%</text>
+    <!-- X-axis timeline -->
+    <line x1="60" y1="180" x2="580" y2="180" stroke="#2a2a3a" stroke-width="1"/>
+    <!-- Era labels -->
+    <text x="100" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">309</text>
+    <text x="200" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">600</text>
+    <text x="300" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">800</text>
+    <text x="400" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">963</text>
+    <text x="480" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">1042</text>
+    <text x="560" y="200" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">1081</text>
+    <!-- Stability period (flat line at ~98%) -->
+    <path d="M70,38 L400,38" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+    <!-- Area under stable period -->
+    <path d="M70,38 L400,38 L400,180 L70,180 Z" fill="url(#goldGradient)" opacity="0.3"/>
+    <!-- Decline period -->
+    <path d="M400,38 Q450,45 480,65 Q520,100 560,115" fill="none" stroke="#ef4444" stroke-width="2.5"/>
+    <!-- Area under decline -->
+    <path d="M400,38 Q450,45 480,65 Q520,100 560,115 L560,180 L400,180 Z" fill="#ef4444" opacity="0.15"/>
+    <!-- Key data points -->
+    <circle cx="70" cy="38" r="4" fill="#fbbf24"/>
+    <circle cx="400" cy="38" r="4" fill="#fbbf24"/>
+    <circle cx="480" cy="65" r="4" fill="#f97316"/>
+    <circle cx="560" cy="115" r="4" fill="#ef4444"/>
+    <!-- Annotations -->
+    <text x="220" y="28" fill="#fbbf24" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">~98% pure gold</text>
+    <text x="220" y="60" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">7 centuries of stability</text>
+    <!-- Tetarteron marker -->
+    <line x1="400" y1="38" x2="400" y2="180" stroke="#22d3ee" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+    <text x="400" y="215" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Tetarteron</text>
+    <text x="400" y="225" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">introduced</text>
+    <!-- Constantine IX marker -->
+    <line x1="480" y1="65" x2="480" y2="180" stroke="#f97316" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+    <text x="480" y="215" fill="#f97316" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Constantine IX</text>
+    <text x="480" y="225" fill="#f97316" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">~85%</text>
+    <!-- 1081 marker -->
+    <text x="560" y="100" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle">~50%</text>
+  </svg>
+  <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
+    The solidus/nomisma maintained ~98% gold purity from Constantine I (309) until the late 10th century.
+  </div>
+</div>
 
 The tetarteron wasn't the cause—imperial overextension, military disasters, and civil wars bear that responsibility. But it was an early symptom of an empire learning that you can't solve real problems with monetary tricks.
 

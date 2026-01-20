@@ -271,6 +271,54 @@ magick image.jpg -rotate 180 image.jpg
 
 Articles live in `archive/src/content/articles/*.md`.
 
+### Article Visualizations (Required)
+
+**Every article must include at least one data visualization.** Visualizations enhance comprehension and engagement. Use the established visual language:
+
+**Colors:**
+- Accent cyan: `#22d3ee`
+- Gold highlights: `#fbbf24`
+- Dark backgrounds: `#12121a`, `#0a0a0f`
+- Muted text: `#71717a`, `#52525b`
+- Borders: `#2a2a3a`, `#27272a`
+
+**Visualization Types:**
+- **SVG Charts** — Line graphs, bar charts, timelines (use `viewBox` for responsive scaling)
+- **Math Boxes** — Formulas with `.math-box`, `.math-formula`, `.math-explanation` classes
+- **Comparison Diagrams** — Side-by-side technical specs, before/after views
+- **Interactive Simulations** — JavaScript-powered with scroll-triggered animations
+- **Process Diagrams** — Step-by-step sequences (numbered panels)
+- **Reference Grids** — Symbol decoders, classification matrices
+
+**Styling Classes (defined in `[id].astro`):**
+```css
+.visualization-container  /* Wrapper with bg-surface, border, rounded */
+.vis-header, .vis-label, .vis-sublabel  /* Header styling */
+.math-box, .math-formula, .math-explanation  /* Math formatting */
+.simulation-container  /* Interactive elements */
+```
+
+**Best Practices:**
+- Use `font-family: 'JetBrains Mono', monospace` for labels and data
+- Add aria-labels for accessibility
+- Include `.vis-footnote` for data caveats
+- For animations: 5 second duration, logarithmic time for decay curves
+- Responsive: use `viewBox` for SVGs, percentage widths
+
+**Example structure:**
+```html
+<div class="visualization-container">
+  <div class="vis-header">
+    <span class="vis-label">// Chart Title</span>
+    <span class="vis-sublabel">Subtitle or context</span>
+  </div>
+  <svg viewBox="0 0 600 300" aria-label="Description">
+    <!-- Chart content -->
+  </svg>
+  <div class="vis-footnote">Data source or caveat</div>
+</div>
+```
+
 ### Collection Item Embeds
 
 When featuring items from the collection in articles, use the `.collection-embed` block. This creates a distinct card that signals "from our collection" with clickable images and a link to the item page.

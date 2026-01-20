@@ -12,6 +12,65 @@ Between 224 and 651 CE, the Sasanian Empire stretched from Mesopotamia to the bo
 
 The ancient Near East had used seals for millennia, but where Mesopotamians favored cylinder seals rolled across clay, the Sasanians preferred the stamp seal: a flat or slightly convex face pressed directly down to leave its impression.
 
+<div class="visualization-container" style="margin: 2rem 0;">
+  <div class="vis-header">
+    <span class="vis-label">// Cylinder vs. Stamp Seal</span>
+    <span class="vis-sublabel">Evolution of seal technology in the ancient Near East</span>
+  </div>
+  <svg viewBox="0 0 600 220" aria-label="Comparison of cylinder seal rolling motion versus stamp seal pressing motion">
+    <!-- Cylinder seal side -->
+    <text x="150" y="25" fill="#22d3ee" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">CYLINDER SEAL</text>
+    <text x="150" y="40" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Mesopotamian tradition</text>
+    <!-- Cylinder shape -->
+    <ellipse cx="110" cy="90" rx="15" ry="35" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
+    <ellipse cx="110" cy="55" rx="15" ry="6" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
+    <line x1="95" y1="55" x2="95" y2="125" stroke="#22d3ee" stroke-width="1.5"/>
+    <line x1="125" y1="55" x2="125" y2="125" stroke="#22d3ee" stroke-width="1.5"/>
+    <ellipse cx="110" cy="125" rx="15" ry="6" fill="none" stroke="#22d3ee" stroke-width="1.5"/>
+    <!-- Rolling arrow -->
+    <path d="M140 90 Q160 70 180 90" fill="none" stroke="#22d3ee" stroke-width="1.5" marker-end="url(#cyanArrow)"/>
+    <text x="160" y="65" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">roll</text>
+    <!-- Clay surface with continuous impression -->
+    <rect x="60" y="140" width="180" height="30" fill="#1a1a24" stroke="#3a3a4a" stroke-width="1"/>
+    <path d="M70 155 Q85 145 100 155 Q115 165 130 155 Q145 145 160 155 Q175 165 190 155 Q205 145 220 155 Q235 165 240 155" fill="none" stroke="#22d3ee" stroke-width="1" opacity="0.6"/>
+    <text x="150" y="185" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Continuous frieze impression</text>
+    <!-- Pros/cons -->
+    <text x="150" y="205" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">✓ Large areas · ✗ Slower</text>
+    <!-- Divider -->
+    <line x1="300" y1="20" x2="300" y2="210" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
+    <!-- Stamp seal side -->
+    <text x="450" y="25" fill="#fbbf24" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">STAMP SEAL</text>
+    <text x="450" y="40" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Sasanian innovation</text>
+    <!-- Stamp shape (dome with flat base) -->
+    <ellipse cx="450" cy="100" rx="30" ry="10" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
+    <path d="M420 100 Q420 70 450 60 Q480 70 480 100" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
+    <!-- Drilling hole indication -->
+    <line x1="435" y1="75" x2="465" y2="75" stroke="#fbbf24" stroke-width="1" opacity="0.5" stroke-dasharray="2,2"/>
+    <!-- Press down arrow -->
+    <line x1="450" y1="115" x2="450" y2="135" stroke="#fbbf24" stroke-width="2" marker-end="url(#goldArrow2)"/>
+    <text x="470" y="128" fill="#fbbf24" font-size="8" font-family="JetBrains Mono, monospace">press</text>
+    <!-- Clay/wax surface with single impression -->
+    <rect x="390" y="140" width="120" height="30" fill="#1a1a24" stroke="#3a3a4a" stroke-width="1"/>
+    <ellipse cx="450" cy="155" rx="25" ry="8" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
+    <!-- Portrait indication in impression -->
+    <circle cx="450" cy="155" r="4" fill="none" stroke="#fbbf24" stroke-width="0.5" opacity="0.5"/>
+    <text x="450" y="185" fill="#a1a1aa" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Single discrete impression</text>
+    <!-- Pros/cons -->
+    <text x="450" y="205" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">✓ Fast · ✓ Wearable · ✓ Wax</text>
+    <defs>
+      <marker id="cyanArrow" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+        <path d="M0,0 L6,3 L0,6 Z" fill="#22d3ee"/>
+      </marker>
+      <marker id="goldArrow2" markerWidth="6" markerHeight="6" refX="3" refY="5" orient="auto">
+        <path d="M0,0 L3,6 L6,0 Z" fill="#fbbf24"/>
+      </marker>
+    </defs>
+  </svg>
+  <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
+    The shift to stamp seals reflected practical needs: faster sealing and compatibility with wax.
+  </div>
+</div>
+
 This wasn't merely aesthetic preference. Stamp seals were faster to use, easier to carry, and better suited to the wax seals that had become common for correspondence. They could be worn as rings, hung from cords, or carried in pouches—always at hand when needed.
 
 <div class="collection-embed">

@@ -24,6 +24,8 @@ const PAGES = [
   { name: 'Artifacts', url: `${BASE_URL}/artifacts/`, slug: 'artifacts' },
   { name: 'Articles', url: `${BASE_URL}/library/articles/`, slug: 'articles' },
   { name: 'Sample Item', url: `${BASE_URL}/item/marcus-aurelius-denarius-01/`, slug: 'item' },
+  { name: 'About', url: `${BASE_URL}/about/`, slug: 'about' },
+  { name: 'Search', url: `${BASE_URL}/search/`, slug: 'search' },
 ];
 
 async function checkLighthouse() {

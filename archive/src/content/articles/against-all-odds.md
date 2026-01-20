@@ -275,10 +275,10 @@ The objects in any collection represent the survivors of a brutal selection proc
         <label for="sim-years" style="font-family: 'JetBrains Mono', monospace; font-size: 9px; color: #52525b;">Years</label>
         <input type="number" id="sim-years" min="100" max="10000" step="100" value="3000" style="width: 52px; padding: 2px 4px; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #22d3ee; background: #0a0a0f; border: 1px solid #27272a; border-radius: 3px; text-align: right;">
       </div>
-      <button id="sim-run-btn" style="background: transparent; color: #52525b; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.2rem 0.5rem; border: 1px solid #27272a; border-radius: 3px; cursor: pointer; transition: all 0.2s; opacity: 0;">Replay</button>
+      <button id="sim-run-btn" style="background: transparent; color: #52525b; font-family: 'JetBrains Mono', monospace; font-size: 9px; padding: 0.2rem 0.5rem; border: 1px solid #27272a; border-radius: 3px; cursor: pointer; transition: all 0.2s;">Replay</button>
     </div>
   </div>
-  <div id="sim-result" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #1f1f23; opacity: 0; transition: opacity 0.3s;"></div>
+  <div id="sim-result" style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0; padding-top: 0; border-top: none; max-height: 0; overflow: hidden; transition: all 0.3s;"></div>
 </div>
 
 <script type="module">
@@ -332,14 +332,24 @@ The objects in any collection represent the survivors of a brutal selection proc
     totalDisplay.textContent = N;
     rateDisplay.textContent = '100%';
     contextDisplay.textContent = 'Each dot is an ancient object. Watch them face millennia of risk.';
-    resultDisplay.style.opacity = '0';
+    hideResult();
     hasRun = false;
   }
 
-  function showReplayButton() {
-    runBtn.style.opacity = '1';
-    runBtn.style.color = '#22d3ee';
-    runBtn.style.borderColor = '#22d3ee';
+  function setButtonState(state) {
+    if (state === 'running') {
+      runBtn.textContent = 'Running...';
+      runBtn.style.color = '#52525b';
+      runBtn.style.borderColor = '#27272a';
+      runBtn.disabled = true;
+      runBtn.style.cursor = 'not-allowed';
+    } else {
+      runBtn.textContent = 'Replay';
+      runBtn.style.color = '#22d3ee';
+      runBtn.style.borderColor = '#22d3ee';
+      runBtn.disabled = false;
+      runBtn.style.cursor = 'pointer';
+    }
   }
 
   function showResult(survivors, totalYears) {
@@ -355,50 +365,74 @@ The objects in any collection represent the survivors of a brutal selection proc
       message = `After ${totalYears} years, ${survivors} of ${N} objects survived (${rate}%). Each survivor beat extraordinary odds.`;
     }
     resultDisplay.textContent = message;
-    resultDisplay.style.opacity = '1';
+    resultDisplay.style.marginTop = '0.75rem';
+    resultDisplay.style.paddingTop = '0.75rem';
+    resultDisplay.style.borderTop = '1px solid #1f1f23';
+    resultDisplay.style.maxHeight = '100px';
+  }
+
+  function hideResult() {
+    resultDisplay.style.marginTop = '0';
+    resultDisplay.style.paddingTop = '0';
+    resultDisplay.style.borderTop = 'none';
+    resultDisplay.style.maxHeight = '0';
   }
 
   async function runSimulation() {
     if (running) return;
     running = true;
     hasRun = true;
+    setButtonState('running');
     contextDisplay.textContent = 'Simulating centuries of war, decay, recycling, and neglect...';
 
     const risk = parseFloat(riskInput.value) / 100;
     const totalYears = parseInt(yearsInput.value);
     const steps = 50;
-    const stepSize = Math.ceil(totalYears / steps);
+    const animationDuration = 5000;
+    const frameDelay = animationDuration / steps;
 
-    for (let year = 0; year <= totalYears; year += stepSize) {
-      yearDisplay.textContent = year;
+    // Generate logarithmic time points - more frames early where destruction happens
+    const timePoints = [];
+    for (let i = 0; i <= steps; i++) {
+      // Use exponential curve: t^2 gives more points at start
+      const t = i / steps;
+      const year = Math.round(totalYears * t * t);
+      if (timePoints.length === 0 || year > timePoints[timePoints.length - 1]) {
+        timePoints.push(year);
+      }
+    }
 
-      for (let i = 0; i < objects.length; i++) {
-        if (objects[i].alive) {
-          const surviveProb = Math.pow(1 - risk, stepSize);
-          if (Math.random() > surviveProb) {
-            objects[i].alive = false;
-            objects[i].el.style.background = '#1a1a24';
+    let prevYear = 0;
+    for (const year of timePoints) {
+      const stepSize = year - prevYear;
+      if (stepSize > 0) {
+        for (let i = 0; i < objects.length; i++) {
+          if (objects[i].alive) {
+            const surviveProb = Math.pow(1 - risk, stepSize);
+            if (Math.random() > surviveProb) {
+              objects[i].alive = false;
+              objects[i].el.style.background = '#1a1a24';
+            }
           }
         }
       }
+      prevYear = year;
 
+      yearDisplay.textContent = year;
       const survivors = objects.filter(o => o.alive).length;
       survivorsDisplay.textContent = survivors;
       rateDisplay.textContent = ((survivors / N) * 100).toFixed(1) + '%';
 
-      await new Promise(r => setTimeout(r, 40));
+      await new Promise(r => setTimeout(r, frameDelay));
     }
 
     const finalSurvivors = objects.filter(o => o.alive).length;
     showResult(finalSurvivors, totalYears);
-    showReplayButton();
+    setButtonState('ready');
     running = false;
   }
 
   runBtn.addEventListener('click', () => {
-    runBtn.style.opacity = '0';
-    runBtn.style.color = '#52525b';
-    runBtn.style.borderColor = '#27272a';
     initGrid();
     runSimulation();
   });
