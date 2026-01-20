@@ -117,40 +117,124 @@ function findNewContent(state) {
   return { newArticles, newItems, allArticles: articles, allItems: items };
 }
 
+// Get thumbnail image for an item (uses -medium.webp variant for smaller file size)
+function getItemImage(itemId) {
+  const itemsDir = path.join(rootDir, 'src/data/items');
+  const itemFile = path.join(itemsDir, `${itemId}.yaml`);
+
+  if (!fs.existsSync(itemFile)) return null;
+
+  const content = fs.readFileSync(itemFile, 'utf-8');
+  const imagesMatch = content.match(/images:\s*\n((?:\s+-\s+.+\n?)+)/);
+  if (!imagesMatch) return null;
+
+  const firstImage = imagesMatch[1].match(/-\s+(.+)/)?.[1]?.trim();
+  if (!firstImage) return null;
+
+  // Use medium webp variant for smaller file size in emails
+  const baseName = firstImage.replace(/\.(jpg|jpeg|png)$/i, '');
+  return `https://theantiquearchive.com/images/items/${itemId}/${baseName}-medium.webp`;
+}
+
+// Generate catchy subject lines
+function generateSubject(newArticles, newItems) {
+  const subjectOptions = {
+    articlesOnly: [
+      `Fresh from the archive: ${newArticles[0]?.title}`,
+      `New reading: ${newArticles[0]?.title}`,
+      `Just published: ${newArticles[0]?.title}`,
+    ],
+    itemsOnly: [
+      `New acquisition: ${newItems[0]?.name}`,
+      `Just added to the collection`,
+      `From the vault: ${newItems[0]?.name}`,
+    ],
+    both: [
+      `New from the archive`,
+      `This week's discoveries`,
+      `Fresh additions to the collection`,
+      `Dispatches from the archive`,
+    ],
+  };
+
+  if (newArticles.length && newItems.length) {
+    return subjectOptions.both[Math.floor(Math.random() * subjectOptions.both.length)];
+  } else if (newArticles.length) {
+    return subjectOptions.articlesOnly[0];
+  } else {
+    return subjectOptions.itemsOnly[0];
+  }
+}
+
 // Generate email content
 function generateEmail(newArticles, newItems) {
   const siteUrl = 'https://theantiquearchive.com';
-
-  let subject = 'New from The Antique Archive';
-  if (newArticles.length && newItems.length) {
-    subject = `New: ${newArticles.length} article${newArticles.length > 1 ? 's' : ''} & ${newItems.length} item${newItems.length > 1 ? 's' : ''}`;
-  } else if (newArticles.length) {
-    subject = `New Article: ${newArticles[0].title}`;
-  } else if (newItems.length) {
-    subject = `New in the Collection: ${newItems[0].name}`;
-  }
+  const subject = generateSubject(newArticles, newItems);
 
   let body = '';
 
-  if (newArticles.length) {
-    body += '## New Articles\n\n';
-    for (const article of newArticles) {
-      body += `### [${article.title}](${siteUrl}/library/articles/${article.id})\n\n`;
-      if (article.description) {
-        body += `${article.description}\n\n`;
+  // Intro text
+  const hasArticles = newArticles.length > 0;
+  const hasItems = newItems.length > 0;
+
+  if (hasArticles && hasItems) {
+    body += `New writing and fresh acquisitions this week—coins, seals, and stories from the ancient world.\n\n`;
+  } else if (hasArticles) {
+    body += `New research and writing from the archive.\n\n`;
+  } else if (hasItems) {
+    body += `New pieces have joined the collection.\n\n`;
+  }
+
+  body += '---\n\n';
+
+  // Featured items with images (show up to 3)
+  if (hasItems) {
+    const featuredItems = newItems.slice(0, 3);
+
+    for (const item of featuredItems) {
+      const imageUrl = getItemImage(item.id);
+
+      if (imageUrl) {
+        body += `[![${item.name}](${imageUrl})](${siteUrl}/item/${item.id})\n\n`;
       }
+
+      body += `**[${item.name}](${siteUrl}/item/${item.id})**\n`;
+      body += `${item.category}${item.era ? ` · ${item.era}` : ''}\n\n`;
     }
+
+    if (newItems.length > 3) {
+      body += `[+${newItems.length - 3} more items →](${siteUrl}/artifacts)\n\n`;
+    }
+
+    body += '---\n\n';
   }
 
-  if (newItems.length) {
-    body += '## New in the Collection\n\n';
-    for (const item of newItems) {
-      body += `- **[${item.name}](${siteUrl}/item/${item.id})** — ${item.category}${item.era ? `, ${item.era}` : ''}\n`;
+  // Articles
+  if (hasArticles) {
+    body += `## Reading\n\n`;
+
+    for (const article of newArticles) {
+      body += `**[${article.title}](${siteUrl}/library/articles/${article.id})**\n`;
+      if (article.description) {
+        body += `${article.description}\n`;
+      }
+      body += '\n';
     }
-    body += '\n';
+
+    body += '---\n\n';
   }
 
-  body += `---\n\n[View the full collection](${siteUrl}) | [Unsubscribe]({{ unsubscribe_url }})`;
+  // Remaining items as list (if more than 3)
+  if (newItems.length > 3) {
+    body += `## Also Added\n\n`;
+    for (const item of newItems.slice(3)) {
+      body += `- [${item.name}](${siteUrl}/item/${item.id}) — ${item.category}\n`;
+    }
+    body += '\n---\n\n';
+  }
+
+  // Footer
+  body += `[Browse the collection](${siteUrl}) · [Unsubscribe]({{ unsubscribe_url }})`;
 
   return { subject, body };
 }
