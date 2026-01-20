@@ -27,45 +27,82 @@ The obverse portrait is your primary dating tool. Imperial denarii feature the r
     <span class="vis-label">// Portrait Style Evolution</span>
     <span class="vis-sublabel">How Roman coin portraits changed over 300 years</span>
   </div>
-  <svg viewBox="0 0 600 200" aria-label="Timeline showing evolution of Roman portrait styles from Early Empire through Crisis Period">
-    <!-- Timeline axis -->
-    <line x1="50" y1="160" x2="550" y2="160" stroke="#2a2a3a" stroke-width="2"/>
-    <!-- Era segments -->
-    <rect x="50" y="155" width="180" height="10" fill="#22d3ee" opacity="0.3"/>
-    <rect x="230" y="155" width="120" height="10" fill="#fbbf24" opacity="0.3"/>
-    <rect x="350" y="155" width="140" height="10" fill="#ef4444" opacity="0.3"/>
-    <!-- Date markers -->
-    <text x="50" y="180" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">27 BC</text>
-    <text x="230" y="180" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">96 AD</text>
-    <text x="350" y="180" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">235 AD</text>
-    <text x="490" y="180" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">284 AD</text>
-    <!-- Early Empire -->
-    <circle cx="140" cy="80" r="35" fill="#12121a" stroke="#22d3ee" stroke-width="2"/>
-    <ellipse cx="140" cy="75" rx="18" ry="22" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.7"/>
-    <text x="140" y="30" fill="#22d3ee" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">EARLY EMPIRE</text>
-    <text x="140" y="130" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Realistic</text>
-    <text x="140" y="142" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Idealized detail</text>
-    <!-- Severan -->
-    <circle cx="300" cy="80" r="35" fill="#12121a" stroke="#fbbf24" stroke-width="2"/>
-    <ellipse cx="300" cy="75" rx="18" ry="22" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.7"/>
-    <path d="M285 60 Q300 50 315 60" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.7"/>
-    <text x="300" y="30" fill="#fbbf24" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">SEVERAN</text>
-    <text x="300" y="130" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Stylized</text>
-    <text x="300" y="142" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Elaborate hair</text>
-    <!-- Crisis Period -->
-    <circle cx="460" cy="80" r="35" fill="#12121a" stroke="#ef4444" stroke-width="2"/>
-    <ellipse cx="460" cy="78" rx="15" ry="18" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.7"/>
-    <text x="460" y="30" fill="#ef4444" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">CRISIS</text>
-    <text x="460" y="130" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Crude</text>
-    <text x="460" y="142" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Less detail</text>
-    <!-- Arrow indicators -->
-    <path d="M180 80 L220 80" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowhead)"/>
-    <path d="M340 80 L380 80" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+  <svg viewBox="0 0 600 220" aria-label="Timeline showing evolution of Roman portrait styles from Early Empire through Crisis Period">
     <defs>
+      <!-- Radial gradients for coin depth -->
+      <radialGradient id="coinGradientEarly" cx="35%" cy="35%">
+        <stop offset="0%" stop-color="#22d3ee" stop-opacity="0.3"/>
+        <stop offset="100%" stop-color="#12121a" stop-opacity="1"/>
+      </radialGradient>
+      <radialGradient id="coinGradientSeveran" cx="35%" cy="35%">
+        <stop offset="0%" stop-color="#fbbf24" stop-opacity="0.25"/>
+        <stop offset="100%" stop-color="#12121a" stop-opacity="1"/>
+      </radialGradient>
+      <radialGradient id="coinGradientCrisis" cx="35%" cy="35%">
+        <stop offset="0%" stop-color="#ef4444" stop-opacity="0.15"/>
+        <stop offset="100%" stop-color="#12121a" stop-opacity="1"/>
+      </radialGradient>
       <marker id="arrowhead" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
         <path d="M0,0 L6,3 L0,6 Z" fill="#3a3a4a"/>
       </marker>
     </defs>
+    <!-- Timeline axis -->
+    <line x1="50" y1="175" x2="550" y2="175" stroke="#2a2a3a" stroke-width="2"/>
+    <!-- Era segments -->
+    <rect x="50" y="170" width="180" height="10" fill="#22d3ee" opacity="0.3"/>
+    <rect x="230" y="170" width="120" height="10" fill="#fbbf24" opacity="0.3"/>
+    <rect x="350" y="170" width="200" height="10" fill="#ef4444" opacity="0.3"/>
+    <!-- Date markers -->
+    <text x="50" y="195" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">27 BC</text>
+    <text x="230" y="195" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">96 AD</text>
+    <text x="350" y="195" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">235 AD</text>
+    <text x="490" y="195" fill="#71717a" font-size="9" font-family="JetBrains Mono, monospace">284 AD</text>
+    <!-- EARLY EMPIRE - Refined, detailed -->
+    <text x="140" y="22" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">EARLY EMPIRE</text>
+    <!-- Coin base with gradient -->
+    <circle cx="140" cy="82" r="38" fill="url(#coinGradientEarly)" stroke="#22d3ee" stroke-width="1.5"/>
+    <!-- Stylized profile - fine, confident lines -->
+    <path d="M125 95 Q130 70 145 62 Q155 58 158 65 Q160 72 155 80 L150 88 Q148 92 152 98 L148 102 Q140 100 132 102 L125 95"
+          fill="none" stroke="#22d3ee" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Fine detail lines - laurel wreath suggestion -->
+    <path d="M128 68 Q135 60 145 58" fill="none" stroke="#22d3ee" stroke-width="0.6" opacity="0.7"/>
+    <path d="M130 72 Q138 65 146 63" fill="none" stroke="#22d3ee" stroke-width="0.6" opacity="0.7"/>
+    <path d="M132 76 Q140 70 148 68" fill="none" stroke="#22d3ee" stroke-width="0.6" opacity="0.6"/>
+    <!-- Beard detail -->
+    <path d="M135 96 Q138 94 140 96 Q143 94 146 96" fill="none" stroke="#22d3ee" stroke-width="0.5" opacity="0.6"/>
+    <!-- Coin rim detail -->
+    <circle cx="140" cy="82" r="35" fill="none" stroke="#22d3ee" stroke-width="0.4" opacity="0.5"/>
+    <text x="140" y="138" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Refined detail</text>
+    <text x="140" y="150" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Naturalistic style</text>
+    <!-- SEVERAN - Bolder, more stylized -->
+    <text x="300" y="22" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">SEVERAN</text>
+    <circle cx="300" cy="82" r="38" fill="url(#coinGradientSeveran)" stroke="#fbbf24" stroke-width="1.5"/>
+    <!-- Stylized profile - bolder, less detail -->
+    <path d="M285 95 Q290 72 305 65 Q314 62 318 70 Q320 78 314 85 L310 92 Q308 96 312 100 L306 103 Q298 100 290 103 L285 95"
+          fill="none" stroke="#fbbf24" stroke-width="1.5" stroke-linecap="round"/>
+    <!-- Simplified hair - bold waves -->
+    <path d="M288 70 Q298 62 310 65" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.6"/>
+    <path d="M292 76 Q302 70 312 72" fill="none" stroke="#fbbf24" stroke-width="0.8" opacity="0.5"/>
+    <circle cx="300" cy="82" r="35" fill="none" stroke="#fbbf24" stroke-width="0.4" opacity="0.4"/>
+    <text x="300" y="138" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Bold features</text>
+    <text x="300" y="150" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Stylized forms</text>
+    <!-- CRISIS - Crude, simplified -->
+    <text x="460" y="22" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">CRISIS</text>
+    <circle cx="460" cy="82" r="38" fill="url(#coinGradientCrisis)" stroke="#ef4444" stroke-width="1.5"/>
+    <!-- Crude profile - rough, simplified -->
+    <path d="M448 92 Q450 78 462 72 Q470 70 472 76 Q474 82 470 87 L468 92 Q467 95 470 98 L465 100 Q460 98 454 100 L448 92"
+          fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Minimal detail -->
+    <path d="M452 76 Q458 72 465 74" fill="none" stroke="#ef4444" stroke-width="1.2" opacity="0.4"/>
+    <circle cx="460" cy="82" r="35" fill="none" stroke="#ef4444" stroke-width="0.5" opacity="0.3"/>
+    <text x="460" y="138" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Crude execution</text>
+    <text x="460" y="150" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Hasty production</text>
+    <!-- Arrow indicators showing decline -->
+    <path d="M185 82 L215 82" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <path d="M345 82 L385 82" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+    <!-- Decline indicator -->
+    <text x="200" y="72" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">▼</text>
+    <text x="365" y="72" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">▼</text>
   </svg>
   <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
     Portrait quality tracks imperial stability. Crisis-era coins often show hasty production.

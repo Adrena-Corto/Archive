@@ -51,7 +51,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
     <rect x="310" y="285" width="130" height="10" fill="#a855f7" opacity="0.3"/>
     <rect x="440" y="285" width="110" height="10" fill="#ef4444" opacity="0.3"/>
     <!-- Uruk Period -->
-    <rect x="50" y="30" width="120" height="180" rx="4" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
+    <rect x="50" y="30" width="120" height="195" rx="4" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
     <text x="110" y="50" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">URUK</text>
     <text x="110" y="62" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">4000-3100 BC</text>
     <!-- Geometric pattern representation -->
@@ -70,7 +70,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
     <rect x="70" y="195" width="20" height="6" rx="2" fill="#22d3ee" opacity="0.6"/>
     <text x="110" y="210" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">complexity</text>
     <!-- Early Dynastic -->
-    <rect x="180" y="30" width="120" height="180" rx="4" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
+    <rect x="180" y="30" width="120" height="195" rx="4" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
     <text x="240" y="50" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">EARLY DYNASTIC</text>
     <text x="240" y="62" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">2900-2350 BC</text>
     <!-- Dense scene representation -->
@@ -85,7 +85,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
     <rect x="200" y="195" width="40" height="6" rx="2" fill="#fbbf24" opacity="0.6"/>
     <text x="240" y="210" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">complexity</text>
     <!-- Akkadian -->
-    <rect x="310" y="30" width="120" height="180" rx="4" fill="#12121a" stroke="#a855f7" stroke-width="1.5"/>
+    <rect x="310" y="30" width="120" height="195" rx="4" fill="#12121a" stroke="#a855f7" stroke-width="1.5"/>
     <text x="370" y="50" fill="#a855f7" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">AKKADIAN</text>
     <text x="370" y="62" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">2350-2150 BC</text>
     <!-- Mythology scene representation -->
@@ -100,7 +100,7 @@ The cylinder shape solved a problem flat stamps couldn't: covering large areas. 
     <rect x="330" y="195" width="65" height="6" rx="2" fill="#a855f7" opacity="0.6"/>
     <text x="370" y="210" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">complexity</text>
     <!-- Neo-Assyrian -->
-    <rect x="440" y="30" width="120" height="180" rx="4" fill="#12121a" stroke="#ef4444" stroke-width="1.5"/>
+    <rect x="440" y="30" width="120" height="195" rx="4" fill="#12121a" stroke="#ef4444" stroke-width="1.5"/>
     <text x="500" y="50" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">NEO-ASSYRIAN</text>
     <text x="500" y="62" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">911-609 BC</text>
     <!-- Royal hunt representation -->

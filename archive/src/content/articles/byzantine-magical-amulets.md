@@ -53,11 +53,11 @@ Other common motifs included:
     <span class="vis-label">// Common Protective Motifs</span>
     <span class="vis-sublabel">Symbols found on Byzantine magical amulets</span>
   </div>
-  <svg viewBox="0 0 600 200" aria-label="Three common protective motifs found on Byzantine amulets">
-    <!-- Chnoubis -->
-    <rect x="30" y="30" width="160" height="140" rx="4" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
-    <text x="110" y="50" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">CHNOUBIS</text>
-    <!-- Lion head with rays -->
+  <svg viewBox="0 0 600 220" aria-label="Three common protective motifs found on Byzantine amulets">
+    <!-- Chnoubis - box with consistent padding -->
+    <rect x="30" y="20" width="160" height="175" rx="4" fill="#12121a" stroke="#22d3ee" stroke-width="1.5"/>
+    <text x="110" y="42" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">CHNOUBIS</text>
+    <!-- Lion head with rays - centered at y=95 -->
     <circle cx="110" cy="95" r="20" fill="none" stroke="#22d3ee" stroke-width="1.5" opacity="0.8"/>
     <path d="M95 85 Q110 75 125 85" fill="none" stroke="#22d3ee" stroke-width="1" opacity="0.6"/>
     <!-- Solar rays -->
@@ -68,35 +68,38 @@ Other common motifs included:
     <line x1="87" y1="90" x2="78" y2="88" stroke="#fbbf24" stroke-width="1"/>
     <!-- Serpent body -->
     <path d="M110 115 Q120 125 110 135 Q100 145 110 155 Q115 160 120 155" fill="none" stroke="#22d3ee" stroke-width="2" opacity="0.8"/>
-    <text x="110" y="178" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Lion-serpent</text>
-    <text x="110" y="188" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Egyptian origin</text>
+    <!-- Caption inside box -->
+    <text x="110" y="175" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Lion-serpent</text>
+    <text x="110" y="186" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Egyptian origin</text>
     <!-- Holy Rider -->
-    <rect x="220" y="30" width="160" height="140" rx="4" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
-    <text x="300" y="50" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">HOLY RIDER</text>
-    <!-- Horse and rider silhouette -->
-    <path d="M260 130 Q270 110 290 115 Q310 120 320 130" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
-    <ellipse cx="320" cy="125" rx="12" ry="8" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.6"/>
-    <!-- Rider -->
-    <path d="M285 115 L285 85 M280 95 L290 95" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
-    <circle cx="285" cy="78" r="8" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
+    <rect x="220" y="20" width="160" height="175" rx="4" fill="#12121a" stroke="#fbbf24" stroke-width="1.5"/>
+    <text x="300" y="42" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">HOLY RIDER</text>
+    <!-- Rider figure - centered in box -->
+    <circle cx="300" cy="72" r="10" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
+    <path d="M300 82 L300 115 M290 95 L310 95" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
+    <!-- Horse body -->
+    <path d="M270 130 Q285 115 300 120 Q315 125 330 130" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
+    <ellipse cx="330" cy="127" rx="10" ry="6" fill="none" stroke="#fbbf24" stroke-width="1" opacity="0.6"/>
     <!-- Spear -->
-    <line x1="290" y1="90" x2="330" y2="140" stroke="#fbbf24" stroke-width="1.5"/>
+    <line x1="305" y1="90" x2="340" y2="145" stroke="#fbbf24" stroke-width="1.5"/>
     <!-- Demon below -->
-    <path d="M325 145 Q330 150 325 155 Q320 150 325 145" fill="#fbbf24" opacity="0.4"/>
-    <text x="300" y="178" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Saint vs. evil</text>
-    <text x="300" y="188" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Christian imagery</text>
+    <path d="M338 150 Q342 155 338 160 Q334 155 338 150" fill="#fbbf24" opacity="0.4"/>
+    <!-- Caption inside box -->
+    <text x="300" y="175" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Saint vs. evil</text>
+    <text x="300" y="186" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Christian imagery</text>
     <!-- Vowel Sequences -->
-    <rect x="410" y="30" width="160" height="140" rx="4" fill="#12121a" stroke="#a855f7" stroke-width="1.5"/>
-    <text x="490" y="50" fill="#a855f7" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">VOCES MAGICAE</text>
-    <!-- Greek vowels in triangle -->
-    <text x="490" y="80" fill="#a855f7" font-size="14" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.9">ΑΕΗΙΟΥΩ</text>
-    <text x="490" y="98" fill="#a855f7" font-size="12" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.7">ΕΗΙΟΥ</text>
-    <text x="490" y="114" fill="#a855f7" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.5">ΗΙΟ</text>
-    <text x="490" y="128" fill="#a855f7" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.4">Ι</text>
+    <rect x="410" y="20" width="160" height="175" rx="4" fill="#12121a" stroke="#a855f7" stroke-width="1.5"/>
+    <text x="490" y="42" fill="#a855f7" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">VOCES MAGICAE</text>
+    <!-- Greek vowels in triangle - centered vertically -->
+    <text x="490" y="72" fill="#a855f7" font-size="13" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.9">ΑΕΗΙΟΥΩ</text>
+    <text x="490" y="90" fill="#a855f7" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.7">ΕΗΙΟΥ</text>
+    <text x="490" y="106" fill="#a855f7" font-size="10" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.5">ΗΙΟ</text>
+    <text x="490" y="120" fill="#a855f7" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.4">Ι</text>
     <!-- IAO -->
-    <text x="490" y="150" fill="#a855f7" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.8">ΙΑΩ</text>
-    <text x="490" y="178" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Magical words</text>
-    <text x="490" y="188" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Cosmic power</text>
+    <text x="490" y="145" fill="#a855f7" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" opacity="0.8">ΙΑΩ</text>
+    <!-- Caption inside box -->
+    <text x="490" y="175" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Magical words</text>
+    <text x="490" y="186" fill="#52525b" font-size="7" font-family="JetBrains Mono, monospace" text-anchor="middle">Cosmic power</text>
   </svg>
   <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
     These motifs blend Egyptian, Jewish, Christian, and Greco-Roman magical traditions.

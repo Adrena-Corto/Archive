@@ -51,71 +51,94 @@ On reverses, look at:
 
 <div class="visualization-container" style="margin: 2rem 0;">
   <div class="vis-header">
-    <span class="vis-label">// Wear Heat Map: Portrait High Points</span>
-    <span class="vis-sublabel">Red areas wear first, blue areas wear last</span>
+    <span class="vis-label">// Wear Progression: Portrait High Points</span>
+    <span class="vis-sublabel">How detail disappears from VF → VG as coins circulate</span>
   </div>
-  <svg viewBox="0 0 400 280" class="wear-heatmap" aria-label="Heat map showing which areas of a coin portrait wear first">
+  <svg viewBox="0 0 600 300" class="wear-heatmap" aria-label="Heat map showing which areas of a coin portrait wear first">
     <defs>
-      <radialGradient id="wearGrad1" cx="50%" cy="30%" r="60%">
-        <stop offset="0%" style="stop-color:#ef4444;stop-opacity:0.8"/>
-        <stop offset="100%" style="stop-color:#ef4444;stop-opacity:0"/>
-      </radialGradient>
-      <radialGradient id="wearGrad2" cx="50%" cy="50%" r="50%">
-        <stop offset="0%" style="stop-color:#f97316;stop-opacity:0.7"/>
-        <stop offset="100%" style="stop-color:#f97316;stop-opacity:0"/>
-      </radialGradient>
-      <radialGradient id="wearGrad3" cx="50%" cy="50%" r="40%">
-        <stop offset="0%" style="stop-color:#22d3ee;stop-opacity:0.5"/>
-        <stop offset="100%" style="stop-color:#22d3ee;stop-opacity:0"/>
-      </radialGradient>
+      <linearGradient id="wearScale" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" style="stop-color:#ef4444"/>
+        <stop offset="33%" style="stop-color:#f97316"/>
+        <stop offset="66%" style="stop-color:#eab308"/>
+        <stop offset="100%" style="stop-color:#22d3ee"/>
+      </linearGradient>
     </defs>
-    <!-- Coin outline -->
-    <circle cx="140" cy="140" r="120" fill="none" stroke="#2a2a3a" stroke-width="2"/>
-    <circle cx="140" cy="140" r="115" fill="#1a1a24"/>
-    <!-- Portrait silhouette -->
-    <path d="M100,200 Q90,180 95,150 Q100,120 110,100 Q125,75 150,70 Q180,68 195,85 Q205,100 200,130 Q195,160 185,180 Q175,200 160,210 Q140,215 120,210 Q105,205 100,200" fill="#12121a" stroke="#3a3a4a" stroke-width="1"/>
-    <!-- Hair area -->
-    <path d="M110,100 Q125,75 150,70 Q180,68 195,85 Q200,95 195,110 Q180,95 150,95 Q125,98 115,110 Q112,105 110,100" fill="#12121a" stroke="#3a3a4a" stroke-width="1"/>
-    <!-- High wear zones (red) - Hair crest -->
-    <ellipse cx="155" cy="82" rx="30" ry="12" fill="url(#wearGrad1)"/>
-    <!-- High wear zones (red) - Cheekbone -->
-    <ellipse cx="175" cy="130" rx="18" ry="25" fill="url(#wearGrad1)"/>
-    <!-- High wear zones (red) - Nose -->
-    <ellipse cx="195" cy="140" rx="10" ry="20" fill="url(#wearGrad1)"/>
-    <!-- Medium wear (orange) - Brow -->
-    <ellipse cx="165" cy="105" rx="20" ry="10" fill="url(#wearGrad2)"/>
-    <!-- Medium wear (orange) - Ear -->
-    <ellipse cx="120" cy="140" rx="12" ry="18" fill="url(#wearGrad2)"/>
-    <!-- Low wear zones (cyan) - Neck/back -->
-    <ellipse cx="130" cy="185" rx="25" ry="20" fill="url(#wearGrad3)"/>
-    <!-- Legend labels -->
-    <text x="280" y="60" fill="#ef4444" font-size="11" font-family="JetBrains Mono, monospace">● Wears first</text>
-    <text x="280" y="80" fill="#f97316" font-size="11" font-family="JetBrains Mono, monospace">● Moderate wear</text>
-    <text x="280" y="100" fill="#22d3ee" font-size="11" font-family="JetBrains Mono, monospace">● Wears last</text>
-    <!-- Callout lines -->
-    <line x1="155" y1="82" x2="220" y2="50" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
-    <text x="225" y="54" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace">Hair crest</text>
-    <line x1="195" y1="140" x2="230" y2="140" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
-    <text x="235" y="144" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace">Nose tip</text>
-    <line x1="175" y1="130" x2="220" y2="170" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
-    <text x="225" y="174" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace">Cheekbone</text>
-    <line x1="120" y1="140" x2="70" y2="120" stroke="#f97316" stroke-width="1" opacity="0.5"/>
-    <text x="30" y="124" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace">Ear</text>
-    <!-- Grade scale at bottom -->
-    <rect x="60" y="250" width="200" height="8" rx="2" fill="#1a1a24"/>
-    <rect x="60" y="250" width="40" height="8" rx="2" fill="#ef4444" opacity="0.8"/>
-    <rect x="100" y="250" width="40" height="8" fill="#f97316" opacity="0.7"/>
-    <rect x="140" y="250" width="40" height="8" fill="#eab308" opacity="0.6"/>
-    <rect x="180" y="250" width="40" height="8" fill="#22d3ee" opacity="0.5"/>
-    <rect x="220" y="250" width="40" height="8" rx="2" fill="#22d3ee" opacity="0.3"/>
-    <text x="60" y="272" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">VG</text>
-    <text x="100" y="272" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">F</text>
-    <text x="140" y="272" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">VF</text>
-    <text x="180" y="272" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">EF</text>
-    <text x="220" y="272" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">AU</text>
+    <!-- Main coin area -->
+    <circle cx="180" cy="150" r="130" fill="none" stroke="#2a2a3a" stroke-width="2"/>
+    <circle cx="180" cy="150" r="125" fill="#12121a"/>
+    <!-- Schematic profile - cleaner geometric style -->
+    <g fill="none" stroke="#3a3a4a" stroke-width="1.5">
+      <!-- Skull outline -->
+      <path d="M120,220 Q95,190 100,150 Q105,110 130,85 Q160,60 200,65 Q235,70 250,95 Q260,120 255,155 Q250,190 230,215 Q200,235 160,230 Q135,225 120,220"/>
+      <!-- Hair mass -->
+      <path d="M130,85 Q160,60 200,65 Q235,70 250,95 Q245,75 220,65 Q180,55 145,70 Q125,80 130,85" fill="#1a1a24"/>
+      <!-- Facial features -->
+      <ellipse cx="195" cy="115" rx="15" ry="8"/>
+      <path d="M230,130 Q245,145 235,165"/>
+      <path d="M180,175 Q200,180 210,175"/>
+      <ellipse cx="125" cy="150" rx="10" ry="15"/>
+    </g>
+    <!-- Wear zones with numbered indicators -->
+    <!-- Zone 1: Hair crest (first to wear) -->
+    <ellipse cx="185" cy="72" rx="35" ry="12" fill="#ef4444" opacity="0.4"/>
+    <circle cx="185" cy="72" r="10" fill="#ef4444" opacity="0.8"/>
+    <text x="185" y="76" fill="#fff" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">1</text>
+    <!-- Zone 2: Nose bridge -->
+    <ellipse cx="238" cy="148" rx="12" ry="22" fill="#ef4444" opacity="0.35"/>
+    <circle cx="238" cy="148" r="10" fill="#ef4444" opacity="0.8"/>
+    <text x="238" y="152" fill="#fff" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">2</text>
+    <!-- Zone 3: Cheekbone -->
+    <ellipse cx="210" cy="130" rx="18" ry="22" fill="#f97316" opacity="0.35"/>
+    <circle cx="210" cy="130" r="10" fill="#f97316" opacity="0.8"/>
+    <text x="210" y="134" fill="#fff" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">3</text>
+    <!-- Zone 4: Brow -->
+    <ellipse cx="200" cy="100" rx="22" ry="10" fill="#f97316" opacity="0.3"/>
+    <circle cx="200" cy="100" r="10" fill="#f97316" opacity="0.8"/>
+    <text x="200" y="104" fill="#fff" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">4</text>
+    <!-- Zone 5: Ear (moderate) -->
+    <ellipse cx="125" cy="150" rx="14" ry="20" fill="#eab308" opacity="0.3"/>
+    <circle cx="125" cy="150" r="10" fill="#eab308" opacity="0.8"/>
+    <text x="125" y="154" fill="#12121a" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">5</text>
+    <!-- Zone 6: Neck/back (last to wear) -->
+    <ellipse cx="145" cy="200" rx="28" ry="22" fill="#22d3ee" opacity="0.25"/>
+    <circle cx="145" cy="200" r="10" fill="#22d3ee" opacity="0.8"/>
+    <text x="145" y="204" fill="#12121a" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">6</text>
+    <!-- Legend panel on right -->
+    <rect x="340" y="30" width="240" height="230" rx="4" fill="#0a0a0f" stroke="#2a2a3a" stroke-width="1"/>
+    <text x="360" y="55" fill="#a1a1aa" font-size="10" font-family="JetBrains Mono, monospace" font-weight="bold">WEAR SEQUENCE</text>
+    <!-- Legend items -->
+    <circle cx="360" cy="85" r="8" fill="#ef4444"/>
+    <text x="360" y="89" fill="#fff" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">1</text>
+    <text x="380" y="89" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace">Hair crest</text>
+    <text x="380" y="101" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Flat by VG</text>
+    <circle cx="360" cy="125" r="8" fill="#ef4444"/>
+    <text x="360" y="129" fill="#fff" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">2</text>
+    <text x="380" y="129" fill="#ef4444" font-size="10" font-family="JetBrains Mono, monospace">Nose tip</text>
+    <text x="380" y="141" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Softens by F</text>
+    <circle cx="360" cy="165" r="8" fill="#f97316"/>
+    <text x="360" y="169" fill="#fff" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">3</text>
+    <text x="380" y="169" fill="#f97316" font-size="10" font-family="JetBrains Mono, monospace">Cheekbone</text>
+    <text x="380" y="181" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Shows wear at VF</text>
+    <circle cx="470" cy="85" r="8" fill="#f97316"/>
+    <text x="470" y="89" fill="#fff" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">4</text>
+    <text x="490" y="89" fill="#f97316" font-size="10" font-family="JetBrains Mono, monospace">Brow</text>
+    <text x="490" y="101" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Smooth by F</text>
+    <circle cx="470" cy="125" r="8" fill="#eab308"/>
+    <text x="470" y="129" fill="#12121a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">5</text>
+    <text x="490" y="129" fill="#eab308" font-size="10" font-family="JetBrains Mono, monospace">Ear</text>
+    <text x="490" y="141" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Detail at VF+</text>
+    <circle cx="470" cy="165" r="8" fill="#22d3ee"/>
+    <text x="470" y="169" fill="#12121a" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">6</text>
+    <text x="490" y="169" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace">Neck</text>
+    <text x="490" y="181" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Protected area</text>
+    <!-- Wear scale bar -->
+    <rect x="360" y="210" width="200" height="12" rx="2" fill="url(#wearScale)"/>
+    <text x="360" y="235" fill="#ef4444" font-size="8" font-family="JetBrains Mono, monospace">FIRST</text>
+    <text x="560" y="235" fill="#22d3ee" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="end">LAST</text>
+    <text x="460" y="235" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">wear sequence →</text>
   </svg>
   <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
-    Red zones lose detail by VG grade. Cyan zones retain detail even in Fine coins.
+    When grading, check zones 1-2 first—if they show detail, the coin is likely VF or better.
   </div>
 </div>
 

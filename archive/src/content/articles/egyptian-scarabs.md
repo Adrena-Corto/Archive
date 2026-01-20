@@ -30,7 +30,7 @@ A well-carved scarab shows anatomical accuracy:
     <span class="vis-label">// Scarab Anatomy</span>
     <span class="vis-sublabel">Key features of a well-carved Egyptian scarab</span>
   </div>
-  <svg viewBox="0 0 600 280" aria-label="Anatomical diagram of an Egyptian scarab showing dorsal view and base">
+  <svg viewBox="0 0 600 295" aria-label="Anatomical diagram of an Egyptian scarab showing dorsal view and base">
     <!-- Dorsal view section -->
     <text x="180" y="25" fill="#22d3ee" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle" font-weight="bold">DORSAL (TOP)</text>
     <!-- Scarab body outline -->
@@ -55,16 +55,16 @@ A well-carved scarab shows anatomical accuracy:
     <path d="M260 130 L285 125" stroke="#22d3ee" stroke-width="1.5" opacity="0.7"/>
     <path d="M260 160 L285 165" stroke="#22d3ee" stroke-width="1.5" opacity="0.7"/>
     <!-- Callout labels for dorsal -->
-    <line x1="180" y1="50" x2="180" y2="30" stroke="#3a3a4a" stroke-width="1"/>
-    <line x1="180" y1="30" x2="60" y2="30" stroke="#3a3a4a" stroke-width="1"/>
-    <text x="58" y="34" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Clypeus (head)</text>
-    <line x1="130" y1="90" x2="50" y2="70" stroke="#3a3a4a" stroke-width="1"/>
-    <text x="48" y="74" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Prothorax</text>
+    <line x1="180" y1="50" x2="180" y2="35" stroke="#3a3a4a" stroke-width="1"/>
+    <line x1="180" y1="35" x2="85" y2="35" stroke="#3a3a4a" stroke-width="1"/>
+    <text x="83" y="39" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Clypeus (head)</text>
+    <line x1="130" y1="90" x2="55" y2="70" stroke="#3a3a4a" stroke-width="1"/>
+    <text x="53" y="74" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Prothorax</text>
     <line x1="200" y1="150" x2="280" y2="130" stroke="#3a3a4a" stroke-width="1"/>
     <text x="282" y="134" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace">Elytra</text>
     <text x="282" y="146" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">(wing cases)</text>
-    <line x1="75" y1="125" x2="40" y2="125" stroke="#3a3a4a" stroke-width="1"/>
-    <text x="38" y="129" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Legs</text>
+    <line x1="75" y1="125" x2="45" y2="125" stroke="#3a3a4a" stroke-width="1"/>
+    <text x="43" y="129" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="end">Legs</text>
     <!-- Divider -->
     <line x1="320" y1="30" x2="320" y2="260" stroke="#2a2a3a" stroke-width="1" stroke-dasharray="4,4"/>
     <!-- Base view section -->
@@ -79,16 +79,15 @@ A well-carved scarab shows anatomical accuracy:
     <path d="M465 110 L475 110 L475 130 L465 130 Z" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
     <path d="M440 145 Q450 155 460 145 Q470 155 480 145" fill="none" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
     <line x1="445" y1="165" x2="475" y2="165" stroke="#fbbf24" stroke-width="1.5" opacity="0.8"/>
-    <!-- Base callouts -->
-    <text x="460" y="210" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Inscription area</text>
-    <text x="460" y="222" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Names, phrases,</text>
-    <text x="460" y="234" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">or symbols</text>
+    <!-- Base callouts - positioned below the scarab outline -->
+    <text x="460" y="242" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Inscription area</text>
+    <text x="460" y="253" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Names, phrases, or symbols</text>
     <!-- Legend -->
-    <rect x="360" y="250" width="200" height="24" rx="3" fill="#0a0a0f" stroke="#2a2a3a" stroke-width="1"/>
-    <circle cx="380" cy="262" r="5" fill="#22d3ee" opacity="0.6"/>
-    <text x="390" y="266" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Beetle form</text>
-    <circle cx="470" cy="262" r="5" fill="#fbbf24" opacity="0.6"/>
-    <text x="480" y="266" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Seal face</text>
+    <rect x="360" y="265" width="200" height="20" rx="3" fill="#0a0a0f" stroke="#2a2a3a" stroke-width="1"/>
+    <circle cx="380" cy="275" r="4" fill="#22d3ee" opacity="0.6"/>
+    <text x="390" y="279" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Beetle form</text>
+    <circle cx="470" cy="275" r="4" fill="#fbbf24" opacity="0.6"/>
+    <text x="480" y="279" fill="#71717a" font-size="8" font-family="JetBrains Mono, monospace">Seal face</text>
   </svg>
   <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
     Quality ranges from naturalistic royal workshop pieces to schematic mass-produced amulets.

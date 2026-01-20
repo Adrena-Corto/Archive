@@ -62,19 +62,18 @@ If an object faces even a modest 0.5% annual risk of destruction, the mathematic
     <text x="450" y="265" fill="#a1a1aa" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace">3000</text>
     <text x="580" y="265" fill="#a1a1aa" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace">5000 yrs</text>
     <!-- Area fill under curve -->
-    <path d="M60,40 Q120,42 150,60 Q200,100 250,140 Q300,175 350,200 Q420,225 500,235 L580,238 L580,240 L60,240 Z" fill="url(#areaGradient)"/>
+    <path d="M60,40 C100,42 140,55 190,130 C240,195 290,218 320,225 C380,235 480,238 580,238 L580,240 L60,240 Z" fill="url(#areaGradient)"/>
     <!-- Main decay curve: P = (0.995)^n, scaled to chart -->
-    <path d="M60,40 Q120,42 150,60 Q200,100 250,140 Q300,175 350,200 Q420,225 500,235 L580,238"
-          fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round"/>
-    <!-- Key data points -->
+    <path d="M60,40 C100,42 140,55 190,130 C240,195 290,218 320,225 C380,235 480,238 580,238" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Key data points - positioned ON the curve -->
     <circle cx="60" cy="40" r="4" fill="#22d3ee"/>
-    <circle cx="190" cy="143" r="4" fill="#22d3ee"/>
-    <circle cx="320" cy="212" r="4" fill="#22d3ee"/>
+    <circle cx="190" cy="130" r="4" fill="#22d3ee"/>
+    <circle cx="320" cy="225" r="4" fill="#22d3ee"/>
     <circle cx="580" cy="238" r="4" fill="#fbbf24"/>
     <!-- Annotations -->
     <text x="70" y="32" fill="#22d3ee" font-size="10" font-family="JetBrains Mono, monospace">100%</text>
-    <text x="200" y="138" fill="#a1a1aa" font-size="10" font-family="JetBrains Mono, monospace">~0.7%</text>
-    <text x="330" y="207" fill="#a1a1aa" font-size="10" font-family="JetBrains Mono, monospace">~0.005%</text>
+    <text x="200" y="122" fill="#a1a1aa" font-size="10" font-family="JetBrains Mono, monospace">~0.7%</text>
+    <text x="330" y="220" fill="#a1a1aa" font-size="10" font-family="JetBrains Mono, monospace">~0.005%</text>
     <text x="505" y="230" fill="#fbbf24" font-size="10" font-family="JetBrains Mono, monospace">~0.00000002%</text>
     <!-- X-axis title -->
     <text x="320" y="290" fill="#71717a" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace">Years Since Creation</text>
