@@ -257,8 +257,7 @@ const itemStructuredData = {
           {item.images.length > 0 ? (
             <>
               <div
-                class="glass-panel overflow-hidden w-full max-w-full rounded-lg relative touch-manipulation"
-                style="aspect-ratio: 3/2;"
+                class="glass-panel overflow-hidden w-full max-w-full rounded-lg relative touch-manipulation aspect-[4/3] md:aspect-[3/2]"
                 @touchstart="handleTouchStart($event)"
                 @touchmove="handleTouchMove($event)"
                 @touchend="handleTouchEnd($event)"
