@@ -7,6 +7,11 @@ tags: [meta, photography, technology, collecting, behind-the-scenes]
 
 I started collecting as a kid in northern France, digging random holes in fields with a shovel—no metal detector, just intuition and stubbornness. World War I and II relics were everywhere: shell casings, buttons, buckles, fragments of a continent's violent century. Three decades later, I have over 1,500 objects, a proper Deus XP detector, and a problem: how do you catalog, photograph, and share a collection this size?
 
+<figure style="margin: 2rem 0;">
+  <img src="/images/articles/building-the-archive/hero-detecting.jpg" alt="Metal detecting in a field at sunset in northern France" style="width: 100%; border-radius: 8px;" />
+  <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; text-align: center;">Evening detecting session in the fields of northern France</figcaption>
+</figure>
+
 The answer, it turns out, is to build something yourself.
 
 ## The Problem with Existing Tools
@@ -28,8 +33,6 @@ Before the website, there was the photography problem. Small, reflective, ancien
 **Color accuracy.** The warm gold of a late Roman solidus, the gray-green patina of an ancient bronze, the blue-black toning of a well-preserved denarius—these are the colors collectors care about. Get them wrong and the photograph lies.
 
 **Consistency.** With hundreds of objects, I needed a repeatable process. Every photograph needed to look like it belonged to the same catalog.
-
-<!-- PHOTO: Setup shot showing SANOTO lightbox with Fujifilm camera on tripod -->
 
 ### The Lightbox Solution
 
@@ -126,8 +129,6 @@ I'm a total beginner at photography. The camera—a Fujifilm X-T50 paired with t
 
 The key insight: a dedicated macro lens changes everything. The XF 30mm f/2.8 Macro allows true 1:1 magnification—filling the frame with a small coin while maintaining edge-to-edge sharpness. At f/5.6, I get enough depth of field to keep the entire coin face in focus while staying in the lens's sharpest aperture range. Manual focus with focus peaking is essential—autofocus often grabs the wrong plane on reflective surfaces.
 
-<!-- PHOTO: Sample before/after showing improvement from early attempts to current setup -->
-
 ## The Tech Stack
 
 With photographs sorted, I needed a home for them. My day job is C, C++, and Rust—building low-latency systems for finance. Web development isn't my world. But the modern stack, combined with AI assistance, made this feasible.
@@ -142,26 +143,31 @@ For a collection archive, this is perfect. The content is mostly static. It does
 
 The items themselves live in YAML files—one per object. This was a deliberate choice against a "real" database:
 
-```yaml
-id: septimius-severus-denarius
-name: "Septimius Severus Denarius"
-category: coin
-era: "193-211 AD"
-period: "Roman Imperial"
-origin: "Rome"
-material: silver
-empire: roman
-denomination: Denarius
-ruler: Septimius Severus
-condition: "VF"
-description: "Silver denarius of Septimius Severus..."
-images:
-  - obverse.jpg
-  - reverse.jpg
-tags: [roman, denarius, silver, severan]
-```
+<div class="visualization-container" style="margin: 2rem 0; padding: 0; overflow: hidden;">
+  <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1rem; background: #0a0a0f; border-bottom: 1px solid #2a2a3a;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #fbbf24;">septimius-severus-denarius.yaml</span>
+    <span style="margin-left: auto; font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #52525b;">src/data/items/</span>
+  </div>
+  <div style="padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.6; background: #12121a;">
+    <div><span style="color: #22d3ee;">id</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">septimius-severus-denarius</span></div>
+    <div><span style="color: #22d3ee;">name</span><span style="color: #52525b;">:</span> <span style="color: #86efac;">"Septimius Severus Denarius"</span></div>
+    <div><span style="color: #22d3ee;">category</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">coin</span></div>
+    <div><span style="color: #22d3ee;">era</span><span style="color: #52525b;">:</span> <span style="color: #86efac;">"193-211 AD"</span></div>
+    <div><span style="color: #22d3ee;">period</span><span style="color: #52525b;">:</span> <span style="color: #86efac;">"Roman Imperial"</span></div>
+    <div><span style="color: #22d3ee;">material</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">silver</span></div>
+    <div><span style="color: #22d3ee;">empire</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">roman</span></div>
+    <div><span style="color: #22d3ee;">denomination</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">Denarius</span></div>
+    <div><span style="color: #22d3ee;">ruler</span><span style="color: #52525b;">:</span> <span style="color: #a1a1aa;">Septimius Severus</span></div>
+    <div><span style="color: #22d3ee;">condition</span><span style="color: #52525b;">:</span> <span style="color: #86efac;">"VF"</span></div>
+    <div><span style="color: #22d3ee;">images</span><span style="color: #52525b;">:</span></div>
+    <div style="padding-left: 1rem;"><span style="color: #52525b;">-</span> <span style="color: #a1a1aa;">obverse.jpg</span></div>
+    <div style="padding-left: 1rem;"><span style="color: #52525b;">-</span> <span style="color: #a1a1aa;">reverse.jpg</span></div>
+    <div><span style="color: #22d3ee;">tags</span><span style="color: #52525b;">:</span> <span style="color: #52525b;">[</span><span style="color: #a1a1aa;">roman, denarius, silver, severan</span><span style="color: #52525b;">]</span></div>
+  </div>
+</div>
 
-This is human-readable, version-controllable with Git, and requires no database server. Adding a new item means creating a new text file. The build process reads all YAML files and generates the corresponding pages.
+Human-readable. Version-controllable with Git. No database server required. Adding a new item means creating a new text file. The build process reads all YAML files and generates the corresponding pages.
 
 <div class="visualization-container" style="margin: 2rem 0;">
   <div class="vis-header">
@@ -176,7 +182,11 @@ This is human-readable, version-controllable with Git, and requires no database 
     </defs>
     <g transform="translate(30, 40)">
       <rect x="0" y="0" width="80" height="60" rx="4" fill="#1a1a24" stroke="#3a3a4a" stroke-width="1"/>
-      <text x="40" y="25" fill="#71717a" font-size="22" text-anchor="middle">📷</text>
+      <g transform="translate(28, 10)">
+        <rect x="2" y="4" width="20" height="14" rx="2" fill="none" stroke="#71717a" stroke-width="1.5"/>
+        <circle cx="12" cy="11" r="3" fill="none" stroke="#71717a" stroke-width="1.5"/>
+        <path d="M17 4V2H7v2" fill="none" stroke="#71717a" stroke-width="1.5"/>
+      </g>
       <text x="40" y="48" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Capture</text>
     </g>
     <line x1="115" y1="70" x2="145" y2="70" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowGray)"/>
@@ -203,7 +213,9 @@ This is human-readable, version-controllable with Git, and requires no database 
     <line x1="475" y1="70" x2="505" y2="70" stroke="#3a3a4a" stroke-width="1.5" marker-end="url(#arrowGray)"/>
     <g transform="translate(510, 40)">
       <rect x="0" y="0" width="80" height="60" rx="4" fill="#1a1a24" stroke="#22d3ee" stroke-width="1"/>
-      <text x="40" y="25" fill="#71717a" font-size="22" text-anchor="middle">🌐</text>
+      <g transform="translate(28, 12)">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" fill="none" stroke="#22d3ee" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </g>
       <text x="40" y="48" fill="#a1a1aa" font-size="9" font-family="JetBrains Mono, monospace" text-anchor="middle">Publish</text>
     </g>
     <text x="70" y="125" fill="#52525b" font-size="8" font-family="JetBrains Mono, monospace" text-anchor="middle">Fujifilm</text>
@@ -223,10 +235,21 @@ This is human-readable, version-controllable with Git, and requires no database 
 
 Images are the heaviest part of any collection site. To keep the experience smooth, the site uses ThumbHash—a compact representation of an image as a blurry placeholder. When you load a page, you see the blur instantly while the real image downloads.
 
-```bash
-# Generate placeholders for all images
-node scripts/generate-thumbhash.mjs
-```
+<div class="visualization-container" style="margin: 2rem 0; padding: 0; overflow: hidden;">
+  <div style="display: flex; align-items: center; gap: 8px; padding: 12px 16px; background: #1a1a24; border-bottom: 1px solid #2a2a3a;">
+    <div style="display: flex; gap: 6px;">
+      <div style="width: 12px; height: 12px; border-radius: 50%; background: #ef4444;"></div>
+      <div style="width: 12px; height: 12px; border-radius: 50%; background: #fbbf24;"></div>
+      <div style="width: 12px; height: 12px; border-radius: 50%; background: #22c55e;"></div>
+    </div>
+    <span style="flex: 1; text-align: center; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #52525b;">Terminal</span>
+    <div style="width: 54px;"></div>
+  </div>
+  <div style="padding: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 13px; line-height: 1.8; background: #0a0a0f;">
+    <div><span style="color: #52525b;"># Generate placeholders for all images</span></div>
+    <div><span style="color: #22d3ee;">$</span> <span style="color: #a1a1aa;">node scripts/generate-thumbhash.mjs</span></div>
+  </div>
+</div>
 
 This scans every image in the collection and generates a 28-byte hash that can be decoded client-side into a blurry approximation. The effect is subtle but significant: pages feel instant even on slow connections.
 
@@ -301,4 +324,7 @@ The archive is personal, but it doesn't have to be solitary. I'm interested in c
 
 Building this archive has been an unexpected pleasure. The intersection of ancient objects and modern technology, of childhood curiosity and adult engineering, of AI assistance and human judgment. The coins and seals don't know they live on the internet now. But they've survived millennia—a few more centuries in digital form seems like a reasonable next chapter.
 
-<!-- PHOTO: Your desk/workspace showing the whole setup -->
+<figure style="margin: 2rem 0;">
+  <img src="/images/articles/building-the-archive/mosaic-collection.jpg" alt="Four photos showing the collecting journey: metal detector on beach with sand scoop, bowl of found coins and relics, fresh finds laid out on paper towel, and organized display cabinet with Roman fibulae, rings, and coins" style="width: 100%; border-radius: 8px;" />
+  <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; text-align: center;">From field to archive: equipment, fresh finds, and the organized collection</figcaption>
+</figure>
