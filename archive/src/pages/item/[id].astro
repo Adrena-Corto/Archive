@@ -118,7 +118,7 @@ const itemStructuredData = {
       </div>
 
       <div class="grid lg:grid-cols-2 gap-12 lg:gap-16 w-full max-w-full">
-        <div x-data={`{
+        <div class="min-w-0" x-data={`{
           activeImage: 0,
           lightboxOpen: false,
           totalImages: ${item.images.length},
@@ -509,7 +509,7 @@ const itemStructuredData = {
           </div>
         </div>
 
-        <div class="lg:sticky lg:top-24 lg:self-start">
+        <div class="min-w-0 lg:sticky lg:top-24 lg:self-start">
           <div class="flex items-center gap-2 mb-4">
             <span class="font-mono text-xs uppercase tracking-wider text-accent">
               {categoryLabels[item.category]}
