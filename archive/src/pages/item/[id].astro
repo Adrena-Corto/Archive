@@ -124,7 +124,7 @@ const itemStructuredData = {
           totalImages: ${item.images.length},
           magnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 150, viewX: 0, viewY: 0, viewW: 0, viewH: 0 },
           lbMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 3, size: 200, viewX: 0, viewY: 0, viewW: 0, viewH: 0 },
-          touchMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 120 },
+          touchMagnifier: { active: false, x: 0, y: 0, bgX: 0, bgY: 0, bgW: 0, bgH: 0, imgSrc: '', zoom: 2.5, size: 120, holdTimer: null, isHolding: false },
           swipe: { startX: 0, startY: 0, startTime: 0, swiping: false },
           openLightbox(index) {
             this.activeImage = index;
@@ -194,6 +194,7 @@ const itemStructuredData = {
             this.lbMagnifier.active = false;
           },
           handleTouchStart(e) {
+            if (this.touchMagnifier.isHolding || this.touchMagnifier.active) return;
             if (e.touches.length === 1) {
               this.swipe.startX = e.touches[0].clientX;
               this.swipe.startY = e.touches[0].clientY;
@@ -202,6 +203,7 @@ const itemStructuredData = {
             }
           },
           handleTouchMove(e) {
+            if (this.touchMagnifier.isHolding || this.touchMagnifier.active) return;
             if (!this.swipe.swiping || e.touches.length !== 1) return;
             const deltaX = e.touches[0].clientX - this.swipe.startX;
             const deltaY = Math.abs(e.touches[0].clientY - this.swipe.startY);
@@ -210,6 +212,7 @@ const itemStructuredData = {
             }
           },
           handleTouchEnd(e) {
+            if (this.touchMagnifier.isHolding || this.touchMagnifier.active) return;
             if (!this.swipe.swiping) return;
             const touch = e.changedTouches[0];
             const deltaX = touch.clientX - this.swipe.startX;
@@ -242,12 +245,32 @@ const itemStructuredData = {
             this.touchMagnifier.imgSrc = img.src;
           },
           showTouchMagnifier(e) {
+            if (e.touches.length !== 1) return;
             e.preventDefault();
-            this.touchMagnifier.active = true;
+            this.touchMagnifier.holdTimer = setTimeout(() => {
+              this.swipe.swiping = false;
+              this.touchMagnifier.isHolding = true;
+              this.touchMagnifier.active = true;
+              this.handleTouchMagnifier(e);
+            }, 150);
+          },
+          moveTouchMagnifier(e) {
+            if (!this.touchMagnifier.isHolding) {
+              if (this.touchMagnifier.holdTimer) {
+                clearTimeout(this.touchMagnifier.holdTimer);
+                this.touchMagnifier.holdTimer = null;
+              }
+              return;
+            }
             this.handleTouchMagnifier(e);
           },
           hideTouchMagnifier() {
+            if (this.touchMagnifier.holdTimer) {
+              clearTimeout(this.touchMagnifier.holdTimer);
+              this.touchMagnifier.holdTimer = null;
+            }
             this.touchMagnifier.active = false;
+            this.touchMagnifier.isHolding = false;
           }
         }`}
         @keydown.arrow-left.window="if(lightboxOpen) prevImage(); else if(totalImages > 1) { activeImage = (activeImage - 1 + totalImages) % totalImages }"
@@ -289,15 +312,18 @@ const itemStructuredData = {
                         @mouseenter="showMagnifier($event)"
                         @mousemove="handleMagnifier($event)"
                         @mouseleave="hideMagnifier()"
-                        @click="openLightbox(activeImage)"
-                        @touchstart.passive="showTouchMagnifier($event)"
-                        @touchmove.prevent="handleTouchMagnifier($event)"
+                        @click="if(window.innerWidth >= 768) openLightbox(activeImage)"
+                        @touchstart="showTouchMagnifier($event)"
+                        @touchmove.prevent="moveTouchMagnifier($event)"
                         @touchend="hideTouchMagnifier()"
+                        @touchcancel="hideTouchMagnifier()"
+                        @contextmenu.prevent
                         src={optimized.medium}
                         alt={`${item.name} - Image ${index + 1}`}
                         width="1400"
                         height="933"
-                        class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500 max-md:h-full max-md:object-cover"
+                        class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500 max-md:h-full max-md:object-cover select-none"
+                        style="-webkit-touch-callout: none; -webkit-user-select: none;"
                         loading={index === 0 ? 'eager' : 'lazy'}
                         fetchpriority={index === 0 ? 'high' : undefined}
                         draggable="false"
@@ -345,6 +371,10 @@ const itemStructuredData = {
                 class="pointer-events-none fixed rounded-full border-2 border-accent/50 shadow-lg shadow-accent/20 z-50 md:hidden"
                 :style="`left: ${touchMagnifier.x}px; top: ${touchMagnifier.y}px; width: ${touchMagnifier.size}px; height: ${touchMagnifier.size}px; background-image: url('${touchMagnifier.imgSrc}'); background-size: ${touchMagnifier.bgW}px ${touchMagnifier.bgH}px; background-position: ${touchMagnifier.bgX}px ${touchMagnifier.bgY}px;`"
               ></div>
+              <!-- Mobile zoom hint -->
+              <p class="font-mono text-micro text-text-dim text-center mt-2 md:hidden">
+                Hold to zoom{item.images.length > 1 && ' · Swipe to browse'}
+              </p>
               {item.images.length > 1 && (
                 <div
                   x-ref="thumbnailStrip"

@@ -6,7 +6,7 @@
       "chineseName": "張南琛",
       "tier": 1,
       "type": "collector",
-      "email": null,
+      "email": "championghka@gmail.com",
       "linkedIn": null,
       "background": "Grandson of Zhang Shiming (one of China's wealthiest during Republican era). Father Zhang Shuxun was 'King of Coins' with one of the greatest ancient Chinese cash collections ever assembled. NC Collection sold for $18M at Champion Auctions in 2021.",
       "collectionFocus": [
@@ -18,8 +18,9 @@
       "sources": [
         "https://www.ngccoin.com/news/article/9020/nc-collection/"
       ],
-      "status": "pending",
-      "notes": "Contact via Champion Auctions (Michael Chou) who handled NC Collection sale. Wall Street trader background - might appreciate tech/fintech angle."
+      "status": "sent",
+      "notes": "Contact via Champion Auctions (Michael Chou) who handled NC Collection sale. Wall Street trader background - might appreciate tech/fintech angle.",
+      "lastSent": "2026-01-20T09:33:53.303Z"
     },
     {
       "id": "peter-fung",
@@ -42,8 +43,10 @@
         "https://www.liangyimuseum.com/",
         "https://thebeat.asia/hong-kong/nomads/explore/inside-liang-yi-museum-hong-kongs-largest-private-collection-of-antique-chinese-and-western-treasures"
       ],
-      "status": "pending",
-      "notes": "Museum at 181-199 Hollywood Road, Sheung Wan. Open by appointment Mon-Fri 10am-6pm. Lynn Fung (daughter) also involved - see CFA interview."
+      "status": "responded",
+      "notes": "Museum at 181-199 Hollywood Road, Sheung Wan. Open by appointment Mon-Fri 10am-6pm. Lynn Fung (daughter) also involved - see CFA interview. RESPONDED 2026-01-20 - invited for museum visit next week.",
+      "lastSent": "2026-01-20T09:20:56.121Z",
+      "lastResponse": "2026-01-20T13:31:00.000Z"
     },
     {
       "id": "alan-chuang",
@@ -71,7 +74,7 @@
       "chineseName": null,
       "tier": 1,
       "type": "collector",
-      "email": null,
+      "email": "development@hkpm.org.hk",
       "instagram": "Betty Lo (shares metalwork art)",
       "background": "Third-generation collectors. Donated nearly 1,400 gold and silver objects spanning 3,000 years to Hong Kong Palace Museum - the largest donation to date. Mengdiexuan Collection ('Butterfly Dream Studio').",
       "collectionFocus": [
@@ -86,8 +89,9 @@
         "https://www.hkpm.org.hk/en/collection",
         "https://loupiosity.com/2022/11/gold-and-treasures-3000-years-of-chinese-ornaments-the-mengdiexuan-collection/"
       ],
-      "status": "pending",
-      "notes": "HIGHEST PRIORITY - collection focus overlaps significantly. Contact via HKPM development team (development@hkpm.org.hk) or through their talks/symposiums at HKPM."
+      "status": "sent",
+      "notes": "HIGHEST PRIORITY - collection focus overlaps significantly. Contact via HKPM development team (development@hkpm.org.hk) or through their talks/symposiums at HKPM.",
+      "lastSent": "2026-01-20T09:01:13.544Z"
     },
     {
       "id": "anthony-cheung",
@@ -172,8 +176,9 @@
         "https://www.pcgsasia.com/experts?l=en",
         "https://www.hicc.hk/remarks-from-ma-tak-wo/"
       ],
-      "status": "pending",
-      "notes": "PRIORITY. Contact via HICC (info@hicc.hk) or LinkedIn. Also WhatsApp/LINE (HICC852)."
+      "status": "sent",
+      "notes": "PRIORITY. Contact via HICC (info@hicc.hk) or LinkedIn. Also WhatsApp/LINE (HICC852).",
+      "lastSent": "2026-01-20T08:59:29.342Z"
     },
     {
       "id": "wong-hon-sum",
@@ -239,8 +244,9 @@
         "https://hkinf.hk/about-us/",
         "https://www.ha.com/heritage-auctions-hong-kong-office.s"
       ],
-      "status": "pending",
-      "notes": "HKINF December 2025 is a key networking opportunity. CrisB@HA.com is Cristiano Bierrenbach, EVP International Numismatics."
+      "status": "sent",
+      "notes": "HKINF December 2025 is a key networking opportunity. CrisB@HA.com is Cristiano Bierrenbach, EVP International Numismatics.",
+      "lastSent": "2026-01-20T09:21:57.735Z"
     },
     {
       "id": "hicc",

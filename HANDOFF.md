@@ -1,76 +1,60 @@
-# Handoff: Daily Article Complete
+# Handoff: Mobile Image Gallery Fix
 
-**Date:** 2026-01-20
-**Session Focus:** Writing daily article about relic survival statistics
+**Date:** 2026-01-21
+**Session Focus:** Fixing mobile image display on item detail pages
 
 ---
 
 ## What Was Done
 
-### Article Written
-Created **"Against All Odds: How Ancient Objects Survive"** at:
-- `archive/src/content/articles/against-all-odds.md`
+### Mobile Image Gallery Fix
 
-The article covers:
-- Mathematics of destruction (Lysippos's 1,500 lost bronzes, <200 Hellenistic bronzes survive, ~80% ancient literature lost)
-- Five paths to survival: intentional burial, accidental burial, continuous use, shipwreck, mundane indestructibility
-- Coin hoards as historical indicators of social instability
-- Preservation bias in archaeology
-- Featured item: **Uruk period lapis lazuli cylinder seal** (c. 3400-3000 BCE)
+**Problem:** On mobile, images in the item detail page gallery weren't displaying correctly - either appearing too zoomed/small or showing letterboxing bands.
 
-### Article Metadata
-```yaml
-title: "Against All Odds: How Ancient Objects Survive"
-publishDate: 2026-01-20
-tags: [collecting, preservation, archaeology, history, survival]
-featuredItems: [uruk-lapis-cylinder-seal]
+**Solution:** Used `max-md:` Tailwind prefix to apply mobile-only styles:
+
+```css
+/* Desktop (md and up): */
+w-full h-auto  /* Original behavior - images scale naturally based on width */
+
+/* Mobile (below md): */
+max-md:h-full max-md:object-cover  /* Fill container, crop if needed */
 ```
+
+**File changed:** [archive/src/pages/item/[id].astro](archive/src/pages/item/[id].astro) line ~302
+
+**Commit:** `b21ce40` - Use object-cover on mobile for item images
+
+---
+
+## Additional Changes in File
+
+The item detail page also received touch magnifier improvements during this session:
+- Hold-to-activate pattern (150ms delay prevents accidental activation)
+- Context menu prevention
+- Touch cancel handling
+- Select prevention styles
+
+---
+
+## Testing Notes
+
+Verified on both mobile (390px) and desktop (1280px) viewports:
+- **Mobile:** Images fill the container properly with `object-cover`
+- **Desktop:** Images scale naturally with `h-auto`, no letterboxing
+
+**Cache note:** GitHub Pages has 10-minute cache TTL. Use `?v=N` query param to bust cache when testing.
 
 ---
 
 ## Status
 
-- ✅ Article written and saved
-- ⏳ Not yet built/deployed (run `pnpm build` in archive/ to include in site)
-- ⏳ ThumbHash manifest may need regenerating if new images were added (none were for this article)
+- ✅ Mobile image display fixed
+- ✅ Desktop unchanged (no regression)
+- ✅ Deployed to production
 
 ---
 
-## Next Steps
+## Previous Session (2026-01-20)
 
-1. **Build and preview:**
-   ```bash
-   cd archive && pnpm build && pnpm preview
-   ```
-
-2. **Deploy:** Push to trigger GitHub Pages deployment
-
-3. **Optional:** Run Lighthouse tests after deployment:
-   ```bash
-   node scripts/lighthouse-test.mjs
-   ```
-
----
-
-## Existing Articles (for reference)
-- `byzantine-magical-amulets.md`
-- `cylinder-seals-mesopotamia.md`
-- `egyptian-scarabs.md`
-- `identifying-roman-denarii.md`
-- `coin-grading-guide.md`
-- `hellenistic-gold-granulation.md`
-- `marcus-aurelius-coins.md`
-- `sasanian-stamp-seals.md`
-- `islamic-seals-calligraphy.md`
-- `byzantine-tetarteron.md` (published 2026-01-18)
-- **against-all-odds.md** (NEW - published 2026-01-20)
-
----
-
-## Collection Items Without Dedicated Articles
-These could be future article topics:
-- `hellenistic-gold-earring` - Ancient jewelry techniques
-- `roman-agate-seal` - Roman intaglios and daily life
-- `lead-amulet` - Byzantine magical practices (partial coverage in byzantine-magical-amulets)
-- `tyche-ring-head` - Hellenistic religion and fortune deities
-- `roman-bronze-fibula-fragment` - Roman dress and fashion
+Created article **"Against All Odds: How Ancient Objects Survive"** covering relic survival statistics and preservation bias. See `archive/src/content/articles/against-all-odds.md`.
