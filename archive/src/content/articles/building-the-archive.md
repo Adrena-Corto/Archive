@@ -7,11 +7,6 @@ tags: [meta, photography, technology, collecting, behind-the-scenes]
 
 I started collecting as a kid in northern France, digging random holes in fields with a shovel—no metal detector, just intuition and stubbornness. World War I and II relics were everywhere: shell casings, buttons, buckles, fragments of a continent's violent century. Three decades later, I have over 1,500 objects, a proper Deus XP detector, and a problem: how do you catalog, photograph, and share a collection this size?
 
-<figure style="margin: 2rem 0;">
-  <img src="/images/articles/building-the-archive/hero-detecting.jpg" alt="Metal detecting in a field at sunset in northern France" style="width: 100%; border-radius: 8px;" />
-  <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; text-align: center;">Evening detecting session in the fields of northern France</figcaption>
-</figure>
-
 The answer, it turns out, is to build something yourself.
 
 ## The Problem with Existing Tools
