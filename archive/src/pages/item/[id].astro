@@ -297,7 +297,7 @@ const itemStructuredData = {
                         alt={`${item.name} - Image ${index + 1}`}
                         width="1400"
                         height="933"
-                        class="detail-image w-full h-auto cursor-zoom-in opacity-0 transition-opacity duration-500"
+                        class="detail-image w-full h-full object-contain md:h-auto md:object-scale-down cursor-zoom-in opacity-0 transition-opacity duration-500"
                         loading={index === 0 ? 'eager' : 'lazy'}
                         fetchpriority={index === 0 ? 'high' : undefined}
                         draggable="false"
