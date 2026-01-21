@@ -17,6 +17,11 @@ Nothing fit. The tools were either too rigid (fixed schemas that didn't understa
 
 So I built it.
 
+<figure style="margin: 2rem 0;">
+  <img src="/images/articles/building-the-archive/mosaic-collection.jpg" alt="Four photos showing the collecting journey: metal detector on beach with sand scoop, bowl of found coins and relics, fresh finds laid out on paper towel, and organized display cabinet with Roman fibulae, rings, and coins" style="width: 100%; border-radius: 8px;" />
+  <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; text-align: center;">From field to archive: equipment, fresh finds, and the organized collection</figcaption>
+</figure>
+
 ## The Photography Problem
 
 Before the website, there was the photography problem. Small, reflective, ancient metal objects are notoriously difficult to photograph well. The challenges:
@@ -318,8 +323,3 @@ The archive is personal, but it doesn't have to be solitary. I'm interested in c
 ---
 
 Building this archive has been an unexpected pleasure. The intersection of ancient objects and modern technology, of childhood curiosity and adult engineering, of AI assistance and human judgment. The coins and seals don't know they live on the internet now. But they've survived millennia—a few more centuries in digital form seems like a reasonable next chapter.
-
-<figure style="margin: 2rem 0;">
-  <img src="/images/articles/building-the-archive/mosaic-collection.jpg" alt="Four photos showing the collecting journey: metal detector on beach with sand scoop, bowl of found coins and relics, fresh finds laid out on paper towel, and organized display cabinet with Roman fibulae, rings, and coins" style="width: 100%; border-radius: 8px;" />
-  <figcaption style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #71717a; margin-top: 0.75rem; text-align: center;">From field to archive: equipment, fresh finds, and the organized collection</figcaption>
-</figure>
