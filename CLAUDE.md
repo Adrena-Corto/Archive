@@ -379,7 +379,7 @@ The site has automated performance testing using Lighthouse to ensure fast load 
 node scripts/lighthouse-test.mjs
 ```
 
-This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on both mobile and desktop, generating a detailed report at `LIGHTHOUSE-REPORT.md`.
+This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on both mobile and desktop.
 
 ### Performance Workflow
 
@@ -388,25 +388,20 @@ This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on bo
    node scripts/lighthouse-test.mjs
    ```
 
-2. **Review Report**
-   ```bash
-   cat LIGHTHOUSE-REPORT.md
-   ```
-
-3. **Identify Issues**
+2. **Identify Issues**
    - Look for scores below 90
    - Check LCP (target: <2.5s on mobile)
    - Check TBT (target: <200ms)
    - Review "Top Opportunities" for fixes
 
-4. **Implement Fixes & Deploy**
+3. **Implement Fixes & Deploy**
    ```bash
    pnpm build
    git add -A && git commit -m "Performance: [description]"
    git push
    ```
 
-5. **Wait & Retest** (GitHub Pages deployment takes ~3 minutes)
+4. **Wait & Retest** (GitHub Pages deployment takes ~3 minutes)
    ```bash
    sleep 180
    node scripts/lighthouse-test.mjs
@@ -449,9 +444,8 @@ This tests 5 key pages (Homepage, Coins, Artifacts, Articles, Sample Item) on bo
 
 ### Documentation
 
-- `PERFORMANCE-WORKFLOW-SUMMARY.md` - Complete workflow guide
-- `LIGHTHOUSE-REPORT.md` - Latest test results
-- `PAGESPEED-WORKFLOW.md` - Manual testing workflow
+- `docs/performance/workflow.md` - Complete workflow guide
+- `docs/performance/pagespeed.md` - Manual testing workflow
 
 ## Design Consistency Testing
 
@@ -479,30 +473,17 @@ This scans all components and pages for:
    node scripts/design-audit.mjs
    ```
 
-2. **Review Report**
-
-   ```bash
-   cat DESIGN-AUDIT-REPORT.md
-   ```
+2. **Review Output** - Script outputs issues to console
 
 3. **Fix Issues** - Address red issues first, then review warnings
 
 4. **Re-audit** - Target score: 90+
 
-### Current Design Score (2026-01-20)
-
-| Metric       | Status                                   |
-|--------------|------------------------------------------|
-| Design Score | 89/100                                   |
-| Issues       | 0                                        |
-| Warnings     | 32 (mostly layout-specific constraints)  |
-
 ### Design Documentation
 
-- `DESIGN-SYSTEM.md` - Color tokens, typography, spacing guidelines
-- `DESIGN-CHECKLIST.md` - Manual visual review checklist
-- `DESIGN-WORKFLOW.md` - Complete workflow guide
-- `DESIGN-AUDIT-REPORT.md` - Latest audit results
+- `docs/design/system.md` - Color tokens, typography, spacing guidelines
+- `docs/design/checklist.md` - Manual visual review checklist
+- `docs/design/workflow.md` - Complete workflow guide
 
 ### Design Tokens
 
@@ -527,7 +508,7 @@ fontSize: {
 
 Use `text-micro` instead of `text-[10px]` throughout the codebase.
 
-See `DESIGN-SYSTEM.md` for full reference.
+See `docs/design/system.md` for full reference.
 
 ## Agents
 
