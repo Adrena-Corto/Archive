@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ItemGrid from '../components/ItemGrid.astro';
 import FeatureShowcase from '../components/home/FeatureShowcase.astro';
+import LatestArticlePopup from '../components/LatestArticlePopup.astro';
 import { getFeaturedItems, getAllItems, getCoins, getArtifacts } from '../lib/items';
 
 const featuredItems = getFeaturedItems();
@@ -269,4 +270,6 @@ const structuredData = {
       </div>
     </div>
   </section>
+
+  <LatestArticlePopup />
 </BaseLayout>
