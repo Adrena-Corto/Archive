@@ -3,13 +3,12 @@
 /**
  * Newsletter Digest Script
  *
- * Sends a weekly digest of new articles and items via Buttondown.
- * Respects a 7-day cooldown between sends.
+ * Creates a Buttondown draft for new articles and items.
+ * Always creates a draft when there's new content - you handle the sending.
  *
  * Usage:
- *   node scripts/send-newsletter.mjs          # Check and send if needed
- *   node scripts/send-newsletter.mjs --force  # Skip cooldown check
- *   node scripts/send-newsletter.mjs --dry-run # Preview without sending
+ *   node scripts/send-newsletter.mjs          # Create draft if new content
+ *   node scripts/send-newsletter.mjs --dry-run # Preview without creating draft
  */
 
 import fs from 'fs';
@@ -23,11 +22,9 @@ const rootDir = path.join(__dirname, '..');
 dotenv.config({ path: path.join(rootDir, '.env') });
 
 const STATE_FILE = path.join(rootDir, '.newsletter-state.json');
-const COOLDOWN_DAYS = 7;
 const BUTTONDOWN_API_KEY = process.env.BUTTONDOWN_API_KEY;
 
 const args = process.argv.slice(2);
-const forceMode = args.includes('--force');
 const dryRun = args.includes('--dry-run');
 
 // Load state
@@ -94,16 +91,6 @@ function getItems() {
       return { id, name, category, era, addedDate: stat.birthtime };
     })
     .filter(item => item.id && item.name);
-}
-
-// Check cooldown
-function canSend(state) {
-  if (!state.lastSent) return true;
-
-  const lastSent = new Date(state.lastSent);
-  const daysSince = (Date.now() - lastSent.getTime()) / (1000 * 60 * 60 * 24);
-
-  return daysSince >= COOLDOWN_DAYS;
 }
 
 // Find new content
@@ -284,15 +271,6 @@ async function main() {
 
   if (!newArticles.length && !newItems.length) {
     console.log('✓ No new content to send.');
-    process.exit(0);
-  }
-
-  if (!forceMode && !canSend(state)) {
-    const lastSent = new Date(state.lastSent);
-    const nextSend = new Date(lastSent.getTime() + COOLDOWN_DAYS * 24 * 60 * 60 * 1000);
-    console.log(`⏳ Cooldown active. Last sent: ${lastSent.toLocaleDateString()}`);
-    console.log(`   Next send available: ${nextSend.toLocaleDateString()}`);
-    console.log('   Use --force to override.');
     process.exit(0);
   }
 
