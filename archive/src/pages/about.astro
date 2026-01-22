@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import TechStats from '../components/TechStats.astro';
+import changelog from '../data/changelog.json';
 ---
 
 <BaseLayout
@@ -75,6 +76,35 @@ import TechStats from '../components/TechStats.astro';
               Learn about patronage opportunities →
             </a>
           </p>
+        </div>
+
+        <div id="changelog" class="glass-panel p-6 md:p-8">
+          <div class="flex items-center justify-between mb-6">
+            <h2 class="font-mono text-xs uppercase tracking-wider text-accent">// Version History</h2>
+            <span class="font-mono text-micro px-2 py-1 bg-accent/10 text-accent rounded border border-accent/20">
+              v{changelog.currentVersion}
+            </span>
+          </div>
+
+          <div class="space-y-6">
+            {changelog.entries.map((entry, index) => (
+              <div class:list={["relative pl-4 border-l-2", index === 0 ? "border-accent" : "border-white/10"]}>
+                <div class="flex items-center gap-3 mb-2">
+                  <span class="font-mono text-sm text-text">{entry.version}</span>
+                  <span class="font-mono text-micro text-text-dim">{entry.date}</span>
+                </div>
+                <h3 class="text-sm text-text mb-2">{entry.title}</h3>
+                <ul class="space-y-1">
+                  {entry.changes.map(change => (
+                    <li class="flex items-start gap-2 text-sm text-text-muted">
+                      <span class="text-accent/50 mt-0.5">›</span>
+                      <span>{change}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
