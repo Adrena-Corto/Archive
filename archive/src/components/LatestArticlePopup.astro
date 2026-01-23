@@ -44,7 +44,7 @@ const publishDate = latestArticle.data.publishDate.toLocaleDateString('en-US', {
     </div>
 
     <!-- Content -->
-    <a href={articleUrl} class="block p-4 hover:bg-white/[0.02] transition-colors group">
+    <a href={articleUrl} id="popup-article-link" class="block p-4 hover:bg-white/[0.02] transition-colors group">
       <p class="font-mono text-micro text-text-dim mb-2">{publishDate}</p>
       <h3 class="text-base text-text group-hover:text-accent transition-colors mb-2 line-clamp-2">
         {latestArticle.data.title}
@@ -95,11 +95,17 @@ const publishDate = latestArticle.data.publishDate.toLocaleDateString('en-US', {
       dismiss();
     });
 
-    // Also dismiss when clicking the article link (after navigation starts)
-    const link = popup.querySelector('a');
+    // Handle article link click - ensure navigation works
+    const link = document.getElementById('popup-article-link') as HTMLAnchorElement;
     if (link) {
-      link.addEventListener('click', () => {
+      link.addEventListener('click', (e) => {
         localStorage.setItem(storageKey, articleId || '');
+        // Force navigation if View Transitions don't trigger
+        const href = link.getAttribute('href');
+        if (href) {
+          e.preventDefault();
+          window.location.href = href;
+        }
       });
     }
   }

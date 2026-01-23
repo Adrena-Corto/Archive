@@ -1,6 +1,17 @@
 {
-  "currentVersion": "1.1.0",
+  "currentVersion": "1.2.0",
   "entries": [
+    {
+      "version": "1.2.0",
+      "date": "2026-01-24",
+      "title": "New Article & Popup Improvements",
+      "changes": [
+        "Added 'The Irreplicable' article on authenticity in an age of replication",
+        "New article popup now appears site-wide",
+        "Fixed popup overlap issues on mobile",
+        "Improved popup link navigation reliability"
+      ]
+    },
     {
       "version": "1.1.0",
       "date": "2026-01-22",

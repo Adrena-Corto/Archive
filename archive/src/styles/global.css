@@ -70,7 +70,7 @@
     pointer-events: none;
   }
 
-  body > *:not(#matrix-bg):not([x-data]) {
+  body > *:not(#matrix-bg):not([x-data]):not(#changelog-notification):not(#latest-article-popup) {
     position: relative;
     z-index: 1;
   }
