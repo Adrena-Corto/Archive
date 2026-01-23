@@ -1,4 +1,4 @@
-const CACHE_NAME = 'archive-v1';
+const CACHE_NAME = 'archive-v2';
 
 const CACHE_FOREVER = [
   /\/_astro\//,
