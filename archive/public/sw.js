@@ -1,4 +1,4 @@
-const CACHE_NAME = 'archive-v2';
+const CACHE_NAME = 'archive-v3';
 
 const CACHE_FOREVER = [
   /\/_astro\//,
@@ -8,6 +8,7 @@ const CACHE_FOREVER = [
   /\.webp$/,
   /\.jpg$/,
   /\.png$/,
+  /manifest\.webmanifest$/,
 ];
 
 const CACHE_NETWORK_FIRST = [
@@ -15,7 +16,16 @@ const CACHE_NETWORK_FIRST = [
   /\/$/,
 ];
 
+const PRECACHE_URLS = [
+  '/',
+  '/coins',
+  '/artifacts',
+];
+
 self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(PRECACHE_URLS))
+  );
   self.skipWaiting();
 });
 
