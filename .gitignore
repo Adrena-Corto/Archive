@@ -1,4 +1,5 @@
 .DS_Store
+pnpm-workspace.yaml
 twitter-visuals/capture-screenshots.sh
 twitter-visuals/TWEET-THREAD.md
 twitter-visuals/typefully-thread.txt
