@@ -59,54 +59,33 @@ The Hellenistic period transformed her into one of the most important gods in th
         <stop offset="100%" style="stop-color:#fbbf24"/>
       </linearGradient>
     </defs>
-
-    <!-- Timeline axis -->
     <line x1="80" y1="280" x2="650" y2="280" stroke="#2a2a3a" stroke-width="2"/>
-
-    <!-- Era markers -->
     <line x1="80" y1="270" x2="80" y2="290" stroke="#52525b" stroke-width="1"/>
     <text x="80" y="305" fill="#52525b" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">500 BCE</text>
-
     <line x1="195" y1="270" x2="195" y2="290" stroke="#52525b" stroke-width="1"/>
     <text x="195" y="305" fill="#52525b" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">400 BCE</text>
-
     <line x1="310" y1="270" x2="310" y2="290" stroke="#fbbf24" stroke-width="2"/>
     <text x="310" y="305" fill="#fbbf24" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">323 BCE</text>
     <text x="310" y="320" fill="#71717a" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Alexander dies</text>
-
     <line x1="425" y1="270" x2="425" y2="290" stroke="#22d3ee" stroke-width="1"/>
     <text x="425" y="305" fill="#22d3ee" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">200 BCE</text>
-
     <line x1="540" y1="270" x2="540" y2="290" stroke="#52525b" stroke-width="1"/>
     <text x="540" y="305" fill="#52525b" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">100 CE</text>
-
     <line x1="650" y1="270" x2="650" y2="290" stroke="#52525b" stroke-width="1"/>
     <text x="650" y="305" fill="#52525b" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">300 CE</text>
-
-    <!-- Rise curve -->
-    <path d="M80,250 C150,250 250,240 310,180 S400,60 500,50 L650,50"
-          fill="none" stroke="url(#fortuneGradient)" stroke-width="3" stroke-linecap="round"/>
-
-    <!-- Data points with labels -->
+    <path d="M80,250 C150,250 250,240 310,180 S400,60 500,50 L650,50" fill="none" stroke="url(#fortuneGradient)" stroke-width="3" stroke-linecap="round"/>
     <circle cx="80" cy="250" r="5" fill="#52525b"/>
     <text x="80" y="235" fill="#52525b" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Minor nymph</text>
-
     <circle cx="195" cy="245" r="5" fill="#52525b"/>
     <text x="195" y="230" fill="#52525b" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Pindar's hymns</text>
-
     <circle cx="310" cy="180" r="7" fill="#fbbf24"/>
     <text x="310" y="165" fill="#fbbf24" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Cult explodes</text>
-
     <circle cx="425" cy="70" r="6" fill="#22d3ee"/>
     <text x="425" y="55" fill="#22d3ee" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">City patron goddess</text>
-
     <circle cx="540" cy="50" r="6" fill="#22d3ee"/>
     <text x="540" y="35" fill="#22d3ee" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Peak worship</text>
-
     <circle cx="650" cy="55" r="5" fill="#71717a"/>
     <text x="650" y="40" fill="#71717a" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace">Christian era</text>
-
-    <!-- Vertical axis label -->
     <text x="40" y="150" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace" transform="rotate(-90, 40, 150)">PROMINENCE</text>
   </svg>
   <div class="vis-footnote" style="font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #71717a; margin-top: 0.5rem;">
@@ -144,39 +123,27 @@ This preserved human freedom (the random swerve broke determinism) but at the co
     <span class="vis-sublabel">Ancient philosophical positions on chance and meaning</span>
   </div>
   <svg viewBox="0 0 600 400" aria-label="Diagram mapping philosophical schools on axes of chance-is-real vs chance-is-meaningful">
-    <!-- Grid -->
     <line x1="300" y1="60" x2="300" y2="340" stroke="#2a2a3a" stroke-width="2"/>
     <line x1="80" y1="200" x2="520" y2="200" stroke="#2a2a3a" stroke-width="2"/>
-
-    <!-- Axis labels -->
     <text x="300" y="45" fill="#71717a" font-size="10" text-anchor="middle" font-family="JetBrains Mono, monospace">CHANCE IS REAL</text>
     <text x="300" y="365" fill="#71717a" font-size="10" text-anchor="middle" font-family="JetBrains Mono, monospace">CHANCE IS ILLUSION</text>
     <text x="540" y="200" fill="#71717a" font-size="10" text-anchor="start" font-family="JetBrains Mono, monospace">MEANINGFUL</text>
     <text x="60" y="200" fill="#71717a" font-size="10" text-anchor="end" font-family="JetBrains Mono, monospace">MEANINGLESS</text>
-
-    <!-- Quadrant boxes -->
-    <!-- Top-right: Real + Meaningful = Popular Religion -->
     <rect x="320" y="70" width="180" height="110" rx="4" fill="#fbbf24" fill-opacity="0.1" stroke="#fbbf24" stroke-width="1"/>
     <text x="410" y="100" fill="#fbbf24" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="bold">POPULAR RELIGION</text>
     <text x="410" y="120" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">Tyche is real and can</text>
     <text x="410" y="135" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">be influenced by prayer</text>
     <text x="410" y="160" fill="#52525b" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace" font-style="italic">"Wear the ring, gain her favor"</text>
-
-    <!-- Top-left: Real + Meaningless = Epicureans -->
     <rect x="100" y="70" width="180" height="110" rx="4" fill="#22d3ee" fill-opacity="0.1" stroke="#22d3ee" stroke-width="1"/>
     <text x="190" y="100" fill="#22d3ee" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="bold">EPICUREANS</text>
     <text x="190" y="120" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">Atoms swerve randomly</text>
     <text x="190" y="135" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">Gods don't intervene</text>
     <text x="190" y="160" fill="#52525b" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace" font-style="italic">"Cultivate your garden"</text>
-
-    <!-- Bottom-right: Illusion + Meaningful = Stoics -->
     <rect x="320" y="220" width="180" height="110" rx="4" fill="#10b981" fill-opacity="0.1" stroke="#10b981" stroke-width="1"/>
     <text x="410" y="250" fill="#10b981" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="bold">STOICS</text>
     <text x="410" y="270" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">Everything is fated</text>
     <text x="410" y="285" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">by divine reason</text>
     <text x="410" y="310" fill="#52525b" font-size="8" text-anchor="middle" font-family="JetBrains Mono, monospace" font-style="italic">"Accept what comes"</text>
-
-    <!-- Bottom-left: Illusion + Meaningless = Skeptics -->
     <rect x="100" y="220" width="180" height="110" rx="4" fill="#a855f7" fill-opacity="0.1" stroke="#a855f7" stroke-width="1"/>
     <text x="190" y="250" fill="#a855f7" font-size="11" text-anchor="middle" font-family="JetBrains Mono, monospace" font-weight="bold">SKEPTICS</text>
     <text x="190" y="270" fill="#71717a" font-size="9" text-anchor="middle" font-family="JetBrains Mono, monospace">We can't know either way</text>
