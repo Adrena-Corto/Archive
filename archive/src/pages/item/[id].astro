@@ -601,14 +601,14 @@ const itemStructuredData = {
             </span>
           </div>
 
-          <h1 class="text-3xl md:text-4xl text-text mb-6" data-pagefind-meta="title">{item.name}</h1>
+          <h1 class="text-3xl md:text-4xl text-text mb-6 break-words" data-pagefind-meta="title">{item.name}</h1>
           <span data-pagefind-meta={`category:${categoryLabels[item.category]}`} class="hidden"></span>
           <span data-pagefind-meta={`period:${item.period}`} class="hidden"></span>
           <span data-pagefind-meta={`origin:${item.origin}`} class="hidden"></span>
           <span data-pagefind-meta={`material:${item.material}`} class="hidden"></span>
 
           <div class="glass-panel p-6">
-            <p class="text-text-muted text-[15px] md:text-base leading-[1.8] md:leading-relaxed tracking-[0.01em]">{item.description}</p>
+            <p class="text-text-muted text-[15px] md:text-base leading-[1.8] md:leading-relaxed tracking-[0.01em] break-words">{item.description}</p>
           </div>
 
           <div class="glass-panel p-6 mt-4">
@@ -720,7 +720,7 @@ const itemStructuredData = {
                     {related.period}
                   </span>
                 </div>
-                <h3 class="text-lg text-text group-hover:text-accent transition-colors">
+                <h3 class="text-lg text-text group-hover:text-accent transition-colors line-clamp-2 break-words">
                   {related.name}
                 </h3>
                 <p class="data-label mt-1">{related.era}</p>
@@ -730,17 +730,17 @@ const itemStructuredData = {
         </section>
       )}
 
-      <nav class="flex justify-between items-center mt-12 pt-8 border-t border-border" data-pagefind-ignore>
+      <nav class="flex justify-between items-start gap-4 mt-12 pt-8 border-t border-border" data-pagefind-ignore>
         {prevItem ? (
-          <a href={url(`/item/${prevItem.id}`)} class="group">
+          <a href={url(`/item/${prevItem.id}`)} class="group max-w-[45%] min-w-0">
             <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Previous</span>
-            <p class="text-lg text-text group-hover:text-accent transition-colors">{prevItem.name}</p>
+            <p class="text-lg text-text group-hover:text-accent transition-colors break-words line-clamp-2">{prevItem.name}</p>
           </a>
         ) : <div />}
         {nextItem ? (
-          <a href={url(`/item/${nextItem.id}`)} class="group text-right">
+          <a href={url(`/item/${nextItem.id}`)} class="group text-right max-w-[45%] min-w-0 ml-auto">
             <span class="font-mono text-xs uppercase tracking-widest text-text-dim">Next</span>
-            <p class="text-lg text-text group-hover:text-accent transition-colors">{nextItem.name}</p>
+            <p class="text-lg text-text group-hover:text-accent transition-colors break-words line-clamp-2">{nextItem.name}</p>
           </a>
         ) : <div />}
       </nav>
