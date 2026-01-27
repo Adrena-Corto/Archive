@@ -1,6 +1,17 @@
 {
-  "currentVersion": "1.2.0",
+  "currentVersion": "1.3.0",
   "entries": [
+    {
+      "version": "1.3.0",
+      "date": "2026-01-27",
+      "title": "Analytics & New Articles",
+      "changes": [
+        "Added Counterscale analytics integration",
+        "New article: 'The Sacred Sleep' on Sumerian dream incubation",
+        "New article: 'Beneath the Pyramids' on acoustic anomalies",
+        "Fixed mobile overflow issues on article visualizations"
+      ]
+    },
     {
       "version": "1.2.0",
       "date": "2026-01-24",
@@ -18,15 +29,53 @@
       "title": "New Article & UX Improvements",
       "changes": [
         "Added 'Linear Minds in Exponential Times' article",
+        "Added 'Gold Fever' article on melt value economics",
+        "Added latest article popup notification",
         "Added zoom tooltip hint on mobile item pages"
       ]
     },
     {
-      "version": "1.0.0",
+      "version": "1.0.3",
+      "date": "2026-01-21",
+      "title": "Newsletter & PWA Support",
+      "changes": [
+        "Newsletter signup with Buttondown integration",
+        "PWA support for Add to Home Screen",
+        "Changelog notification system",
+        "Support/Patronage page"
+      ]
+    },
+    {
+      "version": "1.0.2",
       "date": "2026-01-20",
+      "title": "Performance Optimizations",
+      "changes": [
+        "WebP image format for 10x smaller file sizes",
+        "Deferred JavaScript loading on collection pages",
+        "Fixed Cumulative Layout Shift on item pages",
+        "Progressive image loading with ThumbHash placeholders"
+      ]
+    },
+    {
+      "version": "1.0.1",
+      "date": "2026-01-19",
+      "title": "Mobile & Visual Fixes",
+      "changes": [
+        "Improved SVG visualizations across articles",
+        "Fixed mobile viewport overflow issues",
+        "Fixed blur placeholder fade-out on item pages",
+        "Better mobile image display in galleries"
+      ]
+    },
+    {
+      "version": "1.0.0",
+      "date": "2026-01-18",
       "title": "Initial Release",
       "changes": [
-        "Site launch with coins, artifacts, and articles"
+        "Site launch with coins, artifacts, and articles",
+        "Interactive timeline visualization",
+        "Full-text search with Pagefind",
+        "Matrix-style background animation"
       ]
     }
   ]

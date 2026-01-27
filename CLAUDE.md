@@ -110,6 +110,42 @@ pnpm build        # Production build
 pnpm preview      # Preview production build
 ```
 
+## Deployment Workflow
+
+When deploying meaningful changes to production:
+
+1. **Update the changelog** (`src/data/changelog.json`):
+   - Bump `currentVersion` if adding features (minor) or fixes (patch)
+   - Add a new entry at the top of `entries` array with:
+     - `version`: The new version number
+     - `date`: Today's date (YYYY-MM-DD)
+     - `title`: Brief theme of the release
+     - `changes`: Array of user-facing changes
+
+2. **Build and deploy**:
+
+   ```bash
+   pnpm build
+   git add -A && git commit -m "v1.x.x: Brief description"
+   git push
+   ```
+
+**When to update changelog:**
+
+- ✅ New articles added
+- ✅ New collection items added
+- ✅ New features (filters, search, UI components)
+- ✅ Bug fixes users would notice
+- ✅ Performance improvements
+- ❌ Internal refactoring (no user-facing change)
+- ❌ Documentation-only changes
+- ❌ Development tooling updates
+
+**Version numbering:**
+
+- `1.x.0` → New features
+- `1.x.y` → Bug fixes, minor improvements
+
 ## Testing
 
 The site uses Playwright for visual regression and E2E tests.
