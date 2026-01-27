@@ -94,6 +94,8 @@ In the silence of museum collections, those tablets still exist—dreams frozen 
   padding: 1.5rem;
   margin: 1rem 0;
   font-family: 'JetBrains Mono', monospace;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .cuneiform-line {
@@ -103,10 +105,12 @@ In the silence of museum collections, those tablets still exist—dreams frozen 
 
 .cuneiform-text {
   font-family: 'Noto Sans Cuneiform', serif;
-  font-size: 1.75rem;
+  font-size: clamp(1rem, 4vw, 1.75rem);
   color: #22d3ee;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   text-shadow: 0 0 10px rgba(34, 211, 238, 0.3);
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .transliteration {
@@ -115,6 +119,7 @@ In the silence of museum collections, those tablets still exist—dreams frozen 
   color: #71717a;
   font-style: italic;
   margin-bottom: 0.25rem;
+  word-break: break-word;
 }
 
 .translation {
