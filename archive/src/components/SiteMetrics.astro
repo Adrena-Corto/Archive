@@ -1,0 +1,118 @@
+---
+const COUNTERSCALE_API = 'https://counterscale.alexcamill.workers.dev';
+const SITE_ID = 'theantiquearchive';
+---
+
+<div class="glass-panel p-6 md:p-8" id="site-metrics">
+  <h2 class="font-mono text-xs uppercase tracking-wider text-accent mb-6">// Visitor Metrics</h2>
+
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+    <div class="text-center p-4 bg-surface-elevated/30 rounded-lg border border-white/5">
+      <div class="text-3xl font-light text-text mb-1" id="metric-today">-</div>
+      <div class="font-mono text-xs text-text-muted uppercase tracking-wider">Today</div>
+    </div>
+    <div class="text-center p-4 bg-surface-elevated/30 rounded-lg border border-white/5">
+      <div class="text-3xl font-light text-text mb-1" id="metric-week">-</div>
+      <div class="font-mono text-xs text-text-muted uppercase tracking-wider">This Week</div>
+    </div>
+    <div class="text-center p-4 bg-surface-elevated/30 rounded-lg border border-white/5">
+      <div class="text-3xl font-light text-text mb-1" id="metric-month">-</div>
+      <div class="font-mono text-xs text-text-muted uppercase tracking-wider">This Month</div>
+    </div>
+    <div class="text-center p-4 bg-surface-elevated/30 rounded-lg border border-white/5">
+      <div class="text-3xl font-light text-accent mb-1" id="metric-total">-</div>
+      <div class="font-mono text-xs text-text-muted uppercase tracking-wider">All Time</div>
+    </div>
+  </div>
+
+  <div class="pt-4 border-t border-white/5">
+    <div class="flex items-center justify-between">
+      <span class="font-mono text-xs text-text-muted">
+        <span class="inline-block w-2 h-2 rounded-full bg-green-500 mr-2 animate-pulse"></span>
+        Live tracking via <a href={COUNTERSCALE_API} target="_blank" rel="noopener" class="text-accent hover:text-cyan-300 transition-colors">Counterscale</a>
+      </span>
+      <span class="font-mono text-micro text-text-dim" id="metric-updated">-</span>
+    </div>
+  </div>
+</div>
+
+<script define:vars={{ COUNTERSCALE_API, SITE_ID }}>
+  async function fetchMetrics() {
+    // Skip if placeholder URL
+    if (COUNTERSCALE_API.includes('YOUR-WORKER')) {
+      document.getElementById('metric-today').textContent = '—';
+      document.getElementById('metric-week').textContent = '—';
+      document.getElementById('metric-month').textContent = '—';
+      document.getElementById('metric-total').textContent = '—';
+      document.getElementById('metric-updated').textContent = 'Configure API URL';
+      return;
+    }
+
+    try {
+      // Counterscale API endpoints
+      const today = new Date().toISOString().split('T')[0];
+      const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+      const monthAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
+
+      // Fetch stats from Counterscale API
+      const response = await fetch(`${COUNTERSCALE_API}/api/stats?site=${SITE_ID}&start=${monthAgo}&end=${today}`);
+
+      if (!response.ok) throw new Error('API error');
+
+      const data = await response.json();
+
+      // Parse the response - adjust based on actual Counterscale API format
+      // This assumes data.views is an array of { date, count } objects
+      let todayViews = 0;
+      let weekViews = 0;
+      let monthViews = 0;
+      let totalViews = 0;
+
+      if (data.views && Array.isArray(data.views)) {
+        data.views.forEach(day => {
+          const count = day.count || day.views || 0;
+          totalViews += count;
+
+          if (day.date === today) {
+            todayViews = count;
+          }
+          if (day.date >= weekAgo) {
+            weekViews += count;
+          }
+          if (day.date >= monthAgo) {
+            monthViews += count;
+          }
+        });
+      } else if (typeof data.total === 'number') {
+        // Alternative format
+        totalViews = data.total;
+        todayViews = data.today || 0;
+        weekViews = data.week || data.last7days || 0;
+        monthViews = data.month || data.last30days || 0;
+      }
+
+      // Format numbers
+      const fmt = (n) => n >= 1000 ? `${(n / 1000).toFixed(1)}k` : n.toString();
+
+      document.getElementById('metric-today').textContent = fmt(todayViews);
+      document.getElementById('metric-week').textContent = fmt(weekViews);
+      document.getElementById('metric-month').textContent = fmt(monthViews);
+      document.getElementById('metric-total').textContent = fmt(totalViews);
+      document.getElementById('metric-updated').textContent = `Updated ${new Date().toLocaleTimeString()}`;
+
+    } catch (err) {
+      console.error('Failed to fetch metrics:', err);
+      document.getElementById('metric-updated').textContent = 'Unable to load';
+    }
+  }
+
+  // Fetch on load
+  if (document.readyState === 'complete') {
+    fetchMetrics();
+  } else {
+    window.addEventListener('load', fetchMetrics, { once: true });
+  }
+
+  // Re-fetch on View Transitions
+  document.addEventListener('astro:page-load', fetchMetrics);
+</script>
