@@ -14,7 +14,7 @@ The irony wasn't lost on me. Over four decades, Fung had assembled one of the wo
 
 But watching him speak, the contradiction resolved itself. Each collection began the same way—with obsessive focus. The furniture came first, twenty years of it. Then the vanities, another deep dive. What looked like scattered interests was actually serial expertise, one passion at a time.
 
-I'll return for a proper tour. But even from this brief encounter, one thing was clear: the museum exists because someone cared—deeply, specifically, for decades—about how things were made.
+I'll return for a proper tour. But even from this brief encounter, one thing was clear: the museum exists because someone cared—deeply, specifically, for decades—about peak human craftsmanship.
 
 ---
 
