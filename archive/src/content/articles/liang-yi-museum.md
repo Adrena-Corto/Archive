@@ -6,6 +6,18 @@ tags: [museums, collecting, chinese-art, furniture, hong-kong]
 featuredItems: []
 ---
 
+In a small office at the heart of the museum, an elderly man was playing cello when I arrived. Peter Fung set down his bow, poured tea, and—choosing his words with care—offered an hour of conversation about collecting.
+
+His main advice: focus. Pick an area and go deep. Learn the material, study the makers, understand what distinguishes the exceptional from the merely good. Breadth comes later, if at all.
+
+The irony wasn't lost on me. Over four decades, Fung had assembled one of the world's finest collections of Ming furniture, then expanded into European vanities, Japanese art, and European silver. The man preaching specialization had mastered several fields.
+
+But watching him speak, the contradiction resolved itself. Each collection began the same way—with obsessive focus. The furniture came first, twenty years of it. Then the vanities, another deep dive. What looked like scattered interests was actually serial expertise, one passion at a time.
+
+I'll return for a proper tour. But even from this brief encounter, one thing was clear: the museum exists because someone cared—deeply, specifically, for decades—about how things were made.
+
+---
+
 Most museums enforce distance. Glass cases. Do Not Touch signs. Climate-controlled barriers between you and history. The logic is preservation: keep the public away, and the objects survive.
 
 The Liang Yi Museum in Hong Kong takes a different view.
