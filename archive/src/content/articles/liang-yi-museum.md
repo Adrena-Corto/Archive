@@ -6,7 +6,7 @@ tags: [museums, collecting, chinese-art, furniture, hong-kong]
 featuredItems: []
 ---
 
-In a small office at the heart of the museum, an elderly man was playing cello when I arrived. Peter Fung set down his bow, poured tea, and—choosing his words with care—offered an hour of conversation about collecting.
+In a small office at the heart of the museum, an elderly man was playing cello when I arrived. Peter Fung set down his bow and—choosing his words with care—offered an hour of conversation about collecting.
 
 His main advice: focus. Pick an area and go deep. Learn the material, study the makers, understand what distinguishes the exceptional from the merely good. Breadth comes later, if at all.
 
