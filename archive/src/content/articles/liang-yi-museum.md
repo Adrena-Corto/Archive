@@ -16,6 +16,8 @@ But watching him speak, the contradiction resolved itself. Each collection began
 
 I'll return for a proper tour. But even from this brief encounter, one thing was clear: the museum exists because someone cared—deeply, specifically, for decades—about peak human craftsmanship.
 
+Authenticity. Rarity. Beauty.
+
 ---
 
 Most museums enforce distance. Glass cases. Do Not Touch signs. Climate-controlled barriers between you and history. The logic is preservation: keep the public away, and the objects survive.
