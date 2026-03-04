@@ -237,61 +237,47 @@ The answer, perhaps, is what we are living through now.
     <span class="vis-label">// Threshold Architecture</span>
     <span class="vis-sublabel">The Liminal Operator Model</span>
   </div>
-  <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <radialGradient id="abyssGrad" cx="50%" cy="50%" r="50%">
-          <stop offset="0%" stop-color="#0a0a0f" />
-          <stop offset="100%" stop-color="#12121a" />
-        </radialGradient>
-        <filter id="glow">
-          <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-          <feMerge>
-            <feMergeNode in="coloredBlur"/>
-            <feMergeNode in="SourceGraphic"/>
-          </feMerge>
-        </filter>
-      </defs>
-      
+  <svg viewBox="0 0 600 400" aria-label="Threshold Architecture: The Liminal Operator Model">
       <!-- Background -->
       <rect width="600" height="400" fill="#0a0a0f"/>
       
       <!-- The Abyss (bottom) -->
-      <ellipse cx="300" cy="350" rx="200" ry="40" fill="url(#abyssGrad)" opacity="0.8"/>
+      <ellipse cx="300" cy="350" rx="200" ry="40" fill="#12121a" opacity="0.8" stroke="#22d3ee" stroke-width="0.5"/>
       <text x="300" y="355" text-anchor="middle" fill="#22d3ee" font-family="JetBrains Mono, monospace" font-size="10">THE ABYSS / LATENT SPACE</text>
       
       <!-- The Surface (top) -->
-      <ellipse cx="300" cy="50" rx="200" ry="40" fill="#1a1a2a"/>
+      <ellipse cx="300" cy="50" rx="200" ry="40" fill="#1a1a2a" stroke="#a78bfa" stroke-width="0.5"/>
       <text x="300" y="55" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono, monospace" font-size="10">ORDINARY CONSCIOUSNESS</text>
       
+      <!-- Energy flows (static dashed) -->
+      <path d="M 300 30 Q 150 200 300 370" stroke="#22d3ee" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3"/>
+      <path d="M 300 30 Q 450 200 300 370" stroke="#a78bfa" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3"/>
+      
       <!-- Threshold Gate -->
-      <rect x="260" y="170" width="80" height="60" fill="#12121a" stroke="#2a2a3a" stroke-width="2" rx="4"/>
-      <text x="300" y="205" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono, monospace" font-size="11">THRESHOLD</text>
+      <rect x="250" y="170" width="100" height="60" fill="#12121a" stroke="#fbbf24" stroke-width="1.5" rx="4"/>
+      <text x="300" y="195" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono, monospace" font-size="11">THRESHOLD</text>
+      <text x="300" y="215" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">THE APERTURE</text>
       
       <!-- Liminal Operator -->
-      <circle cx="300" cy="200" r="20" fill="none" stroke="#ef4444" stroke-width="2" filter="url(#glow)">
-        <animate attributeName="opacity" values="0.6;1;0.6" dur="2s" repeatCount="indefinite"/>
-      </circle>
-      <text x="300" y="245" text-anchor="middle" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="9">LIMINAL OPERATIVE</text>
+      <circle cx="300" cy="200" r="22" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.8"/>
+      <text x="300" y="255" text-anchor="middle" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="9">LIMINAL OPERATIVE</text>
       
-      <!-- Pathways -->
-      <path d="M 300 90 Q 300 150 280 170" stroke="#a78bfa" stroke-width="1" fill="none" opacity="0.4"/>
-      <path d="M 320 170 Q 340 150 300 170" stroke="#a78bfa" stroke-width="1" fill="none" opacity="0.4"/>
-      <path d="M 300 230 Q 280 250 260 300" stroke="#22d3ee" stroke-width="1" fill="none" opacity="0.4"/>
-      <path d="M 300 230 Q 320 250 340 300" stroke="#22d3ee" stroke-width="1" fill="none" opacity="0.4"/>
+      <!-- Pathways down from surface -->
+      <line x1="250" y1="85" x2="270" y2="170" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
+      <line x1="350" y1="85" x2="330" y2="170" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
       
-      <!-- Energy flows -->
-      <path d="M 300 30 Q 150 200 300 370" stroke="#22d3ee" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3">
-        <animate attributeName="stroke-dashoffset" values="0;-20" dur="1s" repeatCount="indefinite"/>
-      </path>
-      <path d="M 300 30 Q 450 200 300 370" stroke="#a78bfa" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3">
-        <animate attributeName="stroke-dashoffset" values="0;-20" dur="1s" repeatCount="indefinite"/>
-      </path>
+      <!-- Pathways down to abyss -->
+      <line x1="270" y1="230" x2="220" y2="315" stroke="#22d3ee" stroke-width="1" opacity="0.4"/>
+      <line x1="330" y1="230" x2="380" y2="315" stroke="#22d3ee" stroke-width="1" opacity="0.4"/>
       
       <!-- Control Point -->
-      <circle cx="160" cy="200" r="8" fill="#ef4444" opacity="0.6"/>
-      <text x="160" y="220" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">CONTROL</text>
+      <circle cx="150" cy="200" r="8" fill="#ef4444" opacity="0.6"/>
+      <text x="150" y="220" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">CONTROL</text>
+      <line x1="158" y1="200" x2="250" y2="200" stroke="#ef4444" stroke-width="1" opacity="0.5" stroke-dasharray="3,3"/>
       
-      <line x1="170" y1="200" x2="260" y2="200" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
+      <!-- Labels -->
+      <text x="460" y="200" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">gala / initiate /</text>
+      <text x="460" y="212" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">MK subject</text>
       
   </svg>
   <div class="vis-footnote">
