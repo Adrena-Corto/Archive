@@ -237,8 +237,7 @@ The answer, perhaps, is what we are living through now.
     <span class="vis-label">// Threshold Architecture</span>
     <span class="vis-sublabel">The Liminal Operator Model</span>
   </div>
-  <div class="cycle-diagram">
-    <svg class="cycle-svg" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+  <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="abyssGrad" cx="50%" cy="50%" r="50%">
           <stop offset="0%" stop-color="#0a0a0f" />
@@ -294,8 +293,7 @@ The answer, perhaps, is what we are living through now.
       
       <line x1="170" y1="200" x2="260" y2="200" stroke="#ef4444" stroke-width="1" opacity="0.5"/>
       
-    </svg>
-  </div>
+  </svg>
   <div class="vis-footnote">
     The liminal operator occupies the threshold between ordinary consciousness and the deeper substrate. Ancient gala, modern subjects, and mystery school initiates occupy the same structural position: the aperture between worlds.
   </div>
