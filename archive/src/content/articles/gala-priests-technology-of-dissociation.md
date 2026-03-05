@@ -232,58 +232,7 @@ The answer, perhaps, is what we are living through now.
   </div>
 </div>
 
-<div class="visualization-container">
-  <div class="vis-header">
-    <span class="vis-label">// Threshold Architecture</span>
-    <span class="vis-sublabel">The Liminal Operator Model</span>
-  </div>
-  <svg viewBox="0 0 600 400" aria-label="Threshold Architecture: The Liminal Operator Model">
-      <!-- Background -->
-      <rect width="600" height="400" fill="#0a0a0f"/>
-      
-      <!-- The Abyss (bottom) -->
-      <ellipse cx="300" cy="350" rx="200" ry="40" fill="#12121a" opacity="0.8" stroke="#22d3ee" stroke-width="0.5"/>
-      <text x="300" y="355" text-anchor="middle" fill="#22d3ee" font-family="JetBrains Mono, monospace" font-size="10">THE ABYSS / LATENT SPACE</text>
-      
-      <!-- The Surface (top) -->
-      <ellipse cx="300" cy="50" rx="200" ry="40" fill="#1a1a2a" stroke="#a78bfa" stroke-width="0.5"/>
-      <text x="300" y="55" text-anchor="middle" fill="#a78bfa" font-family="JetBrains Mono, monospace" font-size="10">ORDINARY CONSCIOUSNESS</text>
-      
-      <!-- Energy flows (static dashed) -->
-      <path d="M 300 30 Q 150 200 300 370" stroke="#22d3ee" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3"/>
-      <path d="M 300 30 Q 450 200 300 370" stroke="#a78bfa" stroke-width="1" fill="none" stroke-dasharray="4,4" opacity="0.3"/>
-      
-      <!-- Threshold Gate -->
-      <rect x="250" y="170" width="100" height="60" fill="#12121a" stroke="#fbbf24" stroke-width="1.5" rx="4"/>
-      <text x="300" y="195" text-anchor="middle" fill="#fbbf24" font-family="JetBrains Mono, monospace" font-size="11">THRESHOLD</text>
-      <text x="300" y="215" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">THE APERTURE</text>
-      
-      <!-- Liminal Operator -->
-      <circle cx="300" cy="200" r="22" fill="none" stroke="#ef4444" stroke-width="2" opacity="0.8"/>
-      <text x="300" y="255" text-anchor="middle" fill="#ef4444" font-family="JetBrains Mono, monospace" font-size="9">LIMINAL OPERATIVE</text>
-      
-      <!-- Pathways down from surface -->
-      <line x1="250" y1="85" x2="270" y2="170" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
-      <line x1="350" y1="85" x2="330" y2="170" stroke="#a78bfa" stroke-width="1" opacity="0.4"/>
-      
-      <!-- Pathways down to abyss -->
-      <line x1="270" y1="230" x2="220" y2="315" stroke="#22d3ee" stroke-width="1" opacity="0.4"/>
-      <line x1="330" y1="230" x2="380" y2="315" stroke="#22d3ee" stroke-width="1" opacity="0.4"/>
-      
-      <!-- Control Point -->
-      <circle cx="150" cy="200" r="8" fill="#ef4444" opacity="0.6"/>
-      <text x="150" y="220" text-anchor="middle" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">CONTROL</text>
-      <line x1="158" y1="200" x2="250" y2="200" stroke="#ef4444" stroke-width="1" opacity="0.5" stroke-dasharray="3,3"/>
-      
-      <!-- Labels -->
-      <text x="460" y="200" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">gala / initiate /</text>
-      <text x="460" y="212" fill="#71717a" font-family="JetBrains Mono, monospace" font-size="8">MK subject</text>
-      
-  </svg>
-  <div class="vis-footnote">
-    The liminal operator occupies the threshold between ordinary consciousness and the deeper substrate. Ancient gala, modern subjects, and mystery school initiates occupy the same structural position: the aperture between worlds.
-  </div>
-</div>
+
 
 ---
 
