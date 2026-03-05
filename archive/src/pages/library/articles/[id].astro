@@ -2,7 +2,9 @@
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Breadcrumb from '../../../components/Breadcrumb.astro';
 import NewsletterSignup from '../../../components/NewsletterSignup.astro';
+import AccuracyNotice from '../../../components/AccuracyNotice.astro';
 import { getCollection, render } from 'astro:content';
+import { getI18nData } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
   const articles = await getCollection('articles');
@@ -15,20 +17,31 @@ export async function getStaticPaths() {
 const { article } = Astro.props;
 const { Content } = await render(article);
 
+// Get i18n data
+const i18n = getI18nData(Astro);
+const { locale, t, htmlLang } = i18n;
+
 const base = import.meta.env.BASE_URL;
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
 }
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString('en-US', {
+  // Use locale-aware date formatting
+  const localeMap: Record<string, string> = {
+    'en': 'en-US',
+    'fr': 'fr-FR',
+    'es': 'es-ES',
+    'zh-CN': 'zh-CN',
+  };
+  return date.toLocaleDateString(localeMap[locale] || 'en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
   });
 }
 
-const siteUrl = 'https://theantiquearchive.com';
+const siteUrl = Astro.site?.toString() || 'https://theantiquearchive.com';
 
 const structuredData = {
   "@context": "https://schema.org",
@@ -40,14 +53,15 @@ const structuredData = {
       "datePublished": article.data.publishDate.toISOString(),
       ...(article.data.updatedDate && { "dateModified": article.data.updatedDate.toISOString() }),
       "image": article.data.image ? `${siteUrl}${article.data.image}` : `${siteUrl}/og-image.png`,
+      "inLanguage": htmlLang,
       "author": {
         "@type": "Organization",
-        "name": "The Antique Archive",
+        "name": t.meta.siteName,
         "url": siteUrl
       },
       "publisher": {
         "@type": "Organization",
-        "name": "The Antique Archive",
+        "name": t.meta.siteName,
         "url": siteUrl,
         "logo": {
           "@type": "ImageObject",
@@ -62,10 +76,8 @@ const structuredData = {
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": siteUrl },
-        { "@type": "ListItem", "position": 2, "name": "Library", "item": `${siteUrl}/library` },
-        { "@type": "ListItem", "position": 3, "name": "Articles", "item": `${siteUrl}/library/articles` },
-        { "@type": "ListItem", "position": 4, "name": article.data.title, "item": `${siteUrl}/library/articles/${article.id}` }
+        { "@type": "ListItem", "position": 1, "name": t.nav.articles, "item": `${siteUrl}/library/articles` },
+        { "@type": "ListItem", "position": 2, "name": article.data.title, "item": `${siteUrl}/library/articles/${article.id}` }
       ]
     }
   ]
@@ -73,7 +85,7 @@ const structuredData = {
 ---
 
 <BaseLayout
-  title={`${article.data.title} | The Antique Archive`}
+  title={`${article.data.title} | ${t.meta.siteName}`}
   description={article.data.description}
   structuredData={structuredData}
   image={article.data.image}
@@ -97,13 +109,13 @@ const structuredData = {
 
     <div class="container-narrow relative max-w-3xl">
       <Breadcrumb items={[
-        { label: 'Articles', href: url('/library/articles') },
+        { label: t.nav.articles, href: url('/library/articles') },
         { label: article.data.title }
       ]} />
 
       <header class="mb-12">
         <p class="font-mono text-xs uppercase tracking-[0.2em] text-accent mb-3">
-          // Article
+          // {t.nav.articles}
         </p>
         <h1 class="text-3xl md:text-4xl text-text mb-4 leading-tight">
           {article.data.title}
@@ -117,7 +129,7 @@ const structuredData = {
           </time>
           {article.data.updatedDate && (
             <span class="font-mono text-text-dim">
-              (Updated {formatDate(article.data.updatedDate)})
+              ({t.articles.updatedOn} {formatDate(article.data.updatedDate)})
             </span>
           )}
         </div>
@@ -131,6 +143,7 @@ const structuredData = {
       </header>
 
       <div id="article-content" class="prose prose-invert prose-cyan max-w-none">
+        <AccuracyNotice locale={locale} slug={article.id} title={article.data.title} />
         <Content />
       </div>
 
@@ -146,7 +159,7 @@ const structuredData = {
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          Back to Articles
+          {t.articles.backToArticles}
         </a>
       </footer>
     </div>

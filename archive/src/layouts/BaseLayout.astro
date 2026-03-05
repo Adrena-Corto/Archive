@@ -4,27 +4,38 @@ import SearchModal from '../components/SearchModal.astro';
 import NewsletterSignup from '../components/NewsletterSignup.astro';
 import ChangelogNotification from '../components/ChangelogNotification.astro';
 import LatestArticlePopup from '../components/LatestArticlePopup.astro';
+import LanguageSwitcher from '../components/LanguageSwitcher.astro';
+import { getI18nData, DEFAULT_LOCALE, generateHreflangTags, getTranslations } from '../lib/i18n';
+import type { Locale } from '../lib/i18n';
 
 interface Props {
   title?: string;
   description?: string;
   structuredData?: object;
   image?: string;
+  locale?: Locale;
+  alternateUrls?: Record<Locale, string>;
 }
 
+// Get i18n data from Astro context
+const i18n = getI18nData(Astro);
+const { locale, t, pathWithoutLocale, alternateUrls: defaultAlternateUrls, htmlLang, ogLocale } = i18n;
+
 const {
-  title = 'Collection',
-  description = 'A curated collection of coins, jewelry, rings, cylinder seals, and small antiques.',
+  title = t.meta.siteName,
+  description = t.meta.siteDescription,
   structuredData,
-  image
+  image,
+  alternateUrls = defaultAlternateUrls,
 } = Astro.props;
 
 const defaultStructuredData = {
   "@context": "https://schema.org",
   "@type": "CollectionPage",
-  "name": "The Archive",
+  "name": t.structuredData.collectionName,
   "description": description,
-  "url": Astro.url.href
+  "url": Astro.url.href,
+  "inLanguage": htmlLang,
 };
 
 const pathname = Astro.url.pathname;
@@ -32,6 +43,9 @@ const base = import.meta.env.BASE_URL;
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 const defaultOgImage = new URL('/og-image.png', Astro.site).href;
 const ogImage = image ? new URL(image, Astro.site).href : defaultOgImage;
+
+// Generate hreflang tags
+const hreflangTags = generateHreflangTags(locale, alternateUrls, pathWithoutLocale);
 
 function url(path: string): string {
   return `${base}${path}`.replace(/\/+/g, '/');
@@ -44,13 +58,19 @@ function isActive(path: string): boolean {
 ---
 
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang={htmlLang} class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content={description} />
     <meta name="theme-color" content="#0a0a0f" />
+    
+    <!-- Canonical and Alternate URLs -->
     <link rel="canonical" href={canonicalURL} />
+    {hreflangTags.map(tag => (
+      <link rel={tag.rel} hreflang={tag.hreflang} href={tag.href} />
+    ))}
+    
     <link rel="icon" type="image/png" sizes="32x32" href={url('/favicon-32.png')} />
     <link rel="icon" type="image/png" sizes="16x16" href={url('/favicon-16.png')} />
     <link rel="apple-touch-icon" sizes="180x180" href={url('/apple-touch-icon.png')} />
@@ -73,11 +93,11 @@ function isActive(path: string): boolean {
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:site_name" content="The Antique Archive" />
+    <meta property="og:site_name" content={t.meta.siteName} />
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="en_US" />
+    <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image" />
@@ -87,7 +107,7 @@ function isActive(path: string): boolean {
 
     <!-- Additional SEO -->
     <meta name="robots" content="index, follow" />
-    <meta name="author" content="The Antique Archive" />
+    <meta name="author" content={t.meta.siteName} />
     <meta name="geo.region" content="HK" />
     <meta name="geo.placename" content="Hong Kong" />
     <style set:html={`
@@ -130,7 +150,7 @@ function isActive(path: string): boolean {
   <body class="min-h-screen flex flex-col bg-void">
     <!-- Skip to main content link for accessibility -->
     <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:bg-accent focus:text-void focus:px-4 focus:py-2 focus:rounded focus:font-mono focus:text-sm">
-      Skip to content
+      {t.common.skipToContent}
     </a>
 
     <!-- Preload font glyphs for matrix effect (hidden) -->
@@ -160,27 +180,27 @@ function isActive(path: string): boolean {
             href={url('/artifacts')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/artifacts') && "nav-link-active"]}
             aria-current={isActive('/artifacts') ? 'page' : undefined}
-          >Artifacts</a>
+          >{t.nav.artifacts}</a>
           <a
             href={url('/coins')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/coins') && "nav-link-active"]}
             aria-current={isActive('/coins') ? 'page' : undefined}
-          >Coins</a>
+          >{t.nav.coins}</a>
           <a
             href={url('/timeline')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/timeline') && "nav-link-active"]}
             aria-current={isActive('/timeline') ? 'page' : undefined}
-          >Timeline</a>
+          >{t.nav.timeline}</a>
           <a
             href={url('/library')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", pathname.startsWith(url('/library')) && "nav-link-active"]}
             aria-current={pathname.startsWith(url('/library')) ? 'page' : undefined}
-          >Library</a>
+          >{t.nav.library}</a>
           <a
             href={url('/about')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
             aria-current={isActive('/about') ? 'page' : undefined}
-          >About</a>
+          >{t.nav.about}</a>
           <div class="flex items-center">
             <a
               href={url('/search')}
@@ -189,13 +209,18 @@ function isActive(path: string): boolean {
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <span>Search</span>
+              <span>{t.nav.search}</span>
             </a>
             <button
               @click="window.dispatchEvent(new CustomEvent('toggle-search'))"
               class="ml-2 px-2.5 py-1 text-[10px] font-mono bg-surface-light/50 rounded border border-accent/30 text-accent/70 shadow-[0_0_6px_rgba(34,211,238,0.15)] hover:border-accent/50 hover:text-accent hover:shadow-[0_0_12px_rgba(34,211,238,0.35)] transition-all"
               aria-label="Quick search (Cmd+K)"
             >⌘K</button>
+          </div>
+          
+          <!-- Language Switcher -->
+          <div class="border-l border-white/10 pl-4 ml-2">
+            <LanguageSwitcher currentLocale={locale} />
           </div>
         </div>
 
@@ -207,7 +232,7 @@ function isActive(path: string): boolean {
           style="-webkit-tap-highlight-color: transparent; touch-action: manipulation;"
           :class="$store.nav.mobileMenuOpen && 'text-accent'"
           :aria-expanded="$store.nav.mobileMenuOpen"
-          aria-label="Toggle navigation menu"
+          aria-label={t.common.toggleMenu}
         >
           <span class="sr-only" x-text="$store.nav.mobileMenuOpen ? 'Close menu' : 'Open menu'"></span>
           <div class="w-6 h-5 flex flex-col justify-between pointer-events-none">
@@ -250,7 +275,7 @@ function isActive(path: string): boolean {
           class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/artifacts') && "text-accent border-accent"]}
           aria-current={isActive('/artifacts') ? 'page' : undefined}
         >
-          <span class="text-accent mr-2">></span> Artifacts
+          <span class="text-accent mr-2">></span> {t.nav.artifacts}
         </a>
         <a
           href={url('/coins')}
@@ -258,7 +283,7 @@ function isActive(path: string): boolean {
           class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/coins') && "text-accent border-accent"]}
           aria-current={isActive('/coins') ? 'page' : undefined}
         >
-          <span class="text-accent mr-2">></span> Coins
+          <span class="text-accent mr-2">></span> {t.nav.coins}
         </a>
         <a
           href={url('/timeline')}
@@ -266,7 +291,7 @@ function isActive(path: string): boolean {
           class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/timeline') && "text-accent border-accent"]}
           aria-current={isActive('/timeline') ? 'page' : undefined}
         >
-          <span class="text-accent mr-2">></span> Timeline
+          <span class="text-accent mr-2">></span> {t.nav.timeline}
         </a>
         <div class="py-1">
           <a
@@ -275,7 +300,7 @@ function isActive(path: string): boolean {
             class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", pathname.startsWith(url('/library')) && "text-accent border-accent"]}
             aria-current={pathname.startsWith(url('/library')) ? 'page' : undefined}
           >
-            <span class="text-accent mr-2">></span> Library
+            <span class="text-accent mr-2">></span> {t.nav.library}
           </a>
           <div class="ml-6 flex flex-col gap-1 mt-1">
             <a
@@ -283,14 +308,14 @@ function isActive(path: string): boolean {
               @click="$store.nav.close()"
               class:list={["font-mono text-xs uppercase tracking-widest py-2 text-text-muted hover:text-accent transition-colors", isActive('/library/articles') && "text-accent"]}
             >
-              <span class="text-accent/50 mr-2">-</span> Articles
+              <span class="text-accent/50 mr-2">-</span> {t.nav.articles}
             </a>
             <a
               href={url('/library/books')}
               @click="$store.nav.close()"
               class:list={["font-mono text-xs uppercase tracking-widest py-2 text-text-muted hover:text-accent transition-colors", isActive('/library/books') && "text-accent"]}
             >
-              <span class="text-accent/50 mr-2">-</span> Books
+              <span class="text-accent/50 mr-2">-</span> {t.nav.books}
             </a>
           </div>
         </div>
@@ -300,7 +325,7 @@ function isActive(path: string): boolean {
           class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", isActive('/about') && "text-accent border-accent"]}
           aria-current={isActive('/about') ? 'page' : undefined}
         >
-          <span class="text-accent mr-2">></span> About
+          <span class="text-accent mr-2">></span> {t.nav.about}
         </a>
         <a
           href={url('/search')}
@@ -312,8 +337,16 @@ function isActive(path: string): boolean {
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
-          Search
+          {t.nav.search}
         </a>
+        
+        <!-- Mobile Language Switcher -->
+        <div class="border-t border-white/10 mt-4 pt-4">
+          <p class="font-mono text-xs text-text-dim mb-2 px-3">Language / Langue / Idioma / 语言</p>
+          <div class="px-3">
+            <LanguageSwitcher currentLocale={locale} />
+          </div>
+        </div>
       </nav>
     </div>
 
@@ -326,14 +359,14 @@ function isActive(path: string): boolean {
       <div class="container-narrow py-10">
         <div class="grid md:grid-cols-2 gap-8 mb-8">
           <div>
-            <p class="font-mono text-xs uppercase tracking-wider text-accent mb-2">Stay Updated</p>
-            <p class="text-text-dim text-sm mb-4">Get notified of new articles and collection additions.</p>
+            <p class="font-mono text-xs uppercase tracking-wider text-accent mb-2">{t.footer.stayUpdated}</p>
+            <p class="text-text-dim text-sm mb-4">{t.footer.getNotified}</p>
             <NewsletterSignup variant="compact" />
           </div>
           <div class="flex flex-col md:items-end justify-center gap-2">
             <div class="flex items-center gap-4">
               <a href={url('/support')} class="font-mono text-xs text-text-dim hover:text-accent transition-colors">
-                Support
+                {t.footer.support}
               </a>
               <a href={url('/rss.xml')} class="font-mono text-xs text-text-dim hover:text-accent transition-colors flex items-center gap-1.5">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 24 24">
@@ -343,10 +376,10 @@ function isActive(path: string): boolean {
               </a>
             </div>
             <p class="font-mono text-xs text-text-dim">
-              <span class="text-accent">></span> Personal Collection Display
+              <span class="text-accent">></span> {t.footer.personalCollection}
             </p>
             <p class="font-mono text-xs text-text-dim">
-              Hong Kong, {new Date().getFullYear()}
+              {t.footer.location}, {new Date().getFullYear()}
             </p>
           </div>
         </div>

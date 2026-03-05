@@ -12,6 +12,13 @@ export default defineConfig({
   ],
   site: 'https://theantiquearchive.com',
   // base: '/Archive', // Not needed with custom domain
+  i18n: {
+    defaultLocale: 'en',
+    locales: ['en', 'fr', 'es', 'zh-CN'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   build: {
     // Inline ALL stylesheets to eliminate render-blocking CSS requests
     // This trades larger HTML for faster FCP/LCP on slow connections
