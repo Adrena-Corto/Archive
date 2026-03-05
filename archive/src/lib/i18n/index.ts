@@ -122,11 +122,30 @@ export function generateHreflangTags(
  * This checks if a localized content file exists
  */
 export function hasArticleTranslation(articleId: string, locale: Locale): boolean {
-  // For now, we only have English articles
-  // This function should be updated when localized articles are added
+  // English is the default, always available
+  if (locale === DEFAULT_LOCALE) return true;
+  
   // Check if the locale has a corresponding article file
-  // e.g., article-id.md -> fr/article-id.md, es/article-id.md, etc.
-  return locale === DEFAULT_LOCALE;
+  // French articles are in articlesFr collection
+  if (locale === 'fr') {
+    // List of translated French articles (batch #1)
+    const frenchArticles = [
+      'egyptian-scarabs',
+      'marcus-aurelius-coins', 
+      'cylinder-seals-mesopotamia',
+      'coin-grading-guide',
+      'identifying-roman-denarii',
+      'islamic-seals-calligraphy',
+      'byzantine-magical-amulets',
+      'sasanian-stamp-seals',
+      'bronze-age-collapse',
+      'gold-fever'
+    ];
+    return frenchArticles.includes(articleId);
+  }
+  
+  // Spanish and Chinese not yet translated
+  return false;
 }
 
 /**

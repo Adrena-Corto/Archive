@@ -4,22 +4,51 @@ import Breadcrumb from '../../../components/Breadcrumb.astro';
 import NewsletterSignup from '../../../components/NewsletterSignup.astro';
 import AccuracyNotice from '../../../components/AccuracyNotice.astro';
 import { getCollection, render } from 'astro:content';
-import { getI18nData } from '../../../lib/i18n';
+import { getI18nData, hasArticleTranslation } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
+  // Get English articles
   const articles = await getCollection('articles');
-  return articles.map((article) => ({
+  // Get French articles  
+  const articlesFr = await getCollection('articlesFr');
+  
+  // Create paths for all English articles
+  const englishPaths = articles.map((article) => ({
     params: { id: article.id },
     props: { article },
   }));
+  
+  // Create paths for French articles (with fr/ prefix)
+  const frenchPaths = articlesFr.map((article) => ({
+    params: { id: article.id },
+    props: { article, isFrench: true },
+  }));
+  
+  return [...englishPaths, ...frenchPaths];
 }
 
-const { article } = Astro.props;
-const { Content } = await render(article);
+const { article, isFrench } = Astro.props;
 
-// Get i18n data
+// Get i18n data to determine locale
 const i18n = getI18nData(Astro);
 const { locale, t, htmlLang } = i18n;
+
+// For French locale, try to load French article if available
+let displayArticle = article;
+let content = await render(article);
+let { Content } = content;
+
+// If we're on French locale and this article has a French translation,
+// load the French version instead
+if (locale === 'fr' && !isFrench && hasArticleTranslation(article.id, 'fr')) {
+  const frenchArticles = await getCollection('articlesFr');
+  const frenchArticle = frenchArticles.find(a => a.id === article.id);
+  if (frenchArticle) {
+    displayArticle = frenchArticle;
+    content = await render(frenchArticle);
+    Content = content.Content;
+  }
+}
 
 const base = import.meta.env.BASE_URL;
 function url(path: string): string {
@@ -48,11 +77,11 @@ const structuredData = {
   "@graph": [
     {
       "@type": "Article",
-      "headline": article.data.title,
-      "description": article.data.description,
-      "datePublished": article.data.publishDate.toISOString(),
-      ...(article.data.updatedDate && { "dateModified": article.data.updatedDate.toISOString() }),
-      "image": article.data.image ? `${siteUrl}${article.data.image}` : `${siteUrl}/og-image.png`,
+      "headline": displayArticle.data.title,
+      "description": displayArticle.data.description,
+      "datePublished": displayArticle.data.publishDate.toISOString(),
+      ...(displayArticle.data.updatedDate && { "dateModified": displayArticle.data.updatedDate.toISOString() }),
+      "image": displayArticle.data.image ? `${siteUrl}${displayArticle.data.image}` : `${siteUrl}/og-image.png`,
       "inLanguage": htmlLang,
       "author": {
         "@type": "Organization",
@@ -70,14 +99,14 @@ const structuredData = {
       },
       "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": `${siteUrl}/library/articles/${article.id}`
+        "@id": `${siteUrl}/library/articles/${displayArticle.id}`
       }
     },
     {
       "@type": "BreadcrumbList",
       "itemListElement": [
         { "@type": "ListItem", "position": 1, "name": t.nav.articles, "item": `${siteUrl}/library/articles` },
-        { "@type": "ListItem", "position": 2, "name": article.data.title, "item": `${siteUrl}/library/articles/${article.id}` }
+        { "@type": "ListItem", "position": 2, "name": displayArticle.data.title, "item": `${siteUrl}/library/articles/${displayArticle.id}` }
       ]
     }
   ]
@@ -85,10 +114,10 @@ const structuredData = {
 ---
 
 <BaseLayout
-  title={`${article.data.title} | ${t.meta.siteName}`}
-  description={article.data.description}
+  title={`${displayArticle.data.title} | ${t.meta.siteName}`}
+  description={displayArticle.data.description}
   structuredData={structuredData}
-  image={article.data.image}
+  image={displayArticle.data.image}
 >
   <article class="relative py-16 min-h-screen">
     <!-- Mini-map / Progress indicator (desktop only) -->
@@ -110,7 +139,7 @@ const structuredData = {
     <div class="container-narrow relative max-w-3xl">
       <Breadcrumb items={[
         { label: t.nav.articles, href: url('/library/articles') },
-        { label: article.data.title }
+        { label: displayArticle.data.title }
       ]} />
 
       <header class="mb-12">
@@ -118,23 +147,23 @@ const structuredData = {
           // {t.nav.articles}
         </p>
         <h1 class="text-3xl md:text-4xl text-text mb-4 leading-tight">
-          {article.data.title}
+          {displayArticle.data.title}
         </h1>
         <div class="flex flex-wrap items-center gap-4 text-sm">
           <time
-            datetime={article.data.publishDate.toISOString()}
+            datetime={displayArticle.data.publishDate.toISOString()}
             class="font-mono text-text-dim"
           >
-            {formatDate(article.data.publishDate)}
+            {formatDate(displayArticle.data.publishDate)}
           </time>
-          {article.data.updatedDate && (
+          {displayArticle.data.updatedDate && (
             <span class="font-mono text-text-dim">
-              ({t.articles.updatedOn} {formatDate(article.data.updatedDate)})
+              ({t.articles.updatedOn} {formatDate(displayArticle.data.updatedDate)})
             </span>
           )}
         </div>
         <div class="flex flex-wrap gap-2 mt-4">
-          {article.data.tags.map((tag: string) => (
+          {displayArticle.data.tags.map((tag: string) => (
             <span class="font-mono text-xs text-accent/70 bg-accent/5 px-2 py-0.5 rounded">
               {tag}
             </span>
@@ -143,7 +172,7 @@ const structuredData = {
       </header>
 
       <div id="article-content" class="prose prose-invert prose-cyan max-w-none">
-        <AccuracyNotice locale={locale} slug={article.id} title={article.data.title} />
+        <AccuracyNotice locale={locale} slug={displayArticle.id} title={displayArticle.data.title} />
         <Content />
       </div>
 

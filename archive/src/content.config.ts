@@ -1,8 +1,24 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// English articles (root level only, exclude fr/ subdirectory)
 const articles = defineCollection({
-  loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
+  loader: glob({ pattern: '*.md', base: './src/content/articles' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    publishDate: z.coerce.date(),
+    updatedDate: z.coerce.date().optional(),
+    image: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false),
+    featuredItems: z.array(z.string()).default([]),
+  }),
+});
+
+// French articles
+const articlesFr = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/articles/fr' }),
   schema: z.object({
     title: z.string(),
     description: z.string(),
@@ -32,4 +48,4 @@ const books = defineCollection({
   }),
 });
 
-export const collections = { articles, books };
+export const collections = { articles, articlesFr, books };
