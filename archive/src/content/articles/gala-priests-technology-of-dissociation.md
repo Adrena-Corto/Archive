@@ -8,7 +8,7 @@ featuredItems: []
 
 In the Sumerian temple complex at Nippur, in a chamber buried beneath centuries of alluvial soil, archaeologists uncovered a small ivory statuette dating to the Early Dynastic period (circa 2600–2400 BCE). The figure wears a distinctive garment—a knotted wool wrapper draped over one shoulder—and holds a small drum. The face is damaged, but what remains suggests an androgynous form: neither clearly male nor clearly female, but something existing in the space between.
 
-The figure is a *gala*—a priest of the god Enki, specialized in lamentation rituals that could last for hours. The Akkadians called them *kalû*. The Sumerians called them by a term that resists translation: *gala*, which some scholars have proposed relates to the word for "to cross" or "to transgress."
+The figure is a *gala*—a priest of the god Enki, specialized in lamentation rituals that could last for hours. The Akkadians called them *kalû*. The Sumerians called them by a term that resists translation: *gala*, most commonly linked to the verb "to lament," though the full etymology remains debated among Assyriologists.
 
 They were the first operatives of a technology we are still learning to use.
 
@@ -120,7 +120,7 @@ What remains of the gala in the archaeological record is fragmentary but suggest
 
 Beyond the ivory figurine from Nippur, there are references in administrative texts from the Ur III period (circa 2100–2000 BCE) that mention gala priests receiving allocations of barley and wool. Hymn cycles dedicated to the gala have survived in copies from the Old Babylonian period (circa 2000–1600 BCE), preserving the words they sang even as the practice of singing them faded. The *Udug Hul* incantations—protective spells against demonic affliction—identify the gala as figures of extraordinary power, beings who could travel between worlds and retrieve souls lost in the underworld.
 
-By the first millennium BCE, the gala had largely disappeared as an institutional role. The androgynous priest was replaced by more conventional gender categories. The lamentation rituals continued in modified form, but the *operators* who once used them to cross thresholds between consciousness and cosmos were absorbed into the more bureaucratized religious hierarchies of Assyrian and Babylonian temple administration.
+By the first millennium BCE, the gala had evolved. The *kalû* tradition persisted in Assyrian and Babylonian temple hierarchies, but the role became more bureaucratized — absorbed into larger religious administrations where the original liminal function was diluted, though never entirely lost.
 
 They left behind only the statues, the texts, and the question: what happens when a civilization forgets how to cross its own thresholds?
 

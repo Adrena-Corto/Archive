@@ -44,7 +44,7 @@ Then Enkidu dies.
 
 The rest of the epic is Gilgamesh's unraveling. He cannot accept it. He abandons his city, wanders into the wilderness, seeks Utnapishtim—the man who survived the Flood—to ask him for the secret of immortality. He crosses waters that dry up behind him. He passes through darkness. He reaches the edge of the world, and Utnapishtim tells him the truth: you will never live forever. The gods gave mortality to humans as a gift. Even the Flood could not undo it.
 
-And Gilgamesh, having failed to escape death, does the only thing left. He returns to Uruk. He walks the walls. He shows them to his companion—the same companion who once called him out, who forced him to see himself—and he says: look what I built.
+And Gilgamesh, having failed to escape death, does the only thing left. He returns to Uruk. He walks the walls. He shows them to Urshanabi, the ferryman who carried him across the waters of death—a stranger, not a friend, because the friend is gone—and he says: look what I built.
 
 Not "look what I conquered." Not "look at my glory." Look at what *holds*. The walls that protect. The city that endures. The thing that will outlast me.
 
