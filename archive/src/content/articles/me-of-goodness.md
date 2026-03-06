@@ -54,7 +54,7 @@ The test was never immortality. The test was what you do with the time you have.
 
 ## The School of Souls
 
-There's an old framework—one that shows up in Sufi texts, in certain strains of Kabbalah, in the crypto communities where people talk about "preserving your purity in a corrupt world"—that frames existence as a test.
+There's an old framework—one that shows up in Sufi texts, in certain strains of Kabbalah, in the quiet conversations that happen in places where money and power concentrate, where people talk about "preserving your purity in a corrupt world"—that frames existence as a test.
 
 "Life is a test to see if you can go through it and see most people sell out for money and still choose to preserve your purity."
 
