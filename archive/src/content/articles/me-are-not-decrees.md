@@ -1,6 +1,6 @@
 ---
-title: "The ME Are Not Decrees: What Computational Analysis Reveals About Sumer's Most Misunderstood Concept"
-description: "We trained word embeddings on 394 Sumerian literary texts and let the corpus speak for itself. The ME aren't divine decrees — they're operational parameters. Here's the evidence."
+title: "The ME Are Not Decrees: What Computational Analysis Reveals About Sumer's Most Misunderstood Concepts"
+description: "We trained word embeddings on 394 Sumerian literary texts and let the corpus speak for itself. Some conventional translations hold up. Others don't. Here's the evidence — and the limits of what we can claim."
 publishDate: 2026-03-11
 tags: [mesopotamia, AI, linguistics, research, technology, consciousness]
 featuredItems: []
@@ -39,21 +39,19 @@ The *me* occur 1,584 times in the literary corpus. Here are the verbs most commo
 
 Decrees are issued. They're binary — obeyed or disobeyed. They don't come in sizes. You don't carry them on your body or pour them out.
 
-But parameters do all of these things. A parameter has magnitude (gal). It can be set or declared (dug₄). It can be amplified (mah). It can be transmitted from one system to another (šum₂). It reaches a complete or optimal state (du₇). It manifests in operation (e₃). It can be ported (il₂).
+But the *me* do all of these things. They have magnitude (gal). They can be declared (dug₄). They can be amplified (mah). They can be transmitted from one entity to another (šum₂). They reach a complete or optimal state (du₇). They manifest in operation (e₃). They can be ported (il₂).
 
-The *me* are configuration settings for civilization.
+**A note on rigor:** When we compared ME's verb profile against other abstract nouns (niĝ₂ "thing," inim "word," šag₄ "heart," a₂ "arm/power"), we found that ME's profile is not unique — several other nouns share similar verb distributions. This means the verb evidence alone cannot distinguish between "operational parameter," "divine attribute," "sacred essence," or "cosmic power." The verbs show that ME is *dynamic* — scalar, transferable, physical — but they don't tell us exactly *what kind* of dynamic thing it is.
 
-## Finding 2: The Blueprint Connection
+What we can say with confidence: ME is not a static decree. The corpus treats it as something manipulable and measurable. The precise metaphor — parameter, power, essence — remains open.
 
-When we computed the centroid of ME-related terms (the average vector of *me*, *nam-lugal*, *nam-en*, *nam-mah*, and *nam-tar*) and searched for its nearest neighbors, something remarkable appeared at position 12:
+## Finding 2: The Blueprint Connection — A Cautionary Tale
 
-**ĝiš-ḫur** — "blueprint" or "design plan."
+When we computed the centroid of ME-related terms and searched for its nearest neighbors, ĝiš-ḫur ("blueprint" or "design plan") appeared at position 12, similarity 0.729.
 
-Similarity score: 0.729.
+This was exciting — but when we tested robustness across 20 random seeds, ĝiš-ḫur *never appeared* in ME's top-50 direct neighbors. The centroid connection is real but fragile: it emerges from the average of multiple ME terms, not from ME itself. At the 75th percentile of random similarity, it's suggestive but not statistically distinctive.
 
-The *me* cluster with the word for architectural blueprint. Not metaphorically — mathematically. In the space of Sumerian meaning, the ME *are* design specifications.
-
-This aligns with a detail that Assyriology has long noticed but never quite known what to do with: the texts consistently describe ME as being *stored* in temples and *drawn out* of the Abzu. They're retrieved, not received. Loaded, not commanded.
+We include this finding because the textual evidence is independently interesting: the texts consistently describe ME as being *stored* in temples and *drawn out* of the Abzu. They're retrieved, not received. But we cannot claim computational proof of a ME-blueprint connection. The corpus hints; it does not confirm.
 
 ## Finding 3: ME-LAM₂ Is Not Light
 
@@ -79,7 +77,9 @@ What does the *me-lam₂* actually do? The verb evidence:
 
 It covers regions. It has weight. It's reddish. It causes terror.
 
-This is not light. This is closer to a force field — an energetic emanation that radiates from a being or object with active *me*, provoking involuntary physical and psychological reactions in those who encounter it.
+This is not cheerful brightness. The primary semantic field is terror and awe, not illumination. There may be a luminous component — nu₁₁ (lamp/light) appears as a stable neighbor — but the *experience* the corpus describes is of an overwhelming, covering, reddish force that provokes fear.
+
+**Robustness:** This is our most robust finding. Across 20 random seeds, ni₂ (terror) appears in me-lam₂'s top-10 neighbors in 18 out of 20 runs. The me-lam₂ ↔ ni₂ similarity (0.523) sits at the 97th percentile of random word-pair similarities. This is not noise.
 
 ## Finding 4: NAM-ERIM₂ Is Not "Wickedness"
 
@@ -91,7 +91,11 @@ Its most frequent co-occurring verb is **kuḍ** (to cut/judge), appearing in 11
 
 Other co-occurrences: *di* (judgment), *ka-aš* (oath), *ub-šu-unken-na* (assembly).
 
-The corpus places *nam-erim₂* firmly in the semantic field of **law and oath-taking**, not ethics or morality. It's not "wickedness" — it's the parameter governing oath-obligation and its violation.
+The corpus places *nam-erim₂* firmly in the semantic field of **law and oath-taking**. Whether this excludes moral content is debatable — in English, "wickedness" co-occurs with "judge" and "condemn" without being purely juridical. But the *primary* field is clearly legal, not ethical.
+
+**Robustness:** This is our single most stable finding. Ištaran appears in nam-erim₂'s top-10 neighbors in 20 out of 20 random seeds. The similarity (0.628) sits at the 100th percentile of random word pairs. The kuḍ co-occurrence (11/18 = 61%) is a genuine pattern. Interestingly, the ETCSL's own label for nam-erim₂ is "oath" — not "wickedness" — suggesting the original annotators already recognized this, even if textbook translations haven't caught up.
+
+**A caveat:** With only 18 occurrences, embedding-based claims should be treated as hypotheses. The kuḍ co-occurrence evidence is independent of embeddings and arguably stronger.
 
 ## Finding 5: The Craft MEs Exist Only in One Text
 
@@ -107,6 +111,29 @@ But the craft MEs — carpentry (*nam-nagar*), metalwork (*nam-simug*), coppersm
 No other composition in the entire Sumerian literary corpus lists these as *me*.
 
 This means one of two things: either Inanna and Enki is a unique encyclopedic text — a comprehensive "spec sheet" of all parameters — or the craft MEs were so self-evident to the Sumerians that they didn't need discussing. Either way, the text functions less like a mythological narrative and more like a technical document.
+
+## Robustness & Limitations
+
+We subjected every finding to adversarial peer review and ran systematic robustness tests. The results forced us to weaken some claims and strengthen others.
+
+**What holds up:**
+- ME-LAM₂'s primary field is terror/awe (97th percentile, 18/20 seeds stable)
+- NAM-ERIM₂'s juridical field (100th percentile, 20/20 seeds stable)
+- NAM-TAG as weighted burden (verb evidence consistent)
+- Craft MEs only in Inanna and Enki (simple observation, unambiguous)
+
+**What doesn't hold up:**
+- "ME = operational parameter" as a unique interpretation (verb profile shared by other nouns)
+- ME ↔ ĝiš-ḫur (blueprint) as a direct connection (75th percentile, never top-50)
+
+**Known limitations:**
+- Corpus size (151K tokens) is small by NLP standards. Our embeddings are more fragile than typical Word2Vec applications.
+- Genre effects: ETCSL is literary texts with formulaic language. Administrative texts might give different patterns.
+- We trusted ETCSL's lemmatization without independent verification.
+- We deliberately excluded Akkadian evidence, which is methodologically pure but discards real information.
+- We are not Sumerologists. Domain expertise may reveal why some of our "surprising" findings are already known, and why others are wrong.
+
+This is exploratory computational work — a pilot study, not a conclusion. We believe it demonstrates that distributional methods can generate testable hypotheses about dead languages. Whether those hypotheses survive engagement with the philological literature remains to be seen.
 
 ## What This Means
 
