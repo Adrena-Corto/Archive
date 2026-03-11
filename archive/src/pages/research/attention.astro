@@ -1,0 +1,214 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Attention Probing — Sumerian Research Lab"
+  description="What does a neural network attend to when processing Sumerian? Explore attention patterns across 60+ terms from a GPT trained on 66K literary sentences."
+>
+  <main class="attn-page">
+    <a href="/research" class="back">← Research Lab</a>
+
+    <div class="hero">
+      <div class="eyebrow">Attention Probing</div>
+      <h1>What the Model Sees</h1>
+      <p class="subtitle">
+        For each Sumerian word, we extracted attention weights from all 4 layers of our GPT.
+        <strong>Attends to</strong> = what the word looks at in its context.
+        <strong>Attended by</strong> = what later words look back at it for.
+      </p>
+    </div>
+
+    <!-- Search -->
+    <div class="search-box">
+      <input type="text" id="search" placeholder="Search: me-lem4, nam-tag, inana, lugal..." spellcheck="false" autocomplete="off" />
+      <div id="suggestions"></div>
+    </div>
+
+    <!-- Result -->
+    <div id="result" class="result hidden">
+      <div class="result-header">
+        <h2 id="r-word"></h2>
+        <span id="r-contexts" class="ctx-badge"></span>
+      </div>
+
+      <div class="two-col">
+        <div class="col">
+          <h3>Attends To <span class="hint">(what it looks at)</span></h3>
+          <div id="r-attends" class="bar-list"></div>
+        </div>
+        <div class="col">
+          <h3>Attended By <span class="hint">(what looks at it)</span></h3>
+          <div id="r-attended" class="bar-list"></div>
+        </div>
+      </div>
+
+      <div class="layers-section">
+        <h3>Layer Evolution <span class="hint">(does attention shift across depth?)</span></h3>
+        <div id="r-layers" class="layers-grid"></div>
+      </div>
+    </div>
+
+    <!-- Browse -->
+    <div id="browse" class="browse">
+      <div class="browse-section">
+        <h3>🔥 Key Findings</h3>
+        <div class="tags" data-terms="me-lem4,nam-tag,nam-erim2,nam-tar,ni2,zalag,huc,dugud"></div>
+      </div>
+      <div class="browse-section">
+        <h3>⚙️ ME & Powers</h3>
+        <div class="tags" data-terms="me,me-lem4,me-te,jic-hur,jarza,biluda"></div>
+      </div>
+      <div class="browse-section">
+        <h3>📐 NAM- Abstractions</h3>
+        <div class="tags" data-terms="nam-lugal,nam-en,nam-mah,nam-sipad,nam-til3,nam-he2,nam-dub-sar,nam-cul,nam-dijir,nam-ur-saj,nam-nun"></div>
+      </div>
+      <div class="browse-section">
+        <h3>✨ Divine</h3>
+        <div class="tags" data-terms="inana,en-ki,en-lil2,utu,nanna,nin-urta,dijir"></div>
+      </div>
+      <div class="browse-section">
+        <h3>🌍 Places & Cosmos</h3>
+        <div class="tags" data-terms="kur,abzu,an,ki,e2,eridug,nibru,urim2"></div>
+      </div>
+      <div class="browse-section">
+        <h3>⚔️ Actors & Actions</h3>
+        <div class="tags" data-terms="lugal,ur-saj,pirij,ucumgal,cu,igi,cag4,a2,gu3,jiri3,kud,dab5,du8"></div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .attn-page { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; color: #e8e0d4; }
+  .back { color: #c4956a; text-decoration: none; font-size: 0.9rem; }
+  .back:hover { text-decoration: underline; }
+  .hero { text-align: center; padding: 3rem 0 2rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 2rem; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; color: #c4956a; margin-bottom: 0.5rem; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 300; color: #f5ebe0; margin: 0.5rem 0; }
+  .subtitle { max-width: 650px; margin: 1rem auto; font-size: 1rem; line-height: 1.7; color: #b8a99a; }
+  .subtitle strong { color: #f0e6d8; }
+
+  .search-box { position: relative; margin-bottom: 2rem; }
+  #search { width: 100%; padding: 14px 20px; font-size: 1.1rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); border-radius: 12px; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; outline: none; }
+  #search:focus { border-color: #c4956a; }
+  #search::placeholder { color: #5a5048; }
+  #suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #1a1714; border: 1px solid #333; border-radius: 0 0 10px 10px; display: none; z-index: 20; max-height: 250px; overflow-y: auto; }
+  .sg { padding: 10px 20px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; color: #f5ebe0; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .sg:hover { background: rgba(196,149,106,0.1); }
+
+  .hidden { display: none !important; }
+  .result-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
+  .result-header h2 { font-size: 2rem; font-weight: 400; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; margin: 0; }
+  .ctx-badge { font-size: 0.8rem; color: #7a6e63; background: rgba(255,255,255,0.04); padding: 3px 10px; border-radius: 4px; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-bottom: 2.5rem; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+  .col h3 { font-size: 0.95rem; font-weight: 600; color: #b8a99a; margin-bottom: 1rem; }
+  .hint { color: #5a5048; font-weight: 400; font-size: 0.8rem; }
+
+  .bar-list { display: flex; flex-direction: column; gap: 6px; }
+  .bar-item { display: grid; grid-template-columns: 90px 1fr 50px; gap: 8px; align-items: center; cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: background 0.2s; }
+  .bar-item:hover { background: rgba(196,149,106,0.08); }
+  .bar-word { font-family: 'JetBrains Mono', monospace; color: #f5ebe0; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .bar-track { height: 8px; background: rgba(255,255,255,0.04); border-radius: 4px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 4px; }
+  .bar-fill.to { background: linear-gradient(90deg, #44aacc, #66ccee); }
+  .bar-fill.by { background: linear-gradient(90deg, #c4956a, #d4a57a); }
+  .bar-val { font-family: 'JetBrains Mono', monospace; font-size: 0.75rem; color: #5a5048; text-align: right; }
+
+  .layers-section h3 { font-size: 0.95rem; font-weight: 600; color: #b8a99a; margin-bottom: 1rem; }
+  .layers-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+  @media (max-width: 640px) { .layers-grid { grid-template-columns: repeat(2, 1fr); } }
+  .layer-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; padding: 0.8rem; }
+  .layer-label { font-size: 0.7rem; color: #7a6e63; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .layer-items { font-size: 0.75rem; color: #9a8e82; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
+  .layer-items span { color: #c4956a; }
+
+  .browse-section { margin-bottom: 1.5rem; }
+  .browse-section h3 { font-size: 1rem; color: #b8a99a; margin-bottom: 0.8rem; }
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .tag { padding: 6px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #9a8e82; transition: all 0.2s; }
+  .tag:hover { border-color: #c4956a; color: #f5ebe0; background: rgba(196,149,106,0.08); }
+</style>
+
+<script is:inline>
+let data = null;
+let allTerms = [];
+
+fetch('/data/attention_probing.json').then(r => r.json()).then(d => {
+  data = d;
+  allTerms = Object.keys(d).sort();
+  buildBrowse();
+  if (location.hash) showTerm(decodeURIComponent(location.hash.slice(1)));
+});
+
+const searchEl = document.getElementById('search');
+const suggestEl = document.getElementById('suggestions');
+
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.trim().toLowerCase();
+  if (!q || !data) { suggestEl.style.display = 'none'; return; }
+  const m = allTerms.filter(t => t.startsWith(q) || t.includes(q)).slice(0, 12);
+  if (!m.length) { suggestEl.style.display = 'none'; return; }
+  suggestEl.innerHTML = m.map(t => `<div class="sg" data-t="${t}">${t}</div>`).join('');
+  suggestEl.style.display = 'block';
+  suggestEl.querySelectorAll('.sg').forEach(el => el.addEventListener('click', () => pick(el.dataset.t)));
+});
+searchEl.addEventListener('keydown', e => { if (e.key === 'Enter') { const q = searchEl.value.trim().toLowerCase(); if (data && data[q]) pick(q); } });
+document.addEventListener('click', e => { if (!e.target.closest('.search-box')) suggestEl.style.display = 'none'; });
+
+function pick(t) { searchEl.value = t; suggestEl.style.display = 'none'; showTerm(t); }
+
+function showTerm(term) {
+  if (!data || !data[term]) return;
+  const d = data[term];
+  location.hash = term;
+  document.getElementById('browse').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('r-word').textContent = term;
+  document.getElementById('r-contexts').textContent = `${d.n} contexts`;
+
+  renderBars('r-attends', d.to, 'to');
+  renderBars('r-attended', d.by, 'by');
+  renderLayers(d.layers_to);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderBars(id, items, cls) {
+  const el = document.getElementById(id);
+  if (!items || !items.length) { el.innerHTML = '<p style="color:#5a5048">No data</p>'; return; }
+  const maxVal = items[0][1];
+  el.innerHTML = items.map(([w, s]) => {
+    const pct = (s / maxVal * 100).toFixed(0);
+    return `<div class="bar-item" data-t="${w}">
+      <span class="bar-word">${w}</span>
+      <div class="bar-track"><div class="bar-fill ${cls}" style="width:${pct}%"></div></div>
+      <span class="bar-val">${s.toFixed(3)}</span>
+    </div>`;
+  }).join('');
+  el.querySelectorAll('.bar-item').forEach(bi => {
+    bi.addEventListener('click', () => { if (data[bi.dataset.t]) pick(bi.dataset.t); });
+  });
+}
+
+function renderLayers(layers) {
+  const el = document.getElementById('r-layers');
+  if (!layers) { el.innerHTML = ''; return; }
+  el.innerHTML = layers.map((items, li) => {
+    const inner = items.map(([w, s]) => `<span>${w}</span>(${s.toFixed(3)})`).join(', ');
+    return `<div class="layer-card"><div class="layer-label">Layer ${li}</div><div class="layer-items">${inner}</div></div>`;
+  }).join('');
+}
+
+function buildBrowse() {
+  document.querySelectorAll('.tags').forEach(container => {
+    const terms = container.dataset.terms.split(',');
+    container.innerHTML = terms
+      .filter(t => data && data[t])
+      .map(t => `<span class="tag" data-t="${t}">${t}</span>`)
+      .join('');
+    container.querySelectorAll('.tag').forEach(el => el.addEventListener('click', () => pick(el.dataset.t)));
+  });
+}
+</script>
