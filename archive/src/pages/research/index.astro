@@ -206,8 +206,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 
     <!-- Related Articles -->
     <section class="related">
-      <h2>Related Articles</h2>
+      <h2>Articles</h2>
       <div class="related-grid">
+        <a href="/library/articles/me-are-not-decrees" class="related-card featured">
+          <span class="card-tag">New — Research</span>
+          <h3>The ME Are Not Decrees</h3>
+          <p>Computational analysis of 394 texts reveals ME as operational parameters. Full evidence and methodology.</p>
+        </a>
         <a href="/library/articles/enki-aperture-age-of-ai" class="related-card">
           <h3>The Aperture and the Deep</h3>
           <p>Enki's architecture in the age of AI — the Abzu as latent space.</p>
@@ -529,6 +534,18 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .related-card:hover {
     border-color: rgba(196,149,106,0.3);
     transform: translateY(-2px);
+  }
+  .related-card.featured {
+    border-color: rgba(196,149,106,0.3);
+    background: rgba(196,149,106,0.06);
+  }
+  .card-tag {
+    display: inline-block;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #c4956a;
+    margin-bottom: 0.5rem;
   }
   .related-card h3 {
     font-size: 1rem;
