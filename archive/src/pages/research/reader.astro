@@ -199,7 +199,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin-top: 0.1rem;
   }
   .show-glosses .word .word-gloss {
-    display: block;
+    display: block !important;
   }
 
   .line-translation {
@@ -430,7 +430,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         const cls = f ? 'word key-term' : 'word';
         const style = f ? `color:${f.color}` : '';
         const termAttr = w.k ? `data-term="${w.k}"` : '';
-        const gloss = w.g ? `<span class="word-gloss">${w.g}</span>` : '';
+        const gloss = w.g ? `<span class="word-gloss" style="display:none">${w.g}</span>` : '';
         wordsHtml += `<span class="${cls}" style="${style}" ${termAttr}><span class="word-form">${w.f}</span>${gloss}</span> `;
       }
 
