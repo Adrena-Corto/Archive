@@ -10,40 +10,53 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <div class="explorer-header">
       <a href="/research" class="back">← Research Lab</a>
       <h1>Word Explorer</h1>
-      <p class="subtitle">Search any Sumerian lemma to explore its semantic neighbors, frequency, and usage contexts across 394 literary texts.</p>
+      <p class="subtitle">8,868 words from 66K literary sentences. Search any word to navigate its semantic neighborhood.</p>
     </div>
 
     <div class="search-box">
-      <input type="text" id="search" placeholder="Type a Sumerian word (e.g. me, nam-lugal, inana, kur)..." autocomplete="off" />
+      <input type="text" id="search" placeholder="Search: me, nam-lugal, inana, kur, ni2..." autocomplete="off" spellcheck="false" />
       <div id="suggestions"></div>
     </div>
 
     <div id="result" class="result hidden">
       <div class="result-header">
         <h2 id="r-word"></h2>
-        <span id="r-label" class="label"></span>
-        <span id="r-pos" class="pos"></span>
-      </div>
-      <div class="stats-row">
-        <div class="stat"><span id="r-freq" class="num"></span><span class="desc">occurrences</span></div>
-        <div class="stat"><span id="r-texts" class="num"></span><span class="desc">texts</span></div>
       </div>
 
       <div class="section">
-        <h3>Nearest Neighbors <span class="hint">(by embedding similarity)</span></h3>
+        <h3>Semantic Neighbors <span class="hint">(Word2Vec cosine similarity)</span></h3>
         <div id="r-neighbors" class="neighbors"></div>
       </div>
 
-      <div class="section">
-        <h3>Example Contexts</h3>
+      <div class="section" id="examples-section">
+        <h3>Example Contexts <span class="hint">(from ETCSL literary corpus)</span></h3>
         <div id="r-examples" class="examples"></div>
       </div>
     </div>
 
-    <div id="loading" class="loading hidden">Loading corpus data...</div>
-    <div id="browse" class="browse">
-      <h3>Browse by frequency</h3>
-      <div id="top-words" class="top-words"></div>
+    <div id="loading" class="loading">Loading corpus data (6MB)...</div>
+
+    <div id="browse" class="browse hidden">
+      <div class="browse-section">
+        <h3>🔥 Key Findings</h3>
+        <div class="browse-tags" id="findings-words"></div>
+      </div>
+      <div class="browse-section">
+        <h3>⚙️ ME & Powers</h3>
+        <div class="browse-tags" id="me-words"></div>
+      </div>
+      <div class="browse-section">
+        <h3>📐 NAM- Abstractions</h3>
+        <div class="browse-tags" id="nam-words"></div>
+      </div>
+      <div class="browse-section">
+        <h3>✨ Divine Names</h3>
+        <div class="browse-tags" id="divine-words"></div>
+      </div>
+      <div class="browse-section">
+        <h3>🌍 Cosmic / Spatial</h3>
+        <div class="browse-tags" id="spatial-words"></div>
+      </div>
     </div>
   </main>
 </BaseLayout>
@@ -55,11 +68,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     padding: 2rem 1.5rem 4rem;
     color: #e8e0d4;
   }
-  .back {
-    color: #c4956a;
-    text-decoration: none;
-    font-size: 0.9rem;
-  }
+  .back { color: #c4956a; text-decoration: none; font-size: 0.9rem; }
   .back:hover { text-decoration: underline; }
   h1 {
     font-size: 2.5rem;
@@ -67,23 +76,17 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     margin: 0.5rem 0;
     color: #f5ebe0;
   }
-  .subtitle {
-    color: #9a8e82;
-    font-size: 0.95rem;
-    margin-bottom: 2rem;
-  }
+  .subtitle { color: #9a8e82; font-size: 0.95rem; margin-bottom: 2rem; }
 
-  .search-box {
-    position: relative;
-    margin-bottom: 2rem;
-  }
+  /* Search */
+  .search-box { position: relative; margin-bottom: 2rem; }
   #search {
     width: 100%;
-    padding: 14px 20px;
-    font-size: 1.1rem;
+    padding: 16px 20px;
+    font-size: 1.15rem;
     background: rgba(255,255,255,0.04);
-    border: 1px solid rgba(255,255,255,0.1);
-    border-radius: 10px;
+    border: 2px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
     color: #f5ebe0;
     font-family: 'JetBrains Mono', monospace;
     outline: none;
@@ -99,73 +102,35 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     right: 0;
     background: #1a1714;
     border: 1px solid #333;
-    border-radius: 0 0 8px 8px;
+    border-radius: 0 0 10px 10px;
     display: none;
     z-index: 20;
     max-height: 300px;
     overflow-y: auto;
   }
-  .suggestion {
+  .sg {
     padding: 10px 20px;
     cursor: pointer;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.95rem;
+    color: #f5ebe0;
     border-bottom: 1px solid rgba(255,255,255,0.03);
   }
-  .suggestion:hover { background: rgba(196,149,106,0.1); }
-  .suggestion .sw { font-family: 'JetBrains Mono', monospace; color: #f5ebe0; }
-  .suggestion .sl { color: #7a6e63; font-size: 0.85rem; }
-  .suggestion .sf { color: #5a5048; font-size: 0.8rem; }
+  .sg:hover { background: rgba(196,149,106,0.1); }
 
   .hidden { display: none !important; }
-  .loading { text-align: center; color: #7a6e63; padding: 3rem; }
+  .loading { text-align: center; color: #7a6e63; padding: 3rem; font-size: 1rem; }
 
-  .result-header {
-    display: flex;
-    align-items: baseline;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
+  /* Result */
   .result-header h2 {
-    font-size: 2rem;
+    font-size: 2.2rem;
     font-weight: 400;
     color: #f5ebe0;
     font-family: 'JetBrains Mono', monospace;
-    margin: 0;
-  }
-  .label {
-    color: #c4956a;
-    font-size: 1rem;
-  }
-  .pos {
-    color: #5a5048;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    margin: 0 0 2rem;
   }
 
-  .stats-row {
-    display: flex;
-    gap: 2rem;
-    margin-bottom: 2rem;
-  }
-  .stat .num {
-    font-size: 1.5rem;
-    font-weight: 300;
-    color: #c4956a;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .stat .desc {
-    display: block;
-    font-size: 0.8rem;
-    color: #7a6e63;
-  }
-
-  .section {
-    margin-bottom: 2rem;
-  }
+  .section { margin-bottom: 2.5rem; }
   .section h3 {
     font-size: 1rem;
     font-weight: 600;
@@ -174,138 +139,112 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   }
   .hint { color: #5a5048; font-weight: 400; font-size: 0.85rem; }
 
-  .neighbors {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .neighbor {
+  /* Neighbors */
+  .neighbors { display: flex; flex-wrap: wrap; gap: 8px; }
+  .nb {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
+    padding: 8px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .nb:hover {
+    border-color: rgba(196,149,106,0.4);
+    background: rgba(196,149,106,0.08);
+    transform: translateY(-1px);
+  }
+  .nb .nw { font-family: 'JetBrains Mono', monospace; color: #f5ebe0; font-size: 0.9rem; }
+  .nb .ns { color: #5a5048; font-size: 0.75rem; font-family: 'JetBrains Mono', monospace; }
+  .nb .bar {
+    width: 40px;
+    height: 4px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .nb .bar-fill { height: 100%; background: #c4956a; border-radius: 2px; }
+
+  /* Examples */
+  .ex {
+    padding: 1rem 1.2rem;
+    background: rgba(255,255,255,0.02);
+    border-left: 3px solid rgba(196,149,106,0.3);
+    margin-bottom: 0.8rem;
+    border-radius: 0 8px 8px 0;
+  }
+  .ex-src { font-size: 0.75rem; color: #5a5048; margin-bottom: 0.4rem; }
+  .ex-sum { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c4956a; margin-bottom: 0.3rem; word-break: break-all; }
+  .ex-eng { font-size: 0.85rem; color: #9a8e82; line-height: 1.5; font-style: italic; }
+
+  /* Browse */
+  .browse-section { margin-bottom: 2rem; }
+  .browse-section h3 { font-size: 1rem; color: #b8a99a; margin-bottom: 0.8rem; }
+  .browse-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .bt {
     padding: 6px 14px;
     background: rgba(255,255,255,0.03);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 6px;
     cursor: pointer;
-    transition: border-color 0.2s, background 0.2s;
-  }
-  .neighbor:hover {
-    border-color: rgba(196,149,106,0.4);
-    background: rgba(196,149,106,0.08);
-  }
-  .neighbor .nw {
-    font-family: 'JetBrains Mono', monospace;
-    color: #f5ebe0;
-    font-size: 0.9rem;
-  }
-  .neighbor .ns {
-    color: #5a5048;
-    font-size: 0.75rem;
-  }
-
-  .example {
-    padding: 1rem;
-    background: rgba(255,255,255,0.02);
-    border-left: 2px solid rgba(196,149,106,0.3);
-    margin-bottom: 0.8rem;
-    border-radius: 0 6px 6px 0;
-  }
-  .example .ex-src {
-    font-size: 0.75rem;
-    color: #5a5048;
-    margin-bottom: 0.3rem;
-  }
-  .example .ex-sum {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.85rem;
-    color: #b8a99a;
-    margin-bottom: 0.3rem;
-  }
-  .example .ex-gloss {
-    font-size: 0.85rem;
-    color: #7a6e63;
-    line-height: 1.5;
-  }
-
-  .browse h3 {
-    font-size: 1rem;
-    color: #b8a99a;
-    margin-bottom: 1rem;
-  }
-  .top-words {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-  }
-  .tw {
-    padding: 4px 12px;
-    background: rgba(255,255,255,0.03);
-    border: 1px solid rgba(255,255,255,0.05);
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
     color: #9a8e82;
-    transition: border-color 0.2s;
+    transition: all 0.2s;
   }
-  .tw:hover { border-color: #c4956a; color: #f5ebe0; }
+  .bt:hover { border-color: #c4956a; color: #f5ebe0; background: rgba(196,149,106,0.08); }
 </style>
 
 <script is:inline>
-let explorerData = null;
-let searchIndex = null;
+let data = null;
+let index = null;
 
-// Load data
 Promise.all([
   fetch('/data/word_explorer.json').then(r => r.json()),
   fetch('/data/word_index.json').then(r => r.json()),
-]).then(([explorer, index]) => {
-  explorerData = explorer;
-  searchIndex = index;
+]).then(([explorer, idx]) => {
+  data = explorer;
+  index = idx;
   document.getElementById('loading').classList.add('hidden');
+  document.getElementById('browse').classList.remove('hidden');
   buildBrowse();
-  // Check URL hash
-  if (location.hash) showWord(location.hash.slice(1));
-}).catch(e => {
+  if (location.hash) showWord(decodeURIComponent(location.hash.slice(1)));
+}).catch(() => {
   document.getElementById('loading').textContent = 'Failed to load data.';
 });
 
 const searchEl = document.getElementById('search');
 const suggestEl = document.getElementById('suggestions');
-const resultEl = document.getElementById('result');
-const browseEl = document.getElementById('browse');
 
 searchEl.addEventListener('input', () => {
   const q = searchEl.value.trim().toLowerCase();
-  if (!q || !searchIndex) { suggestEl.style.display = 'none'; return; }
-  
-  const matches = searchIndex.filter(w => w.w.startsWith(q) || w.w.includes(q)).slice(0, 15);
-  if (matches.length === 0) { suggestEl.style.display = 'none'; return; }
-  
-  suggestEl.innerHTML = matches.map(m => 
-    `<div class="suggestion" data-word="${m.w}">
-      <span><span class="sw">${m.w}</span> <span class="sl">${m.l || ''}</span></span>
-      <span class="sf">${m.f}×</span>
-    </div>`
-  ).join('');
+  if (!q || !index) { suggestEl.style.display = 'none'; return; }
+  const matches = index.filter(w => w.startsWith(q)).slice(0, 12);
+  if (!matches.length) {
+    // Fuzzy: contains
+    const fuzzy = index.filter(w => w.includes(q)).slice(0, 12);
+    if (!fuzzy.length) { suggestEl.style.display = 'none'; return; }
+    matches.push(...fuzzy);
+  }
+  suggestEl.innerHTML = matches.map(w => `<div class="sg" data-w="${w}">${w}</div>`).join('');
   suggestEl.style.display = 'block';
-  
-  suggestEl.querySelectorAll('.suggestion').forEach(el => {
-    el.addEventListener('click', () => {
-      showWord(el.dataset.word);
-      suggestEl.style.display = 'none';
-      searchEl.value = el.dataset.word;
-    });
+  suggestEl.querySelectorAll('.sg').forEach(el => {
+    el.addEventListener('click', () => { pickWord(el.dataset.w); });
   });
 });
 
 searchEl.addEventListener('keydown', e => {
   if (e.key === 'Enter') {
     const q = searchEl.value.trim().toLowerCase();
-    if (explorerData && explorerData[q]) {
-      showWord(q);
-      suggestEl.style.display = 'none';
+    if (data && data[q]) pickWord(q);
+    else {
+      // Try closest match
+      const m = index?.find(w => w.startsWith(q));
+      if (m) pickWord(m);
     }
   }
 });
@@ -314,70 +253,72 @@ document.addEventListener('click', e => {
   if (!e.target.closest('.search-box')) suggestEl.style.display = 'none';
 });
 
+function pickWord(w) {
+  searchEl.value = w;
+  suggestEl.style.display = 'none';
+  showWord(w);
+}
+
 function showWord(word) {
-  if (!explorerData || !explorerData[word]) return;
-  const d = explorerData[word];
+  if (!data || !data[word]) return;
+  const d = data[word];
   
   location.hash = word;
-  browseEl.classList.add('hidden');
-  resultEl.classList.remove('hidden');
-  
-  document.getElementById('r-word').textContent = d.word;
-  document.getElementById('r-label').textContent = d.label || '';
-  document.getElementById('r-pos').textContent = d.pos || '';
-  document.getElementById('r-freq').textContent = d.freq.toLocaleString();
-  document.getElementById('r-texts').textContent = d.texts;
+  document.getElementById('browse').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('r-word').textContent = word;
   
   // Neighbors
   const nbEl = document.getElementById('r-neighbors');
-  nbEl.innerHTML = d.neighbors.map(n => 
-    `<div class="neighbor" data-word="${n.word}">
-      <span class="nw">${n.word}</span>
-      <span class="ns">${n.score}</span>
+  const maxSim = d.neighbors.length ? d.neighbors[0].s : 1;
+  nbEl.innerHTML = d.neighbors.map(n =>
+    `<div class="nb" data-w="${n.w}">
+      <span class="nw">${n.w}</span>
+      <span class="bar"><span class="bar-fill" style="width:${(n.s / maxSim * 100).toFixed(0)}%"></span></span>
+      <span class="ns">${n.s.toFixed(3)}</span>
     </div>`
   ).join('');
-  nbEl.querySelectorAll('.neighbor').forEach(el => {
-    el.addEventListener('click', () => {
-      showWord(el.dataset.word);
-      searchEl.value = el.dataset.word;
-    });
+  nbEl.querySelectorAll('.nb').forEach(el => {
+    el.addEventListener('click', () => pickWord(el.dataset.w));
   });
   
   // Examples
   const exEl = document.getElementById('r-examples');
-  if (d.examples.length) {
-    exEl.innerHTML = d.examples.map(ex => 
-      `<div class="example">
-        <div class="ex-src">${ex.text_id} — ${ex.title}</div>
-        <div class="ex-sum">${ex.sumerian}</div>
-        <div class="ex-gloss">${ex.gloss}</div>
+  const exSection = document.getElementById('examples-section');
+  if (d.examples && d.examples.length) {
+    exSection.classList.remove('hidden');
+    exEl.innerHTML = d.examples.map(ex =>
+      `<div class="ex">
+        <div class="ex-src">${ex.src}</div>
+        <div class="ex-sum">${ex.sum}</div>
+        <div class="ex-eng">${ex.eng || ''}</div>
       </div>`
     ).join('');
   } else {
-    exEl.innerHTML = '<p style="color:#5a5048">No examples found in corpus.</p>';
+    exSection.classList.add('hidden');
   }
   
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function buildBrowse() {
-  if (!searchIndex) return;
-  const topEl = document.getElementById('top-words');
-  // Show interesting words, not just most frequent
-  const interesting = ['me', 'nam-lugal', 'nam-en', 'me-lem4', 'nam-tar', 'nam-til3',
-    'inana', 'en-ki', 'en-lil2', 'kur', 'abzu', 'dingir', 'lugal', 'nam-erim2',
-    'nam-ur-saj', 'nam-nun', 'nam-mah', 'zalag', 'babbar', 'jic-hur', 'garza',
-    'nam-dub-sar', 'nam-sipad', 'nam-he2', 'utu', 'nanna', 'me-te',
-    'nam-cul', 'nam-dijir', 'ni2', 'nam-kalag-ga', 'an', 'ki', 'e2'];
-  topEl.innerHTML = interesting
-    .filter(w => explorerData && explorerData[w])
-    .map(w => `<span class="tw" data-word="${w}">${w}</span>`)
-    .join('');
-  topEl.querySelectorAll('.tw').forEach(el => {
-    el.addEventListener('click', () => {
-      showWord(el.dataset.word);
-      searchEl.value = el.dataset.word;
+  const groups = {
+    'findings-words': ['me-lem4', 'nam-erim2', 'nam-tag', 'nam-tar', 'ni2', 'zalag', 'dugud', 'du8'],
+    'me-words': ['me', 'me-lem4', 'me-te', 'jic-hur', 'biluda', 'jarza', 'cu-luh'],
+    'nam-words': ['nam-lugal', 'nam-en', 'nam-tar', 'nam-til3', 'nam-mah', 'nam-sipad', 'nam-dub-sar', 'nam-erim2', 'nam-tag', 'nam-ur-saj', 'nam-dijir', 'nam-he2', 'nam-cul', 'nam-nun', 'nam-kalag-ga'],
+    'divine-words': ['an', 'enlil', 'enki', 'inana', 'utu', 'nanna', 'ictaran', 'dijir', 'a-nun-na'],
+    'spatial-words': ['kur', 'abzu', 'ki', 'an', 'e2', 'ub', 'edin', 'id2'],
+  };
+  for (const [id, words] of Object.entries(groups)) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    el.innerHTML = words
+      .filter(w => data && data[w])
+      .map(w => `<span class="bt" data-w="${w}">${w}</span>`)
+      .join('');
+    el.querySelectorAll('.bt').forEach(btn => {
+      btn.addEventListener('click', () => pickWord(btn.dataset.w));
     });
-  });
+  }
 }
 </script>
