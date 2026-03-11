@@ -197,6 +197,11 @@ function isActive(path: string): boolean {
             aria-current={pathname.startsWith(url('/library')) ? 'page' : undefined}
           >{t.nav.library}</a>
           <a
+            href={url('/research')}
+            class:list={["nav-link font-mono text-xs uppercase tracking-widest", pathname.startsWith(url('/research')) && "nav-link-active"]}
+            aria-current={pathname.startsWith(url('/research')) ? 'page' : undefined}
+          >Research</a>
+          <a
             href={url('/about')}
             class:list={["nav-link font-mono text-xs uppercase tracking-widest", isActive('/about') && "nav-link-active"]}
             aria-current={isActive('/about') ? 'page' : undefined}
@@ -319,6 +324,14 @@ function isActive(path: string): boolean {
             </a>
           </div>
         </div>
+        <a
+          href={url('/research')}
+          @click="$store.nav.close()"
+          class:list={["mobile-nav-link font-mono text-sm uppercase tracking-widest py-3", pathname.startsWith(url('/research')) && "text-accent border-accent"]}
+          aria-current={pathname.startsWith(url('/research')) ? 'page' : undefined}
+        >
+          <span class="text-accent mr-2">></span> Research
+        </a>
         <a
           href={url('/about')}
           @click="$store.nav.close()"
