@@ -128,16 +128,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
     </section>
 
-    <!-- Word Explorer CTA -->
-    <section class="explorer-cta">
-      <a href="/research/explorer" class="cta-card">
-        <div class="cta-icon">🔍</div>
-        <div class="cta-text">
+    <!-- Tools -->
+    <section class="tools-section">
+      <h2>Tools</h2>
+      <div class="tools-row">
+        <a href="/research/explorer" class="tool-tile">
+          <div class="tile-icon">🔍</div>
           <h3>Word Explorer</h3>
-          <p>Search any of 8,868 Sumerian words — navigate semantic neighborhoods, see nearest neighbors with similarity scores, and read usage examples from the literary corpus.</p>
-        </div>
-        <span class="cta-arrow">→</span>
-      </a>
+          <p>Search 8,868 words — semantic neighbors, similarity scores, usage examples.</p>
+        </a>
+        <a href="/research/model" class="tool-tile">
+          <div class="tile-icon">🧠</div>
+          <h3>Language Model</h3>
+          <p>6.8M param GPT — generates Sumerian text and predicts missing words in damaged tablets.</p>
+        </a>
+        <a href="/research/attention" class="tool-tile">
+          <div class="tile-icon">👁️</div>
+          <h3>Attention Probing</h3>
+          <p>What the neural network sees — explore attention patterns across 60+ terms.</p>
+        </a>
+      </div>
     </section>
 
     <!-- Visualization -->
@@ -178,30 +188,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="dt-row"><span class="dt-term">nam-mah</span><span>majesty</span><span>declared/performative status</span><span class="dt-mod">⚡ Moderate</span></div>
         <div class="dt-row"><span class="dt-term">nam-lugal</span><span>kingship</span><span>transferable configuration</span><span class="dt-min">○ Minor</span></div>
       </div>
-    </section>
-
-    <!-- Language Model CTA -->
-    <section class="explorer-cta">
-      <a href="/research/model" class="cta-card">
-        <div class="cta-icon">🧠</div>
-        <div class="cta-text">
-          <h3>Sumerian Language Model</h3>
-          <p>A 6.8M parameter GPT trained from scratch on 66K sentences. Generates Sumerian text and predicts missing words in damaged tablets.</p>
-        </div>
-        <span class="cta-arrow">→</span>
-      </a>
-    </section>
-
-    <!-- Attention Probing CTA -->
-    <section class="explorer-cta">
-      <a href="/research/attention" class="cta-card">
-        <div class="cta-icon">👁️</div>
-        <div class="cta-text">
-          <h3>Attention Probing</h3>
-          <p>What does the neural network see when processing Sumerian? Explore attention patterns across 60+ terms — me-lam₂ attends to ni₂ (terror) 1608× more than zalag (light).</p>
-        </div>
-        <span class="cta-arrow">→</span>
-      </a>
     </section>
 
     <!-- Corpus Stats -->
@@ -361,24 +347,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     color: #c4956a;
   }
 
-  /* Explorer CTA */
-  .explorer-cta { margin-bottom: 3rem; }
-  .cta-card {
+  /* Tools Row */
+  .tools-section { margin-bottom: 3rem; }
+  .tools-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  @media (max-width: 700px) { .tools-row { grid-template-columns: 1fr; } }
+  .tool-tile {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    padding: 1.5rem 2rem;
-    background: linear-gradient(135deg, rgba(196,149,106,0.08), rgba(196,149,106,0.02));
-    border: 1px solid rgba(196,149,106,0.25);
+    flex-direction: column;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, rgba(196,149,106,0.06), rgba(196,149,106,0.01));
+    border: 1px solid rgba(196,149,106,0.2);
     border-radius: 12px;
     text-decoration: none;
     transition: all 0.3s;
   }
-  .cta-card:hover { border-color: rgba(196,149,106,0.5); transform: translateY(-2px); }
-  .cta-icon { font-size: 2.5rem; flex-shrink: 0; }
-  .cta-text h3 { font-size: 1.2rem; color: #f5ebe0; margin: 0 0 0.3rem; }
-  .cta-text p { font-size: 0.9rem; color: #9a8e82; line-height: 1.5; margin: 0; }
-  .cta-arrow { font-size: 1.5rem; color: #c4956a; flex-shrink: 0; margin-left: auto; }
+  .tool-tile:hover { border-color: rgba(196,149,106,0.5); transform: translateY(-3px); }
+  .tile-icon { font-size: 2rem; margin-bottom: 0.8rem; }
+  .tool-tile h3 { font-size: 1.05rem; color: #f5ebe0; margin: 0 0 0.5rem; }
+  .tool-tile p { font-size: 0.85rem; color: #9a8e82; line-height: 1.5; margin: 0; }
 
   /* Method */
   .method-steps {
