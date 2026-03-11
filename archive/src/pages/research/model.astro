@@ -165,6 +165,70 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
     </section>
 
+    <!-- Tablet Completion -->
+    <section>
+      <h2>Filling the Gaps</h2>
+      <p class="section-intro">
+        Sumerian tablets are often damaged — broken edges, worn surfaces, missing signs. 
+        A language model trained on the literary corpus can predict what's most likely in the gaps, 
+        not by "understanding" but by knowing which words statistically follow which.
+        This could be a genuine tool for epigraphists working on fragmentary texts.
+      </p>
+
+      <div class="completions">
+        <div class="completion">
+          <div class="comp-source">Lament context</div>
+          <div class="comp-line">nam-tag <span class="gap">[?]</span> šu gi₄</div>
+          <div class="comp-q">"The burden [?] was returned" — what adjective?</div>
+          <div class="comp-preds">
+            <div class="pred"><span class="pred-word">dugud</span><span class="pred-gloss">heavy</span><span class="pred-bar"><span style="width:89%"></span></span><span class="pred-pct">8.9%</span></div>
+            <div class="pred"><span class="pred-word">du₈</span><span class="pred-gloss">release</span><span class="pred-bar"><span style="width:43%"></span></span><span class="pred-pct">4.3%</span></div>
+            <div class="pred"><span class="pred-word">sug₄</span><span class="pred-gloss">empty</span><span class="pred-bar"><span style="width:34%"></span></span><span class="pred-pct">3.4%</span></div>
+            <div class="pred"><span class="pred-word">jar</span><span class="pred-gloss">place</span><span class="pred-bar"><span style="width:30%"></span></span><span class="pred-pct">3.0%</span></div>
+          </div>
+          <div class="comp-note">The model's #1 prediction — <em>dugud</em> (heavy) — matches our finding that nam-tag's dominant collocate is "heavy." It learned this independently.</div>
+        </div>
+
+        <div class="completion">
+          <div class="comp-source">Aura context</div>
+          <div class="comp-line">me-lem₄ <span class="gap">[?]</span> guru₃ an ki</div>
+          <div class="comp-q">"The aura [?] bears down on heaven and earth"</div>
+          <div class="comp-preds">
+            <div class="pred"><span class="pred-word">dul</span><span class="pred-gloss">cover</span><span class="pred-bar"><span style="width:100%"></span></span><span class="pred-pct">14.9%</span></div>
+            <div class="pred"><span class="pred-word">an</span><span class="pred-gloss">heaven</span><span class="pred-bar"><span style="width:36%"></span></span><span class="pred-pct">5.4%</span></div>
+            <div class="pred"><span class="pred-word">kalam</span><span class="pred-gloss">land</span><span class="pred-bar"><span style="width:30%"></span></span><span class="pred-pct">4.5%</span></div>
+            <div class="pred"><span class="pred-word">ḫuš</span><span class="pred-gloss">fury</span><span class="pred-bar"><span style="width:25%"></span></span><span class="pred-pct">3.8%</span></div>
+          </div>
+          <div class="comp-note">Top prediction: <em>dul</em> (to cover). me-lam₂ covers, blankets, envelops — it's a radiative force that spreads over territory. <em>ḫuš</em> (fury) at #4 confirms the terror cluster.</div>
+        </div>
+
+        <div class="completion">
+          <div class="comp-source">Royal context</div>
+          <div class="comp-line">šu-suen lugal <span class="gap">[?]</span> mah dug₄</div>
+          <div class="comp-q">"Šu-Suen, king [?] spoke majestically"</div>
+          <div class="comp-preds">
+            <div class="pred"><span class="pred-word">an</span><span class="pred-gloss">heaven</span><span class="pred-bar"><span style="width:100%"></span></span><span class="pred-pct">22.4%</span></div>
+            <div class="pred"><span class="pred-word">urim₂</span><span class="pred-gloss">Ur</span><span class="pred-bar"><span style="width:21%"></span></span><span class="pred-pct">4.7%</span></div>
+            <div class="pred"><span class="pred-word">me</span><span class="pred-gloss">powers</span><span class="pred-bar"><span style="width:21%"></span></span><span class="pred-pct">4.7%</span></div>
+            <div class="pred"><span class="pred-word">en-lil₂</span><span class="pred-gloss">Enlil</span><span class="pred-bar"><span style="width:18%"></span></span><span class="pred-pct">4.0%</span></div>
+          </div>
+          <div class="comp-note">King of heaven, king of Ur, king of ME — all plausible royal epithets. The model generates the correct register.</div>
+        </div>
+
+        <div class="completion">
+          <div class="comp-source">Temple context</div>
+          <div class="comp-line">e₂ <span class="gap">[?]</span> me gal šu du₇</div>
+          <div class="comp-q">"Temple [?], great ME perfected"</div>
+          <div class="comp-preds">
+            <div class="pred"><span class="pred-word">du₃</span><span class="pred-gloss">build</span><span class="pred-bar"><span style="width:100%"></span></span><span class="pred-pct">4.3%</span></div>
+            <div class="pred"><span class="pred-word">kug</span><span class="pred-gloss">pure/holy</span><span class="pred-bar"><span style="width:37%"></span></span><span class="pred-pct">1.6%</span></div>
+            <div class="pred"><span class="pred-word">me</span><span class="pred-gloss">powers</span><span class="pred-bar"><span style="width:37%"></span></span><span class="pred-pct">1.6%</span></div>
+          </div>
+          <div class="comp-note">Temple built, temple pure — both are standard Sumerian collocations for e₂.</div>
+        </div>
+      </div>
+    </section>
+
     <!-- Try It -->
     <section>
       <h2>Try It</h2>
@@ -238,6 +302,23 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .curve-table td { padding: 0.5rem 1rem; color: #b8a99a; border-bottom: 1px solid rgba(255,255,255,0.03); }
   .curve-table .best td { color: #c4956a; font-weight: 600; }
   .curve-note { font-size: 0.85rem; color: #7a6e63; }
+
+  /* Completions */
+  .completions { display: flex; flex-direction: column; gap: 2rem; }
+  .completion { padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+  .comp-source { font-size: 0.75rem; color: #7a6e63; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.5rem; }
+  .comp-line { font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; color: #f0e6d8; margin-bottom: 0.3rem; }
+  .gap { display: inline-block; padding: 2px 12px; background: rgba(196,149,106,0.2); border: 1px dashed rgba(196,149,106,0.5); border-radius: 4px; color: #c4956a; font-weight: 600; }
+  .comp-q { font-size: 0.85rem; color: #9a8e82; font-style: italic; margin-bottom: 1rem; }
+  .comp-preds { display: flex; flex-direction: column; gap: 6px; margin-bottom: 1rem; }
+  .pred { display: grid; grid-template-columns: 80px 90px 1fr 45px; gap: 8px; align-items: center; font-size: 0.85rem; }
+  .pred-word { font-family: 'JetBrains Mono', monospace; color: #c4956a; font-weight: 600; }
+  .pred-gloss { color: #7a6e63; font-size: 0.8rem; }
+  .pred-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 3px; overflow: hidden; }
+  .pred-bar span { display: block; height: 100%; background: linear-gradient(90deg, #c4956a, #d4a57a); border-radius: 3px; }
+  .pred-pct { color: #5a5048; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; text-align: right; }
+  .comp-note { font-size: 0.85rem; color: #9a8e82; line-height: 1.6; padding-top: 0.5rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  .comp-note em { color: #c4956a; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
 
   /* Try it */
   .try-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 1.5rem; }
