@@ -31,13 +31,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="finding-icon">⚙️</div>
           <h3>ME ≠ "Divine Decree"</h3>
           <p>
-            Distributional analysis of 1,584 occurrences across 394 literary texts shows ME behaves 
-            as an <strong>operational parameter</strong> — scalar, manipulable, storable, transferable. 
-            Not a divine command, but a configurable property of reality.
+            Distributional analysis of 1,584 occurrences across 394 literary texts suggests ME behaves 
+            more like an <strong>operational parameter</strong> — scalar, manipulable, storable, transferable. 
+            The evidence is suggestive but not conclusive: ME's verbal profile isn't unique among abstract nouns.
           </p>
           <div class="evidence">
             <span class="tag">151K words analyzed</span>
-            <span class="tag">Word2Vec confirmed</span>
+            <span class="tag">Tentative — needs further work</span>
           </div>
         </div>
 
@@ -52,7 +52,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </p>
           <div class="evidence">
             <span class="tag">134 occurrences</span>
-            <span class="tag">Distinct from zalag/babbar</span>
+            <span class="tag">ni₂/zalag attention ratio: 1608×</span>
+            <span class="tag">Triple confirmed (PMI + W2V + GPT)</span>
           </div>
         </div>
 
@@ -67,7 +68,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           </p>
           <div class="evidence">
             <span class="tag">18 occurrences</span>
-            <span class="tag">Similarity to ištaran: 0.667</span>
+            <span class="tag">kuḍ attention: 1.02 (highest in dataset)</span>
+            <span class="tag">Triple confirmed</span>
           </div>
         </div>
 
@@ -153,8 +155,26 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="step-num">4</div>
           <div class="step-content">
             <h3>Visualization</h3>
-            <p>t-SNE dimensionality reduction maps the full semantic space into 2D. 
+            <p>t-SNE and UMAP dimensionality reduction map the full semantic space into 2D. 
             Color-coded by category: ME, NAM- compounds, divine names, light terms, spatial terms.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <h3>Language Model</h3>
+            <p>6.8M parameter GPT-2 style transformer (4 layers, 4 heads, 256d) trained from scratch on 
+            348K literary tokens. Generates Sumerian text, predicts missing words in damaged tablets, and provides 
+            independent validation of distributional findings.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <h3>Attention Probing</h3>
+            <p>Extract and analyze attention weights from all 16 heads (4 layers × 4 heads) of the trained GPT 
+            across 60+ terms. Reveals what the model has learned to associate with each word — a third independent 
+            method confirming or challenging distributional findings.</p>
           </div>
         </div>
       </div>
@@ -222,7 +242,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="dt-row dt-header">
           <span>Sumerian</span><span>Conventional</span><span>Distributional</span><span>Distortion</span>
         </div>
-        <div class="dt-row"><span class="dt-term">me</span><span>divine decree</span><span>operational parameter</span><span class="dt-sig">⚠️ Significant</span></div>
+        <div class="dt-row"><span class="dt-term">me</span><span>divine decree</span><span>operational parameter (tentative)</span><span class="dt-mod">⚡ Moderate</span></div>
         <div class="dt-row"><span class="dt-term">me-lam₂</span><span>radiance/splendor</span><span>radiative force field</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">nam-erim₂</span><span>wickedness</span><span>oath-violation (juridical)</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">nam-tag</span><span>sin/transgression</span><span>karmic weight (universal burden)</span><span class="dt-sig">⚠️ Significant</span></div>
