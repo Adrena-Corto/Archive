@@ -1,0 +1,563 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sumerian Research Lab — The Antique Archive"
+  description="Computational re-analysis of Sumerian texts. Bypassing conventional translations to let the corpus speak for itself."
+>
+  <main class="research-lab">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-content">
+        <p class="eyebrow">Research Lab</p>
+        <h1>The ME Project</h1>
+        <p class="subtitle">
+          Computational re-analysis of Sumerian literary texts — bypassing 
+          Akkadian-mediated translations to recover original meanings through 
+          distributional semantics.
+        </p>
+        <p class="meta">
+          by <strong>Ariane</strong> 🧵 &amp; <strong>Corto</strong> · Started March 2026 · Ongoing
+        </p>
+      </div>
+    </section>
+
+    <!-- Key Findings -->
+    <section class="findings">
+      <h2>Key Findings</h2>
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="finding-icon">⚙️</div>
+          <h3>ME ≠ "Divine Decree"</h3>
+          <p>
+            Distributional analysis of 1,584 occurrences across 394 literary texts shows ME behaves 
+            as an <strong>operational parameter</strong> — scalar, manipulable, storable, transferable. 
+            Not a divine command, but a configurable property of reality.
+          </p>
+          <div class="evidence">
+            <span class="tag">151K words analyzed</span>
+            <span class="tag">Word2Vec confirmed</span>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">🔥</div>
+          <h3>ME-LAM₂ ≠ Light</h3>
+          <p>
+            The "radiance" of ME (melammu) is <strong>not in the light semantic cluster</strong>. 
+            Its nearest neighbors are ni₂ (terror), dul (to cover), and izi (fire). 
+            It's a radiative emanation that causes physical reactions — closer to an energy field 
+            than to brightness.
+          </p>
+          <div class="evidence">
+            <span class="tag">134 occurrences</span>
+            <span class="tag">Distinct from zalag/babbar</span>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">⚖️</div>
+          <h3>NAM-ERIM₂ ≠ "Wickedness"</h3>
+          <p>
+            Conventionally translated as "wickedness" or "evil," nam-erim₂'s nearest embedding 
+            neighbor is <strong>Ištaran</strong> (god of justice), followed by di (judgment) 
+            and ka-aš (oath). It's a <strong>juridical concept</strong> — oath-violation, 
+            not moral evil.
+          </p>
+          <div class="evidence">
+            <span class="tag">18 occurrences</span>
+            <span class="tag">Similarity to ištaran: 0.667</span>
+          </div>
+        </div>
+
+        <div class="finding-card">
+          <div class="finding-icon">📐</div>
+          <h3>ME → ĜIŠ-HUR (Blueprint)</h3>
+          <p>
+            Word2Vec clusters ME with <strong>ĝiš-ḫur</strong> (blueprint/plan) at 0.729 similarity. 
+            The ME are design parameters, linked to the architectural plan of civilization — 
+            not abstract decrees handed down from heaven.
+          </p>
+          <div class="evidence">
+            <span class="tag">ME centroid analysis</span>
+            <span class="tag">t-SNE cluster visible</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Method -->
+    <section class="method">
+      <h2>Method</h2>
+      <div class="method-steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <h3>Corpus Assembly</h3>
+            <p>394 ETCSL literary texts (151,173 words, 4,218 unique lemmas) + 82,452 SumTablets 
+            administrative texts. Full XML parsing with lemmatization, POS tagging, and English glosses.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <h3>Distributional Analysis</h3>
+            <p>PMI co-occurrence matrices, morphological decomposition, frequency analysis. 
+            No Akkadian translations consulted — let the Sumerian speak.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <h3>Word Embeddings</h3>
+            <p>Skip-Gram Word2Vec (100d, window=5) trained on literary corpus. 
+            2,372 vocabulary, 33,338 sentences. Reveals semantic clusters invisible to close reading.</p>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <h3>Visualization</h3>
+            <p>t-SNE dimensionality reduction maps the full semantic space into 2D. 
+            Color-coded by category: ME, NAM- compounds, divine names, light terms, spatial terms.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- t-SNE Visualization -->
+    <section class="visualization">
+      <h2>Semantic Map</h2>
+      <p class="viz-subtitle">
+        t-SNE projection of 2,372 Sumerian lemmas from the ETCSL literary corpus. 
+        Each dot is a word; proximity = semantic similarity. Hover to explore.
+      </p>
+      <div class="viz-container" id="tsne-container">
+        <canvas id="tsne-canvas"></canvas>
+        <div id="tsne-tooltip"></div>
+        <div id="tsne-legend"></div>
+        <input id="tsne-search" placeholder="Search a Sumerian word..." />
+      </div>
+    </section>
+
+    <!-- Corpus Stats -->
+    <section class="stats">
+      <h2>Corpus</h2>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-num">394</div>
+          <div class="stat-label">Literary texts (ETCSL)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">151,173</div>
+          <div class="stat-label">Annotated words</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">4,218</div>
+          <div class="stat-label">Unique lemmas</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num">82,452</div>
+          <div class="stat-label">Administrative tablets (SumTablets)</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Articles -->
+    <section class="related">
+      <h2>Related Articles</h2>
+      <div class="related-grid">
+        <a href="/library/articles/enki-aperture-age-of-ai" class="related-card">
+          <h3>The Aperture and the Deep</h3>
+          <p>Enki's architecture in the age of AI — the Abzu as latent space.</p>
+        </a>
+        <a href="/library/articles/gala-priests-liminal-operators" class="related-card">
+          <h3>The Gala Priests</h3>
+          <p>Liminal operators of ancient Sumer — boundary-crossers and their modern echoes.</p>
+        </a>
+        <a href="/library/articles/three-depths-knowing" class="related-card">
+          <h3>The Three Depths of Knowing</h3>
+          <p>A framework for signal and noise — from Sumerian temples to modern feeds.</p>
+        </a>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .research-lab {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    color: #e8e0d4;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 4rem 0 3rem;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 3rem;
+  }
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-size: 0.8rem;
+    color: #c4956a;
+    margin-bottom: 0.5rem;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 300;
+    letter-spacing: -0.02em;
+    margin: 0.5rem 0;
+    color: #f5ebe0;
+  }
+  .subtitle {
+    max-width: 700px;
+    margin: 1rem auto;
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #b8a99a;
+  }
+  .meta {
+    font-size: 0.9rem;
+    color: #7a6e63;
+    margin-top: 1.5rem;
+  }
+
+  /* Findings */
+  .findings, .method, .visualization, .stats, .related {
+    margin-bottom: 4rem;
+  }
+  h2 {
+    font-size: 1.8rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+    margin-bottom: 2rem;
+    color: #f5ebe0;
+  }
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .finding-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 12px;
+    padding: 2rem;
+    transition: border-color 0.3s;
+  }
+  .finding-card:hover {
+    border-color: rgba(196,149,106,0.3);
+  }
+  .finding-icon {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+  .finding-card h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.8rem;
+    color: #f0e6d8;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .finding-card p {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #b8a99a;
+  }
+  .evidence {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 0.75rem;
+    padding: 0.2rem 0.6rem;
+    background: rgba(196,149,106,0.15);
+    border-radius: 4px;
+    color: #c4956a;
+  }
+
+  /* Method */
+  .method-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .step {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(196,149,106,0.15);
+    color: #c4956a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+  .step-content h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+    color: #f0e6d8;
+  }
+  .step-content p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: #9a8e82;
+  }
+
+  /* Visualization */
+  .viz-subtitle {
+    color: #9a8e82;
+    font-size: 0.95rem;
+    margin-bottom: 1.5rem;
+  }
+  .viz-container {
+    position: relative;
+    width: 100%;
+    height: 600px;
+    background: #0a0a0a;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.06);
+    overflow: hidden;
+  }
+  #tsne-canvas {
+    width: 100%;
+    height: 100%;
+  }
+  #tsne-tooltip {
+    position: absolute;
+    display: none;
+    background: rgba(0,0,0,0.92);
+    border: 1px solid #444;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    pointer-events: none;
+    z-index: 10;
+    color: #e8e0d4;
+  }
+  #tsne-legend {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(0,0,0,0.85);
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    font-size: 11px;
+  }
+  #tsne-search {
+    position: absolute;
+    bottom: 12px;
+    left: 12px;
+    background: rgba(20,20,20,0.9);
+    border: 1px solid #444;
+    color: #e8e0d4;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    width: 220px;
+  }
+  #tsne-search::placeholder { color: #666; }
+
+  /* Stats */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1.5rem;
+  }
+  .stat {
+    text-align: center;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.04);
+  }
+  .stat-num {
+    font-size: 2rem;
+    font-weight: 300;
+    color: #c4956a;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .stat-label {
+    font-size: 0.85rem;
+    color: #7a6e63;
+    margin-top: 0.3rem;
+  }
+
+  /* Related */
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .related-card {
+    display: block;
+    padding: 1.5rem;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .related-card:hover {
+    border-color: rgba(196,149,106,0.3);
+    transform: translateY(-2px);
+  }
+  .related-card h3 {
+    font-size: 1rem;
+    color: #f0e6d8;
+    margin-bottom: 0.5rem;
+  }
+  .related-card p {
+    font-size: 0.85rem;
+    color: #9a8e82;
+    line-height: 1.5;
+  }
+</style>
+
+<script is:inline define:vars={{ }}>
+// t-SNE data will be injected here at build time
+// For now, we fetch it from a JSON file
+fetch('/data/tsne_sumerian.json')
+  .then(r => r.json())
+  .then(data => initTSNE(data))
+  .catch(() => {
+    document.getElementById('tsne-container').innerHTML = 
+      '<p style="padding:2rem;color:#666;text-align:center;">Visualization loading...</p>';
+  });
+
+function initTSNE(points) {
+  const colors = {
+    "ME (divine powers)": "#ff4444",
+    "NAM- roles": "#ff8800",
+    "NAM- qualities": "#ffcc00",
+    "NAM- states": "#88cc00",
+    "NAM- crafts": "#00cc88",
+    "NAM- social": "#00aaff",
+    "Light/radiance": "#ffff00",
+    "Divine": "#cc44ff",
+    "Spatial/cosmic": "#44ccff",
+    "Blueprint/design": "#ff44cc",
+    "other": "#222222",
+  };
+
+  const canvas = document.getElementById('tsne-canvas');
+  const ctx = canvas.getContext('2d');
+  const tooltip = document.getElementById('tsne-tooltip');
+  const search = document.getElementById('tsne-search');
+  const legend = document.getElementById('tsne-legend');
+
+  // Build legend
+  legend.innerHTML = Object.entries(colors)
+    .filter(([k]) => k !== 'other')
+    .map(([cat, col]) => 
+      `<div style="margin:3px 0;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-right:6px;"></span>${cat}</div>`
+    ).join('');
+
+  let W, H, scale, ox, oy;
+  let highlighted = null;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width = rect.width * window.devicePixelRatio;
+    H = canvas.height = rect.height * window.devicePixelRatio;
+    canvas.style.width = rect.width + 'px';
+    canvas.style.height = rect.height + 'px';
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    
+    const xs = points.map(p => p.x), ys = points.map(p => p.y);
+    const xmin = Math.min(...xs), xmax = Math.max(...xs);
+    const ymin = Math.min(...ys), ymax = Math.max(...ys);
+    const pad = 40;
+    const w = rect.width, h = rect.height;
+    scale = Math.min((w - 2*pad) / (xmax - xmin), (h - 2*pad) / (ymax - ymin));
+    ox = pad - xmin * scale + (w - 2*pad - (xmax-xmin)*scale) / 2;
+    oy = pad - ymin * scale + (h - 2*pad - (ymax-ymin)*scale) / 2;
+    draw();
+  }
+
+  function toScreen(p) { return [p.x * scale + ox, p.y * scale + oy]; }
+
+  function draw() {
+    const w = W / window.devicePixelRatio;
+    const h = H / window.devicePixelRatio;
+    ctx.clearRect(0, 0, w, h);
+    
+    for (const p of points) {
+      if (p.category === 'other') {
+        const [sx, sy] = toScreen(p);
+        ctx.beginPath();
+        ctx.arc(sx, sy, 1.5, 0, Math.PI*2);
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fill();
+      }
+    }
+    for (const p of points) {
+      if (p.category !== 'other') {
+        const [sx, sy] = toScreen(p);
+        const isHL = highlighted === p.word;
+        ctx.beginPath();
+        ctx.arc(sx, sy, isHL ? 7 : 4, 0, Math.PI*2);
+        ctx.fillStyle = colors[p.category] || '#666';
+        ctx.fill();
+        ctx.font = isHL ? 'bold 12px Inter, sans-serif' : '9px Inter, sans-serif';
+        ctx.fillStyle = colors[p.category] || '#999';
+        ctx.fillText(p.word, sx + 6, sy + 3);
+      }
+    }
+    if (highlighted) {
+      const p = points.find(p => p.word === highlighted);
+      if (p) {
+        const [sx, sy] = toScreen(p);
+        ctx.beginPath();
+        ctx.arc(sx, sy, 10, 0, Math.PI*2);
+        ctx.strokeStyle = '#fff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+  }
+
+  canvas.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    let closest = null, minD = 15;
+    for (const p of points) {
+      const [sx, sy] = toScreen(p);
+      const d = Math.hypot(mx-sx, my-sy);
+      if (d < minD) { minD = d; closest = p; }
+    }
+    if (closest) {
+      tooltip.style.display = 'block';
+      tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+      tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
+      tooltip.innerHTML = `<b>${closest.word}</b><br><span style="color:${colors[closest.category]}">${closest.category}</span>`;
+    } else {
+      tooltip.style.display = 'none';
+    }
+  });
+
+  search.addEventListener('input', () => {
+    highlighted = search.value.trim() || null;
+    draw();
+  });
+
+  window.addEventListener('resize', resize);
+  resize();
+}
+</script>
