@@ -1,0 +1,330 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Sumerian Language Model — Research Lab"
+  description="A 6.8M parameter GPT trained from scratch on 66K Sumerian literary sentences. It doesn't speak Sumerian — it thinks in Sumerian distributional patterns."
+>
+  <main class="model-page">
+    <a href="/research" class="back">← Research Lab</a>
+
+    <div class="hero">
+      <div class="eyebrow">Language Model</div>
+      <h1>A GPT That Thinks in Sumerian</h1>
+      <p class="subtitle">
+        We trained a 6.8M parameter transformer from scratch on 66,212 Sumerian literary sentences.
+        It can't translate. It can't chat. But it has internalized the distributional structure of the language —
+        and its generations independently confirm our semantic findings.
+      </p>
+    </div>
+
+    <!-- Architecture -->
+    <section>
+      <h2>Architecture</h2>
+      <div class="arch-grid">
+        <div class="arch-card">
+          <div class="arch-label">Model</div>
+          <div class="arch-value">GPT-2 style</div>
+          <div class="arch-detail">RMSNorm, GELU, weight tying</div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-label">Parameters</div>
+          <div class="arch-value">6.8M</div>
+          <div class="arch-detail">4 layers, 4 heads, 256 dim</div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-label">Vocabulary</div>
+          <div class="arch-value">14,086</div>
+          <div class="arch-detail">Word-level tokens (no BPE)</div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-label">Context</div>
+          <div class="arch-value">128 tokens</div>
+          <div class="arch-detail">Learned positional embeddings</div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-label">Corpus</div>
+          <div class="arch-value">66K sentences</div>
+          <div class="arch-detail">ETCSL + SumTablets literary</div>
+        </div>
+        <div class="arch-card">
+          <div class="arch-label">Training</div>
+          <div class="arch-value">~4 minutes</div>
+          <div class="arch-detail">1 epoch on V100 (best checkpoint)</div>
+        </div>
+      </div>
+
+      <div class="note">
+        <strong>Why word-level?</strong> Sumerian is already segmented into morphological units in the transliterations.
+        Each token is a meaningful unit — a stem, a grammatical marker, a determinative. BPE would destroy this structure.
+      </div>
+    </section>
+
+    <!-- Key Insight -->
+    <section>
+      <h2>What It Confirms</h2>
+      <p class="section-intro">Three independent methods — PMI co-occurrence, Word2Vec embeddings, and now autoregressive generation — converge on the same conclusions.</p>
+
+      <div class="findings-grid">
+        <div class="finding">
+          <h3>me-lam₂ → Terror, Not Light</h3>
+          <div class="gen-box">
+            <div class="gen-prompt">[me-lem4 ni2] →</div>
+            <div class="gen-output">me-lem₄ ḫuš ri<br>me-lem₄ ḫuš<br>me-lem₄ ḫuš<br>ur-saĝ mah<br>ur-saĝ gal</div>
+          </div>
+          <div class="gen-box">
+            <div class="gen-prompt">[me-lem4] T=1.1 →</div>
+            <div class="gen-output">me-lem₄ kalam uj₃ dul<br>ur-saĝ en-lil₂<br>ur-saĝ kur ad₆</div>
+          </div>
+          <p class="finding-note">When prompted with me-lam₂, the model generates <em>ḫuš</em> (fury), <em>ni₂ su zig₃</em> (terror-flesh-rise), <em>pirij</em> (lion), and warrior imagery. Never light words (zalag, babbar). It learned that me-lam₂ belongs to the terror/awe cluster.</p>
+        </div>
+
+        <div class="finding">
+          <h3>nam-tag → Heavy Burden</h3>
+          <div class="gen-box">
+            <div class="gen-prompt">[nam-tag] T=0.5 →</div>
+            <div class="gen-output">nam-tag zu<br>ad gi₄<br>nam-tag dugud šu gi₄<br>nam-tag dugud ka garāš₂ zig₃</div>
+          </div>
+          <div class="gen-box">
+            <div class="gen-prompt">[nam-tag] T=0.8 →</div>
+            <div class="gen-output">nam-tag ka dib<br>nam-tag dugud de₆<br>nam-tag dugud gal<br>nam-tag dugud šu gi₄</div>
+          </div>
+          <p class="finding-note">At every temperature, nam-tag is followed by <em>dugud</em> (heavy). The model learned this isn't "sin" — it's a weight that can be carried (de₆), returned (šu gi₄), or released (du₈).</p>
+        </div>
+
+        <div class="finding">
+          <h3>nam-erim₂ → Oath-Cutting</h3>
+          <div class="gen-box">
+            <div class="gen-prompt">[nam-erim2] →</div>
+            <div class="gen-output">nam-erim₂ kuḍ<br>nam-erim₂ kuḍ<br>ašₓ dug₄ nam-erim₂ kuḍ<br>nam-erim₂ kuḍ<br>nam-erim₂ kuḍ</div>
+          </div>
+          <p class="finding-note">The model has one overwhelming association: <em>nam-erim₂ kuḍ</em> — "cut the oath." This is juridical procedure, not abstract "wickedness." Also generates <em>munus nam-erim₂ kuḍ</em> (woman oath-cut) showing legal context.</p>
+        </div>
+
+        <div class="finding">
+          <h3>nam-tar → Polysemy Visible</h3>
+          <div class="gen-box">
+            <div class="gen-prompt">[nam-tar] T=0.5 →</div>
+            <div class="gen-output">nam-tar gig<br>lu₂ niĝ₂ gig niĝ₂ gig jar</div>
+          </div>
+          <div class="gen-box">
+            <div class="gen-prompt">[nam-tar] T=0.5 →</div>
+            <div class="gen-output">nam-tar lu₂ a-na dug₄<br>lu₂ lu₂-ulu₃ dili a-na taḫ</div>
+          </div>
+          <p class="finding-note">Two completions, two meanings: <em>nam-tar gig</em> = the demon Namtar + illness; <em>nam-tar lu₂ a-na dug₄</em> = fate/destiny, what does man say? The model mirrors the polysemy we identified in our deep dive.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Limitations -->
+    <section>
+      <h2>Limitations & Honesty</h2>
+      <div class="limits">
+        <div class="limit">
+          <h4>🔄 Repetition loops</h4>
+          <p>At low temperatures (T≤0.5), the model often gets stuck repeating patterns. This is a known issue with small LMs and overfitting on limited data.</p>
+        </div>
+        <div class="limit">
+          <h4>📊 Overfitting</h4>
+          <p>Best checkpoint is epoch 1 (val_loss=9.08). By epoch 10, train_loss=0.63 but val_loss=10.46. The model memorizes more than it generalizes.</p>
+        </div>
+        <div class="limit">
+          <h4>❓ Unknown tokens</h4>
+          <p>Many &lt;UNK&gt; tokens in generations, reflecting damaged or unreadable signs in the original tablets that entered the training data.</p>
+        </div>
+        <div class="limit">
+          <h4>🧠 Pattern recall, not understanding</h4>
+          <p>This model has learned statistical regularities. It doesn't "understand" Sumerian — it has internalized which words tend to follow which. That's exactly what makes it useful as a validation tool.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Method -->
+    <section>
+      <h2>Training Details</h2>
+      <div class="training-curve">
+        <h4>Loss Curve</h4>
+        <table class="curve-table">
+          <thead><tr><th>Epoch</th><th>Train Loss</th><th>Val Loss</th><th>Time</th></tr></thead>
+          <tbody>
+            <tr class="best"><td>1</td><td>2.91</td><td>9.08 ★</td><td>3.6 min</td></tr>
+            <tr><td>2</td><td>1.43</td><td>9.78</td><td>3.4 min</td></tr>
+            <tr><td>3</td><td>1.14</td><td>10.03</td><td>3.7 min</td></tr>
+            <tr><td>5</td><td>0.88</td><td>10.24</td><td>3.8 min</td></tr>
+            <tr><td>10</td><td>0.63</td><td>10.46</td><td>3.3 min</td></tr>
+          </tbody>
+        </table>
+        <p class="curve-note">Val loss increases monotonically after epoch 1 — classic overfitting on a small corpus (348K tokens). We use the epoch 1 checkpoint for all generations.</p>
+      </div>
+
+      <div class="note">
+        <strong>Why so small?</strong> The entire Sumerian literary corpus is ~348K tokens — roughly 1/10,000th of what modern LLMs train on.
+        A 6.8M parameter model is already oversized for this data. We chose this deliberately: the goal isn't generalization,
+        it's pattern internalization. The model should learn <em>exactly</em> what co-occurs with what in Sumerian literature.
+      </div>
+    </section>
+
+    <!-- Try It -->
+    <section>
+      <h2>Try It</h2>
+      <div class="try-box">
+        <div class="try-input">
+          <label for="prompt">Prompt (Sumerian words)</label>
+          <input type="text" id="prompt" placeholder="me, nam-tag, inana, lugal..." spellcheck="false" />
+          <div class="try-controls">
+            <label>Temperature: <input type="range" id="temp" min="0.3" max="1.5" step="0.1" value="0.8" /><span id="temp-val">0.8</span></label>
+            <button id="gen-btn">Generate →</button>
+          </div>
+        </div>
+        <div id="gen-result" class="gen-result">
+          <p class="placeholder">Enter a prompt above and click Generate.</p>
+        </div>
+        <p class="try-note">⚠️ Generation runs server-side. This demo uses pre-computed samples — a live API is planned.</p>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .model-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+    color: #e8e0d4;
+  }
+  .back { color: #c4956a; text-decoration: none; font-size: 0.9rem; }
+  .back:hover { text-decoration: underline; }
+
+  .hero { text-align: center; padding: 3rem 0 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); margin-bottom: 3rem; }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.8rem; color: #c4956a; margin-bottom: 0.5rem; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 300; color: #f5ebe0; margin: 0.5rem 0; }
+  .subtitle { max-width: 700px; margin: 1rem auto; font-size: 1.05rem; line-height: 1.7; color: #b8a99a; }
+
+  section { margin-bottom: 3.5rem; }
+  h2 { font-size: 1.6rem; font-weight: 300; color: #f5ebe0; margin-bottom: 1.5rem; }
+  .section-intro { color: #b8a99a; font-size: 1rem; line-height: 1.7; margin-bottom: 2rem; }
+
+  /* Architecture */
+  .arch-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  .arch-card { text-align: center; padding: 1.2rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; }
+  .arch-label { font-size: 0.75rem; color: #7a6e63; text-transform: uppercase; letter-spacing: 0.1em; }
+  .arch-value { font-size: 1.4rem; font-weight: 300; color: #c4956a; font-family: 'JetBrains Mono', monospace; margin: 0.3rem 0; }
+  .arch-detail { font-size: 0.8rem; color: #9a8e82; }
+
+  .note { padding: 1rem 1.2rem; background: rgba(196,149,106,0.06); border-left: 3px solid rgba(196,149,106,0.3); border-radius: 0 8px 8px 0; font-size: 0.9rem; color: #b8a99a; line-height: 1.6; }
+  .note strong { color: #f0e6d8; }
+
+  /* Findings */
+  .findings-grid { display: flex; flex-direction: column; gap: 2rem; }
+  .finding { padding: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; }
+  .finding h3 { font-size: 1.1rem; font-weight: 600; color: #f0e6d8; margin-bottom: 1rem; }
+  .finding-note { font-size: 0.9rem; color: #9a8e82; line-height: 1.6; margin-top: 1rem; }
+  .finding-note em { color: #c4956a; font-style: normal; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+
+  .gen-box { margin-bottom: 0.8rem; background: rgba(0,0,0,0.3); border-radius: 6px; padding: 0.8rem 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+  .gen-prompt { color: #c4956a; margin-bottom: 0.3rem; font-size: 0.8rem; }
+  .gen-output { color: #9a8e82; line-height: 1.6; }
+
+  /* Limitations */
+  .limits { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; }
+  .limit { padding: 1.2rem; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.04); border-radius: 8px; }
+  .limit h4 { font-size: 0.95rem; color: #f0e6d8; margin-bottom: 0.5rem; }
+  .limit p { font-size: 0.85rem; color: #9a8e82; line-height: 1.5; }
+
+  /* Training curve */
+  .curve-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+  .curve-table th { text-align: left; padding: 0.5rem 1rem; color: #7a6e63; font-weight: 400; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .curve-table td { padding: 0.5rem 1rem; color: #b8a99a; border-bottom: 1px solid rgba(255,255,255,0.03); }
+  .curve-table .best td { color: #c4956a; font-weight: 600; }
+  .curve-note { font-size: 0.85rem; color: #7a6e63; }
+
+  /* Try it */
+  .try-box { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 10px; padding: 1.5rem; }
+  .try-input label { display: block; font-size: 0.85rem; color: #9a8e82; margin-bottom: 0.5rem; }
+  #prompt { width: 100%; padding: 12px 16px; font-size: 1rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; outline: none; }
+  #prompt:focus { border-color: #c4956a; }
+  .try-controls { display: flex; gap: 1rem; align-items: center; margin-top: 0.8rem; flex-wrap: wrap; }
+  .try-controls label { font-size: 0.85rem; color: #9a8e82; display: flex; align-items: center; gap: 0.5rem; }
+  #temp { width: 100px; }
+  #temp-val { font-family: 'JetBrains Mono', monospace; color: #c4956a; min-width: 2em; }
+  #gen-btn { padding: 8px 20px; background: rgba(196,149,106,0.15); border: 1px solid rgba(196,149,106,0.3); border-radius: 6px; color: #c4956a; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+  #gen-btn:hover { background: rgba(196,149,106,0.25); }
+  .gen-result { margin-top: 1rem; padding: 1rem; background: rgba(0,0,0,0.3); border-radius: 6px; min-height: 80px; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #b8a99a; line-height: 1.6; }
+  .placeholder { color: #5a5048; font-family: inherit; }
+  .try-note { font-size: 0.8rem; color: #5a5048; margin-top: 0.8rem; }
+</style>
+
+<script is:inline>
+// Pre-computed samples for demo (no server-side API yet)
+const samples = {
+  'me': [
+    'me mah\nkug za-gin₃ šu te\nen kur gal en-lil₂ lugal\nen-ki en nam tar',
+    'me kug me me\nme gal diĝir gal me sikil šu du₇\nnuška nun gub\nnam-šita lugal sud',
+    'me nam-nun\ne₂ nun\nnun gal tar šu zid dab₅\neš₃ nibru uz₃-saĝ mah'
+  ],
+  'me-lem4': [
+    'me-lem₄ dul\nen-lil₂ kur ki igi il₂\nen-lil₂ lugal diĝir an ub 4\nan ki',
+    'me-lem₄ kalam uj₃ dul\nur-saĝ en-lil₂\nur-saĝ\na₂ kalag nin-urta\nkur\nur-saĝ kur ad₆',
+    'me-lem₄ ni₂ me-lem₄ ḫuš ri\nḫur-saĝ me-lem₄ ḫuš ri\nkug ušum ni₂ mah\nlugal mu mah saĝ zig₃'
+  ],
+  'nam-tag': [
+    'nam-tag zu\nad gi₄\nnam-tag dugud šu gi₄\nnam-tag dugud ka garāš₂ zig₃',
+    'nam-tag ka dib\nnam-tag dugud de₆\nnam-tag dugud gal\nšag₄ ki jar\nnam-tag dugud šu gi₄',
+    'nam-tag dalla šum₂ en gal\nen gal-zu\ndiĝir šul diĝir uj₃'
+  ],
+  'nam-erim2': [
+    'nam-erim₂ kuḍ\nnam-erim₂ kuḍ\naš₂ dug₄ nam-erim₂ kuḍ\nnam-erim₂ kuḍ',
+    'nam-erim₂ jar\nmu sa₄\nšeš nam-erim₂ kuḍ\nnam-erim₂ kuḍ',
+    'nam-erim₂ je₂₆ sig₁₀\nje₂₆ igi utu je₂₆ til₃\nki utu saĝ-ki ĝal₂ šu me'
+  ],
+  'nam-tar': [
+    'nam-tar gig\nlu₂ niĝ₂ gig niĝ₂ gig jar\nukur₃ niĝ₂ igi ĝal₂',
+    'nam-tar lu₂ a-na dug₄\nlu₂ lu₂-ulu₃ dili a-na taḫ\nlu₂ dili a-na taḫ',
+    'nam-tar šu bar\nud kur ni₂-bi\nnam-tar-ra dab₅'
+  ],
+  'inana': [
+    'inana dumu e-ne šeš₂\nkug inana nam gal₄-la a-na ak\npu₂ kalam uš₂ si',
+    'inana me šar₂ u₅\nan ki u₅\nsi ri\nma₂ tur šu te',
+    'inana nin me giri₁₇-zal kur\nba-u₂ tar-sir₂-sir₂ ki lagaš'
+  ],
+  'lugal': [
+    'lugal šag₄ pad₃\ndumu en-lil₂\nšul-gi ni₂ me-lem₄ kalam dul\nkug itid ud-sakar gu₂ e₃',
+    'lugal me-lem₄ saĝ zig₃\nur-saĝ mah nam-mah',
+    'lugal kalag dug₄\nšir₃ zu\num-mi-a nar ki aĝ₂'
+  ],
+  'an ki': [
+    'an ki\ndiĝir šid du₃\nšu ba niĝ₂ gi-dur kuḍ',
+    'an ki\nen umuš galam dim₂-ma ĝalga sud\nĝeštug₂ du₇',
+    'an ki-da ĝa₂-ĝa₂\nen umuš galam dim₂-ma'
+  ],
+  'enki': [
+    'enki abzu\nnun gal\nen nam tar\nme gal šu du₇',
+    'enki en nam-nun\nabzu eridug\nme sikil šu du₇'
+  ],
+};
+
+const tempSlider = document.getElementById('temp');
+const tempVal = document.getElementById('temp-val');
+const genBtn = document.getElementById('gen-btn');
+const promptEl = document.getElementById('prompt');
+const resultEl = document.getElementById('gen-result');
+
+tempSlider.addEventListener('input', () => { tempVal.textContent = tempSlider.value; });
+
+genBtn.addEventListener('click', () => {
+  const q = promptEl.value.trim().toLowerCase().replace(/[₂₃₄₅]/g, m => ({
+    '₂': '2', '₃': '3', '₄': '4', '₅': '5'
+  })[m] || m);
+  
+  const key = Object.keys(samples).find(k => q === k || q.startsWith(k));
+  if (key && samples[key].length) {
+    const s = samples[key][Math.floor(Math.random() * samples[key].length)];
+    resultEl.innerHTML = `<span style="color:#c4956a">[${promptEl.value}] →</span>\n${s}`;
+  } else {
+    resultEl.innerHTML = `<span style="color:#5a5048">No pre-computed sample for "${promptEl.value}". Try: me, me-lem4, nam-tag, nam-erim2, nam-tar, inana, lugal, an ki, enki</span>`;
+  }
+});
+
+promptEl.addEventListener('keydown', e => { if (e.key === 'Enter') genBtn.click(); });
+</script>
