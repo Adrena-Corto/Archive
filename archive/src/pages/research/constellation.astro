@@ -1,0 +1,399 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Constellation Map — Sumerian Research Lab"
+  description="Navigate the semantic universe of Sumerian. A force-directed graph of 500+ words connected by embedding similarity and neural attention."
+>
+  <main class="const-page">
+    <div class="top-bar">
+      <a href="/research" class="back">← Research Lab</a>
+      <div class="search-wrap">
+        <input type="text" id="search" placeholder="Find a word..." spellcheck="false" autocomplete="off" />
+        <div id="suggestions"></div>
+      </div>
+      <div class="legend" id="legend"></div>
+    </div>
+
+    <div class="canvas-wrap">
+      <canvas id="graph"></canvas>
+      <div id="tooltip" class="tooltip"></div>
+      <div id="info-panel" class="info-panel hidden">
+        <button id="close-panel" class="close-btn">×</button>
+        <h3 id="panel-word"></h3>
+        <div id="panel-cat" class="panel-cat"></div>
+        <div id="panel-connections"></div>
+        <div class="panel-links">
+          <a id="link-explorer" href="#">Explorer →</a>
+          <a id="link-attention" href="#">Attention →</a>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .const-page { display: flex; flex-direction: column; height: 100vh; overflow: hidden; color: #e8e0d4; }
+  .top-bar { display: flex; align-items: center; gap: 1rem; padding: 0.8rem 1.5rem; background: rgba(10,8,6,0.95); border-bottom: 1px solid rgba(255,255,255,0.06); z-index: 10; flex-wrap: wrap; }
+  .back { color: #c4956a; text-decoration: none; font-size: 0.85rem; white-space: nowrap; }
+  .back:hover { text-decoration: underline; }
+  .search-wrap { position: relative; flex: 1; max-width: 300px; }
+  #search { width: 100%; padding: 8px 14px; font-size: 0.9rem; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; outline: none; }
+  #search:focus { border-color: #c4956a; }
+  #suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #1a1714; border: 1px solid #333; border-radius: 0 0 8px 8px; display: none; z-index: 30; max-height: 200px; overflow-y: auto; }
+  .sg { padding: 8px 14px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #f5ebe0; }
+  .sg:hover { background: rgba(196,149,106,0.1); }
+  .legend { display: flex; gap: 10px; flex-wrap: wrap; font-size: 0.7rem; }
+  .leg { display: flex; align-items: center; gap: 4px; color: #7a6e63; }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+  .canvas-wrap { flex: 1; position: relative; background: #0a0806; overflow: hidden; cursor: grab; }
+  .canvas-wrap:active { cursor: grabbing; }
+  #graph { width: 100%; height: 100%; }
+  .tooltip { display: none; position: absolute; padding: 6px 12px; background: rgba(20,18,14,0.95); border: 1px solid rgba(196,149,106,0.3); border-radius: 6px; font-size: 0.8rem; pointer-events: none; z-index: 20; font-family: 'JetBrains Mono', monospace; color: #f5ebe0; }
+  
+  .info-panel { position: absolute; top: 1rem; right: 1rem; width: 280px; background: rgba(20,18,14,0.95); border: 1px solid rgba(196,149,106,0.25); border-radius: 10px; padding: 1.2rem; z-index: 15; }
+  .hidden { display: none !important; }
+  .close-btn { position: absolute; top: 8px; right: 12px; background: none; border: none; color: #7a6e63; font-size: 1.2rem; cursor: pointer; }
+  .info-panel h3 { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; color: #f5ebe0; margin: 0 0 0.3rem; }
+  .panel-cat { font-size: 0.75rem; color: #c4956a; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.1em; }
+  #panel-connections { font-size: 0.8rem; color: #9a8e82; line-height: 1.6; max-height: 250px; overflow-y: auto; margin-bottom: 1rem; }
+  .conn { display: flex; justify-content: space-between; padding: 2px 0; cursor: pointer; }
+  .conn:hover { color: #f5ebe0; }
+  .conn-w { font-family: 'JetBrains Mono', monospace; }
+  .conn-s { color: #5a5048; font-size: 0.75rem; }
+  .panel-links { display: flex; gap: 0.8rem; }
+  .panel-links a { font-size: 0.8rem; color: #c4956a; text-decoration: none; }
+  .panel-links a:hover { text-decoration: underline; }
+</style>
+
+<script is:inline>
+const catColors = {
+  me: '#ff4444', nam: '#ff8800', light: '#ffff00', terror: '#ff00aa',
+  divine: '#cc44ff', spatial: '#44ccff', design: '#ff44cc', actor: '#88cc44',
+  body: '#66aa88', verb: '#aa8866', other: '#444444'
+};
+const catLabels = {
+  me: 'ME/Powers', nam: 'NAM-', light: 'Light', terror: 'Terror',
+  divine: 'Divine', spatial: 'Places', design: 'Design', actor: 'Actors',
+  body: 'Body', verb: 'Verbs', other: 'Other'
+};
+
+let nodes = [], edges = [], nodeMap = {};
+let selected = null;
+let zoom = 1, panX = 0, panY = 0;
+let dragging = false, dragX, dragY, dragPanX, dragPanY;
+let hovered = null;
+let simRunning = true;
+
+fetch('/data/constellation.json').then(r => r.json()).then(data => {
+  nodes = data.nodes;
+  edges = data.edges;
+  
+  // Init positions randomly
+  nodes.forEach((n, i) => {
+    n.x = (Math.random() - 0.5) * 800;
+    n.y = (Math.random() - 0.5) * 600;
+    n.vx = 0; n.vy = 0;
+    n.r = Math.max(3, Math.min(12, Math.log(n.freq + 1) * 1.2));
+    nodeMap[n.id] = n;
+  });
+  
+  // Build adjacency
+  edges.forEach(e => {
+    e.source = nodeMap[e.s];
+    e.target = nodeMap[e.t];
+  });
+  
+  buildLegend();
+  animate();
+});
+
+function buildLegend() {
+  const el = document.getElementById('legend');
+  el.innerHTML = Object.entries(catLabels)
+    .filter(([k]) => nodes.some(n => n.cat === k))
+    .map(([k, label]) => `<span class="leg"><span class="leg-dot" style="background:${catColors[k]}"></span>${label}</span>`)
+    .join('');
+}
+
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('tooltip');
+
+function resize() {
+  const dpr = window.devicePixelRatio;
+  canvas.width = canvas.parentElement.clientWidth * dpr;
+  canvas.height = canvas.parentElement.clientHeight * dpr;
+  canvas.style.width = canvas.parentElement.clientWidth + 'px';
+  canvas.style.height = canvas.parentElement.clientHeight + 'px';
+}
+window.addEventListener('resize', resize);
+resize();
+
+// Force simulation
+function simulate() {
+  const alpha = 0.3;
+  const repulsion = 800;
+  const attraction = 0.005;
+  const damping = 0.85;
+  const centerForce = 0.001;
+  
+  // Repulsion (Barnes-Hut would be better but simple O(n²) for 500 nodes is fine)
+  for (let i = 0; i < nodes.length; i++) {
+    const a = nodes[i];
+    for (let j = i + 1; j < nodes.length; j++) {
+      const b = nodes[j];
+      let dx = a.x - b.x, dy = a.y - b.y;
+      let d2 = dx*dx + dy*dy + 1;
+      let f = repulsion / d2;
+      a.vx += dx * f * alpha;
+      a.vy += dy * f * alpha;
+      b.vx -= dx * f * alpha;
+      b.vy -= dy * f * alpha;
+    }
+  }
+  
+  // Attraction along edges
+  for (const e of edges) {
+    if (!e.source || !e.target) continue;
+    let dx = e.target.x - e.source.x;
+    let dy = e.target.y - e.source.y;
+    let d = Math.sqrt(dx*dx + dy*dy) + 0.1;
+    let f = (d - 80) * attraction * e.w;
+    e.source.vx += dx/d * f;
+    e.source.vy += dy/d * f;
+    e.target.vx -= dx/d * f;
+    e.target.vy -= dy/d * f;
+  }
+  
+  // Center gravity
+  for (const n of nodes) {
+    n.vx -= n.x * centerForce;
+    n.vy -= n.y * centerForce;
+    n.vx *= damping;
+    n.vy *= damping;
+    n.x += n.vx;
+    n.y += n.vy;
+  }
+}
+
+function toScreen(x, y) {
+  const w = canvas.width / window.devicePixelRatio;
+  const h = canvas.height / window.devicePixelRatio;
+  return [(x * zoom + panX + w/2), (y * zoom + panY + h/2)];
+}
+
+function fromScreen(sx, sy) {
+  const w = canvas.width / window.devicePixelRatio;
+  const h = canvas.height / window.devicePixelRatio;
+  return [((sx - w/2) - panX) / zoom, ((sy - h/2) - panY) / zoom];
+}
+
+function draw() {
+  const dpr = window.devicePixelRatio;
+  const w = canvas.width / dpr, h = canvas.height / dpr;
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  
+  // Selected node's connections
+  const selEdges = new Set();
+  const selNodes = new Set();
+  if (selected) {
+    selNodes.add(selected);
+    edges.forEach((e, i) => {
+      if (e.s === selected || e.t === selected) {
+        selEdges.add(i);
+        selNodes.add(e.s);
+        selNodes.add(e.t);
+      }
+    });
+  }
+  
+  // Edges
+  for (let i = 0; i < edges.length; i++) {
+    const e = edges[i];
+    if (!e.source || !e.target) continue;
+    const [x1, y1] = toScreen(e.source.x, e.source.y);
+    const [x2, y2] = toScreen(e.target.x, e.target.y);
+    if (Math.max(x1,x2) < -50 || Math.min(x1,x2) > w+50 || Math.max(y1,y2) < -50 || Math.min(y1,y2) > h+50) continue;
+    
+    const isSel = selEdges.has(i);
+    const isAttn = e.k.startsWith('attn');
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    if (selected && !isSel) {
+      ctx.strokeStyle = 'rgba(40,35,30,0.15)';
+      ctx.lineWidth = 0.3;
+    } else {
+      ctx.strokeStyle = isAttn ? `rgba(196,149,106,${isSel ? 0.6 : 0.12})` : `rgba(100,90,80,${isSel ? 0.4 : 0.06})`;
+      ctx.lineWidth = isSel ? Math.max(1, e.w * 3) : 0.5;
+    }
+    ctx.stroke();
+  }
+  
+  // Nodes
+  for (const n of nodes) {
+    const [sx, sy] = toScreen(n.x, n.y);
+    if (sx < -20 || sx > w+20 || sy < -20 || sy > h+20) continue;
+    
+    const isSel = selNodes.has(n.id);
+    const isHov = hovered === n.id;
+    const dim = selected && !isSel;
+    
+    const r = n.r * zoom * (isHov ? 1.5 : 1);
+    ctx.beginPath();
+    ctx.arc(sx, sy, Math.max(1.5, r), 0, Math.PI * 2);
+    const col = catColors[n.cat] || '#444';
+    ctx.fillStyle = dim ? 'rgba(40,35,30,0.3)' : col;
+    ctx.globalAlpha = dim ? 0.3 : (isSel ? 1 : 0.7);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+    
+    // Labels for selected connections or large/hovered nodes
+    if (isSel || isHov || (zoom > 1.5 && n.r > 5) || (zoom > 3)) {
+      ctx.font = `${isHov || n.id === selected ? 'bold ' : ''}${Math.max(8, 10 * zoom)}px "JetBrains Mono", monospace`;
+      ctx.fillStyle = dim ? 'rgba(100,90,80,0.2)' : (n.id === selected ? '#fff' : col);
+      ctx.fillText(n.id, sx + r + 4, sy + 3);
+    }
+  }
+}
+
+let frameCount = 0;
+function animate() {
+  if (simRunning && frameCount < 500) {
+    simulate();
+  }
+  draw();
+  frameCount++;
+  requestAnimationFrame(animate);
+}
+
+// Interaction
+canvas.addEventListener('wheel', e => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  const old = zoom;
+  zoom *= e.deltaY < 0 ? 1.12 : 0.89;
+  zoom = Math.max(0.1, Math.min(15, zoom));
+  panX = mx - canvas.width/window.devicePixelRatio/2 - ((mx - canvas.width/window.devicePixelRatio/2 - panX) * zoom / old);
+  panY = my - canvas.height/window.devicePixelRatio/2 - ((my - canvas.height/window.devicePixelRatio/2 - panY) * zoom / old);
+}, { passive: false });
+
+canvas.addEventListener('mousedown', e => {
+  dragging = true;
+  dragX = e.clientX; dragY = e.clientY;
+  dragPanX = panX; dragPanY = panY;
+});
+
+canvas.addEventListener('mousemove', e => {
+  if (dragging) {
+    panX = dragPanX + (e.clientX - dragX);
+    panY = dragPanY + (e.clientY - dragY);
+    return;
+  }
+  const rect = canvas.getBoundingClientRect();
+  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  let closest = null, minD = 15;
+  for (const n of nodes) {
+    const [sx, sy] = toScreen(n.x, n.y);
+    const d = Math.hypot(mx - sx, my - sy);
+    if (d < minD) { minD = d; closest = n; }
+  }
+  hovered = closest ? closest.id : null;
+  if (closest) {
+    tooltip.style.display = 'block';
+    tooltip.style.left = (mx + 15) + 'px';
+    tooltip.style.top = (my - 10) + 'px';
+    tooltip.innerHTML = `<span style="color:${catColors[closest.cat]}">${closest.id}</span>`;
+    canvas.style.cursor = 'pointer';
+  } else {
+    tooltip.style.display = 'none';
+    canvas.style.cursor = dragging ? 'grabbing' : 'grab';
+  }
+});
+
+canvas.addEventListener('mouseup', e => {
+  if (dragging && Math.abs(e.clientX - dragX) < 3 && Math.abs(e.clientY - dragY) < 3) {
+    // Click
+    if (hovered) selectNode(hovered);
+    else { selected = null; document.getElementById('info-panel').classList.add('hidden'); }
+  }
+  dragging = false;
+});
+
+canvas.addEventListener('mouseleave', () => { dragging = false; hovered = null; tooltip.style.display = 'none'; });
+
+function selectNode(id) {
+  selected = id;
+  const n = nodeMap[id];
+  if (!n) return;
+  
+  // Center on node
+  const w = canvas.width / window.devicePixelRatio;
+  const h = canvas.height / window.devicePixelRatio;
+  panX = -n.x * zoom;
+  panY = -n.y * zoom;
+  
+  // Panel
+  const panel = document.getElementById('info-panel');
+  panel.classList.remove('hidden');
+  document.getElementById('panel-word').textContent = id;
+  document.getElementById('panel-cat').textContent = catLabels[n.cat] || n.cat;
+  document.getElementById('panel-cat').style.color = catColors[n.cat] || '#999';
+  
+  // Connections
+  const conns = [];
+  edges.forEach(e => {
+    if (e.s === id) conns.push({ word: e.t, score: e.w, kind: e.k });
+    else if (e.t === id) conns.push({ word: e.s, score: e.w, kind: e.k });
+  });
+  conns.sort((a, b) => b.score - a.score);
+  
+  const connEl = document.getElementById('panel-connections');
+  connEl.innerHTML = conns.slice(0, 15).map(c => {
+    const label = c.kind === 'w2v' ? 'sim' : c.kind === 'attn_to' ? 'att→' : 'att←';
+    return `<div class="conn" data-w="${c.word}"><span class="conn-w">${c.word}</span><span class="conn-s">${label} ${c.score.toFixed(3)}</span></div>`;
+  }).join('');
+  connEl.querySelectorAll('.conn').forEach(el => {
+    el.addEventListener('click', () => selectNode(el.dataset.w));
+  });
+  
+  document.getElementById('link-explorer').href = `/research/explorer#${id}`;
+  document.getElementById('link-attention').href = `/research/attention#${id}`;
+}
+
+document.getElementById('close-panel').addEventListener('click', () => {
+  selected = null;
+  document.getElementById('info-panel').classList.add('hidden');
+});
+
+// Search
+const searchEl = document.getElementById('search');
+const suggestEl = document.getElementById('suggestions');
+searchEl.addEventListener('input', () => {
+  const q = searchEl.value.trim().toLowerCase();
+  if (!q) { suggestEl.style.display = 'none'; return; }
+  const m = nodes.filter(n => n.id.startsWith(q) || n.id.includes(q)).slice(0, 10);
+  if (!m.length) { suggestEl.style.display = 'none'; return; }
+  suggestEl.innerHTML = m.map(n => `<div class="sg" data-w="${n.id}">${n.id}</div>`).join('');
+  suggestEl.style.display = 'block';
+  suggestEl.querySelectorAll('.sg').forEach(el => el.addEventListener('click', () => {
+    selectNode(el.dataset.w);
+    suggestEl.style.display = 'none';
+    searchEl.value = el.dataset.w;
+  }));
+});
+document.addEventListener('click', e => { if (!e.target.closest('.search-wrap')) suggestEl.style.display = 'none'; });
+
+// Hash navigation
+if (location.hash) {
+  const term = decodeURIComponent(location.hash.slice(1));
+  const check = setInterval(() => {
+    if (nodeMap[term]) { selectNode(term); clearInterval(check); }
+  }, 200);
+}
+</script>

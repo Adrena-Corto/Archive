@@ -147,6 +147,11 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <h3>Attention Probing</h3>
           <p>What the neural network sees — explore attention patterns across 60+ terms.</p>
         </a>
+        <a href="/research/constellation" class="tool-tile">
+          <div class="tile-icon">✨</div>
+          <h3>Constellation Map</h3>
+          <p>Navigate 500+ words as a force-directed galaxy. Click any star to explore its semantic connections.</p>
+        </a>
       </div>
     </section>
 
@@ -351,10 +356,10 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .tools-section { margin-bottom: 3rem; }
   .tools-row {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
   }
-  @media (max-width: 700px) { .tools-row { grid-template-columns: 1fr; } }
+  @media (max-width: 500px) { .tools-row { grid-template-columns: 1fr; } }
   .tool-tile {
     display: flex;
     flex-direction: column;
