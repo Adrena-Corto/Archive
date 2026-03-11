@@ -126,18 +126,58 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       </div>
     </section>
 
-    <!-- t-SNE Visualization -->
+    <!-- Visualization -->
     <section class="visualization">
       <h2>Semantic Map</h2>
       <p class="viz-subtitle">
-        t-SNE projection of 2,372 Sumerian lemmas from the ETCSL literary corpus. 
-        Each dot is a word; proximity = semantic similarity. Hover to explore.
+        2,372 Sumerian lemmas projected into 2D. Each dot is a word; proximity = semantic similarity. Hover to explore.
       </p>
+      <div class="viz-toggle">
+        <button class="vt-btn active" data-mode="tsne">t-SNE</button>
+        <button class="vt-btn" data-mode="umap">UMAP</button>
+      </div>
       <div class="viz-container" id="tsne-container">
         <canvas id="tsne-canvas"></canvas>
         <div id="tsne-tooltip"></div>
         <div id="tsne-legend"></div>
         <input id="tsne-search" placeholder="Search a Sumerian word..." />
+      </div>
+    </section>
+
+    <!-- Translation Distortions -->
+    <section class="distortions">
+      <h2>Translation Distortions</h2>
+      <p class="viz-subtitle">
+        The Akkadian translations consistently convert <strong>operational</strong> Sumerian concepts 
+        into <strong>static</strong> ones. The dynamism — scalar, manipulable, transferable — is systematically flattened.
+      </p>
+      <div class="distortion-table">
+        <div class="dt-row dt-header">
+          <span>Sumerian</span><span>Conventional</span><span>Distributional</span><span>Distortion</span>
+        </div>
+        <div class="dt-row"><span class="dt-term">me</span><span>divine decree</span><span>operational parameter</span><span class="dt-sig">⚠️ Significant</span></div>
+        <div class="dt-row"><span class="dt-term">me-lam₂</span><span>radiance/splendor</span><span>radiative force field</span><span class="dt-sig">⚠️ Significant</span></div>
+        <div class="dt-row"><span class="dt-term">nam-erim₂</span><span>wickedness</span><span>oath-violation (juridical)</span><span class="dt-sig">⚠️ Significant</span></div>
+        <div class="dt-row"><span class="dt-term">nam-tag</span><span>sin</span><span>weighted burden (releasable)</span><span class="dt-sig">⚠️ Significant</span></div>
+        <div class="dt-row"><span class="dt-term">nam-tar</span><span>destiny</span><span>seizing condition (medical)</span><span class="dt-mod">⚡ Moderate</span></div>
+        <div class="dt-row"><span class="dt-term">nam-mah</span><span>majesty</span><span>declared/performative status</span><span class="dt-mod">⚡ Moderate</span></div>
+        <div class="dt-row"><span class="dt-term">nam-lugal</span><span>kingship</span><span>transferable configuration</span><span class="dt-min">○ Minor</span></div>
+        <div class="dt-row"><span class="dt-term">nam-til₃</span><span>life</span><span>extensible duration parameter</span><span class="dt-min">○ Minor</span></div>
+      </div>
+    </section>
+
+    <!-- Tools -->
+    <section class="tools">
+      <h2>Tools</h2>
+      <div class="tools-grid">
+        <a href="/research/explorer" class="tool-card">
+          <h3>🔍 Word Explorer</h3>
+          <p>Search any Sumerian word — see its semantic neighbors, usage contexts, and frequency across 394 texts.</p>
+        </a>
+        <a href="/library/articles/me-are-not-decrees" class="tool-card">
+          <h3>📄 The ME Are Not Decrees</h3>
+          <p>Full research article with all quantitative evidence and methodology.</p>
+        </a>
       </div>
     </section>
 
@@ -373,6 +413,78 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     width: 220px;
   }
   #tsne-search::placeholder { color: #666; }
+  .viz-toggle {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .vt-btn {
+    padding: 6px 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    color: #7a6e63;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: all 0.2s;
+  }
+  .vt-btn.active {
+    background: rgba(196,149,106,0.15);
+    border-color: #c4956a;
+    color: #c4956a;
+  }
+  .vt-btn:hover { border-color: #c4956a; }
+
+  /* Distortions */
+  .distortions, .tools { margin-bottom: 4rem; }
+  .distortion-table {
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .dt-row {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1.5fr 0.8fr;
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-size: 0.85rem;
+    color: #9a8e82;
+    gap: 8px;
+  }
+  .dt-header {
+    background: rgba(255,255,255,0.03);
+    font-weight: 600;
+    color: #b8a99a;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .dt-term { font-family: 'JetBrains Mono', monospace; color: #f0e6d8; }
+  .dt-sig { color: #ff6b6b; }
+  .dt-mod { color: #ffa94d; }
+  .dt-min { color: #69db7c; }
+
+  /* Tools */
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .tool-card {
+    display: block;
+    padding: 2rem;
+    background: rgba(196,149,106,0.05);
+    border: 1px solid rgba(196,149,106,0.15);
+    border-radius: 12px;
+    text-decoration: none;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .tool-card:hover {
+    border-color: rgba(196,149,106,0.4);
+    transform: translateY(-2px);
+  }
+  .tool-card h3 { font-size: 1.1rem; color: #f0e6d8; margin-bottom: 0.5rem; }
+  .tool-card p { font-size: 0.9rem; color: #9a8e82; line-height: 1.5; }
 
   /* Stats */
   .stats-grid {
@@ -431,15 +543,27 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </style>
 
 <script is:inline define:vars={{ }}>
-// t-SNE data will be injected here at build time
-// For now, we fetch it from a JSON file
-fetch('/data/tsne_sumerian.json')
-  .then(r => r.json())
-  .then(data => initTSNE(data))
-  .catch(() => {
-    document.getElementById('tsne-container').innerHTML = 
-      '<p style="padding:2rem;color:#666;text-align:center;">Visualization loading...</p>';
+let currentData = null;
+const dataCache = {};
+
+function loadViz(mode) {
+  const url = mode === 'umap' ? '/data/umap_sumerian.json' : '/data/tsne_sumerian.json';
+  if (dataCache[mode]) { initTSNE(dataCache[mode]); return; }
+  fetch(url).then(r => r.json()).then(data => {
+    dataCache[mode] = data;
+    initTSNE(data);
   });
+}
+
+document.querySelectorAll('.vt-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.vt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    loadViz(btn.dataset.mode);
+  });
+});
+
+loadViz('tsne');
 
 function initTSNE(points) {
   const colors = {
