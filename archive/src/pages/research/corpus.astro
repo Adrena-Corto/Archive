@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Corpus Browser — Sumerian Research Lab"
+  description="Browse 2,945 Sumerian words with glosses, part of speech, collocations, and usage contexts from 394 ETCSL literary texts."
+>
+  <main class="corpus-page">
+    <a href="/research" class="back">← Research Lab</a>
+
+    <div class="hero">
+      <div class="eyebrow">Corpus Browser</div>
+      <h1>Sumerian Dictionary</h1>
+      <p class="subtitle">2,945 words from 394 literary texts. Each entry includes English glosses, part of speech, collocations, and example contexts.</p>
+    </div>
+
+    <div class="layout">
+      <div class="search-col">
+        <input type="text" id="search" placeholder="Search any word..." spellcheck="false" autocomplete="off" />
+        <div class="filters">
+          <button class="filter-btn active" data-pos="">All</button>
+          <button class="filter-btn" data-pos="N">Nouns</button>
+          <button class="filter-btn" data-pos="V">Verbs</button>
+          <button class="filter-btn" data-pos="AJ">Adj</button>
+        </div>
+        <div id="word-list" class="word-list"></div>
+      </div>
+
+      <div class="detail-col">
+        <div id="detail" class="detail">
+          <div id="empty-state" class="empty">
+            <p>← Select a word or search to begin</p>
+            <div class="browse-cats">
+              <h4>Browse by category</h4>
+              <div class="cat-tags" id="browse-tags"></div>
+            </div>
+          </div>
+          <div id="word-detail" class="word-detail hidden">
+            <div class="wd-header">
+              <h2 id="wd-word"></h2>
+              <span id="wd-pos" class="wd-pos"></span>
+            </div>
+            <div id="wd-gloss" class="wd-gloss"></div>
+            <div class="wd-stats">
+              <span id="wd-freq" class="wd-stat"></span>
+              <span id="wd-texts" class="wd-stat"></span>
+            </div>
+
+            <div class="wd-section" id="colloc-section">
+              <h3>Collocations</h3>
+              <div id="wd-colloc" class="wd-colloc"></div>
+            </div>
+
+            <div class="wd-section" id="example-section">
+              <h3>In Context</h3>
+              <div id="wd-examples" class="wd-examples"></div>
+            </div>
+
+            <div class="wd-links">
+              <a id="link-explorer" href="#">Word Explorer →</a>
+              <a id="link-constellation" href="#">Constellation →</a>
+              <a id="link-attention" href="#">Attention →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="loading" class="loading">Loading dictionary (1.2MB)...</div>
+  </main>
+</BaseLayout>
+
+<style>
+  .corpus-page { max-width: 1100px; margin: 0 auto; padding: 1.5rem; color: #e8e0d4; }
+  .back { color: #c4956a; text-decoration: none; font-size: 0.85rem; }
+  .hero { text-align: center; padding: 2rem 0 1.5rem; margin-bottom: 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .eyebrow { text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; color: #c4956a; }
+  .hero h1 { font-size: 2.2rem; font-weight: 300; color: #f5ebe0; margin: 0.3rem 0; }
+  .subtitle { color: #9a8e82; font-size: 0.9rem; }
+
+  .layout { display: grid; grid-template-columns: 300px 1fr; gap: 2rem; }
+  @media (max-width: 700px) { .layout { grid-template-columns: 1fr; } }
+
+  .search-col { position: sticky; top: 1rem; align-self: start; }
+  #search { width: 100%; padding: 12px 16px; font-size: 1rem; background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08); border-radius: 10px; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; outline: none; margin-bottom: 0.8rem; }
+  #search:focus { border-color: #c4956a; }
+
+  .filters { display: flex; gap: 4px; margin-bottom: 0.8rem; }
+  .filter-btn { padding: 4px 10px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 4px; color: #7a6e63; font-size: 0.75rem; cursor: pointer; }
+  .filter-btn.active { border-color: #c4956a; color: #c4956a; background: rgba(196,149,106,0.1); }
+
+  .word-list { max-height: 70vh; overflow-y: auto; display: flex; flex-direction: column; gap: 2px; }
+  .wl-item { display: flex; justify-content: space-between; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; transition: background 0.15s; }
+  .wl-item:hover { background: rgba(196,149,106,0.08); }
+  .wl-item.active { background: rgba(196,149,106,0.15); border-left: 2px solid #c4956a; }
+  .wl-word { font-family: 'JetBrains Mono', monospace; color: #f5ebe0; }
+  .wl-gloss { color: #5a5048; font-size: 0.75rem; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  .empty { text-align: center; color: #5a5048; padding: 3rem 1rem; }
+  .browse-cats { margin-top: 2rem; text-align: left; }
+  .browse-cats h4 { font-size: 0.85rem; color: #7a6e63; margin-bottom: 0.8rem; }
+  .cat-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ct { padding: 5px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 5px; cursor: pointer; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; color: #9a8e82; }
+  .ct:hover { border-color: #c4956a; color: #f5ebe0; }
+
+  .hidden { display: none !important; }
+  .loading { text-align: center; color: #7a6e63; padding: 2rem; }
+
+  .wd-header { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 0.5rem; }
+  .wd-header h2 { font-size: 2rem; font-weight: 400; color: #f5ebe0; font-family: 'JetBrains Mono', monospace; margin: 0; }
+  .wd-pos { font-size: 0.75rem; color: #7a6e63; background: rgba(255,255,255,0.04); padding: 2px 8px; border-radius: 3px; text-transform: uppercase; }
+  .wd-gloss { font-size: 1.1rem; color: #b8a99a; margin-bottom: 1rem; font-style: italic; }
+  .wd-stats { display: flex; gap: 1.5rem; margin-bottom: 1.5rem; }
+  .wd-stat { font-size: 0.85rem; color: #7a6e63; }
+  .wd-stat strong { color: #c4956a; font-family: 'JetBrains Mono', monospace; }
+
+  .wd-section { margin-bottom: 1.5rem; }
+  .wd-section h3 { font-size: 0.9rem; font-weight: 600; color: #b8a99a; margin-bottom: 0.8rem; }
+
+  .wd-colloc { display: flex; flex-wrap: wrap; gap: 6px; }
+  .coll { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); border-radius: 6px; cursor: pointer; font-size: 0.8rem; }
+  .coll:hover { border-color: rgba(196,149,106,0.3); }
+  .coll-w { font-family: 'JetBrains Mono', monospace; color: #f5ebe0; }
+  .coll-n { color: #5a5048; font-size: 0.7rem; }
+
+  .ex { padding: 0.8rem 1rem; background: rgba(255,255,255,0.02); border-left: 3px solid rgba(196,149,106,0.2); border-radius: 0 6px 6px 0; margin-bottom: 0.6rem; }
+  .ex-src { font-size: 0.7rem; color: #5a5048; margin-bottom: 0.3rem; }
+  .ex-form { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; color: #c4956a; }
+  .ex-gloss { font-size: 0.8rem; color: #7a6e63; font-style: italic; }
+
+  .wd-links { display: flex; gap: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.04); }
+  .wd-links a { font-size: 0.8rem; color: #c4956a; text-decoration: none; }
+  .wd-links a:hover { text-decoration: underline; }
+</style>
+
+<script is:inline>
+let dict = null, index = null;
+let currentPos = '';
+
+Promise.all([
+  fetch('/data/dictionary.json').then(r => r.json()),
+  fetch('/data/dict_index.json').then(r => r.json()),
+]).then(([d, idx]) => {
+  dict = d;
+  index = idx;
+  document.getElementById('loading').classList.add('hidden');
+  buildBrowse();
+  renderList('');
+  if (location.hash) showWord(decodeURIComponent(location.hash.slice(1)));
+});
+
+const searchEl = document.getElementById('search');
+const listEl = document.getElementById('word-list');
+
+searchEl.addEventListener('input', () => renderList(searchEl.value.trim().toLowerCase()));
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentPos = btn.dataset.pos;
+    renderList(searchEl.value.trim().toLowerCase());
+  });
+});
+
+function renderList(q) {
+  if (!dict) return;
+  let filtered = index;
+  if (q) filtered = index.filter(w => w.startsWith(q) || w.includes(q));
+  if (currentPos) filtered = filtered.filter(w => dict[w] && dict[w].p === currentPos);
+  filtered = filtered.slice(0, 100);
+  
+  listEl.innerHTML = filtered.map(w => {
+    const d = dict[w];
+    return `<div class="wl-item" data-w="${w}"><span class="wl-word">${w}</span><span class="wl-gloss">${d.g || ''}</span></div>`;
+  }).join('');
+  
+  listEl.querySelectorAll('.wl-item').forEach(el => {
+    el.addEventListener('click', () => showWord(el.dataset.w));
+  });
+}
+
+function showWord(w) {
+  if (!dict || !dict[w]) return;
+  const d = dict[w];
+  location.hash = w;
+  
+  document.getElementById('empty-state').classList.add('hidden');
+  document.getElementById('word-detail').classList.remove('hidden');
+  
+  document.getElementById('wd-word').textContent = w;
+  document.getElementById('wd-pos').textContent = d.p || '?';
+  document.getElementById('wd-gloss').textContent = d.g || '(no gloss)';
+  document.getElementById('wd-freq').innerHTML = `<strong>${d.f}</strong> occurrences`;
+  document.getElementById('wd-texts').innerHTML = `in <strong>${d.t}</strong> texts`;
+  
+  // Collocations
+  const collEl = document.getElementById('wd-colloc');
+  const collSec = document.getElementById('colloc-section');
+  if (d.c && d.c.length) {
+    collSec.classList.remove('hidden');
+    collEl.innerHTML = d.c.map(([cw, n]) => 
+      `<span class="coll" data-w="${cw}"><span class="coll-w">${cw}</span><span class="coll-n">${n}×</span></span>`
+    ).join('');
+    collEl.querySelectorAll('.coll').forEach(el => {
+      el.addEventListener('click', () => { if (dict[el.dataset.w]) showWord(el.dataset.w); });
+    });
+  } else {
+    collSec.classList.add('hidden');
+  }
+  
+  // Examples
+  const exEl = document.getElementById('wd-examples');
+  const exSec = document.getElementById('example-section');
+  if (d.ex && d.ex.length) {
+    exSec.classList.remove('hidden');
+    exEl.innerHTML = d.ex.map(ex =>
+      `<div class="ex"><div class="ex-src">${ex.s}</div><div class="ex-form">${ex.f}</div><div class="ex-gloss">${ex.g}</div></div>`
+    ).join('');
+  } else {
+    exSec.classList.add('hidden');
+  }
+  
+  document.getElementById('link-explorer').href = `/research/explorer#${w}`;
+  document.getElementById('link-constellation').href = `/research/constellation#${w}`;
+  document.getElementById('link-attention').href = `/research/attention#${w}`;
+  
+  // Highlight in list
+  listEl.querySelectorAll('.wl-item').forEach(el => el.classList.toggle('active', el.dataset.w === w));
+}
+
+function buildBrowse() {
+  const interesting = ['me', 'me-lem4', 'nam-tag', 'nam-erim2', 'nam-tar', 'inana', 'en-ki', 'en-lil2', 
+    'lugal', 'kur', 'abzu', 'dijir', 'ni2', 'zalag', 'dugud', 'nam-lugal', 'cu', 'jic-hur',
+    'ur-saj', 'e2', 'an', 'ki', 'utu', 'nanna', 'pirij', 'kug', 'gal', 'mah'];
+  const el = document.getElementById('browse-tags');
+  el.innerHTML = interesting.filter(w => dict && dict[w])
+    .map(w => `<span class="ct" data-w="${w}">${w}</span>`).join('');
+  el.querySelectorAll('.ct').forEach(btn => {
+    btn.addEventListener('click', () => showWord(btn.dataset.w));
+  });
+}
+</script>
