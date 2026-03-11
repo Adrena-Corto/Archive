@@ -113,8 +113,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="step-num">3</div>
           <div class="step-content">
             <h3>Word Embeddings</h3>
-            <p>Skip-Gram Word2Vec (100d, window=5) trained on literary corpus. 
-            2,372 vocabulary, 33,338 sentences. Reveals semantic clusters invisible to close reading.</p>
+            <p>Skip-Gram Word2Vec (100d, window=5) trained on combined literary corpus. 
+            8,868 vocabulary, 66,212 sentences. Reveals semantic clusters invisible to close reading.</p>
           </div>
         </div>
         <div class="step">
@@ -132,7 +132,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <section class="visualization">
       <h2>Semantic Map</h2>
       <p class="viz-subtitle">
-        2,372 Sumerian lemmas projected into 2D. Each dot is a word; proximity = semantic similarity. Hover to explore.
+        8,868 Sumerian words projected into 2D. Each dot is a word; proximity = semantic similarity. 
+        Use the search box to find specific terms. Key terms are highlighted by default.
       </p>
       <div class="viz-toggle">
         <button class="vt-btn active" data-mode="tsne">t-SNE</button>
@@ -160,7 +161,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         <div class="dt-row"><span class="dt-term">me</span><span>divine decree</span><span>operational parameter</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">me-lam₂</span><span>radiance/splendor</span><span>radiative force field</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">nam-erim₂</span><span>wickedness</span><span>oath-violation (juridical)</span><span class="dt-sig">⚠️ Significant</span></div>
-        <div class="dt-row"><span class="dt-term">nam-tag</span><span>sin</span><span>weighted burden (releasable)</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">nam-tag</span><span>sin/transgression</span><span>karmic weight (universal burden)</span><span class="dt-sig">⚠️ Significant</span></div>
         <div class="dt-row"><span class="dt-term">nam-tar</span><span>destiny/fate</span><span>seizing condition (agent/demon)</span><span class="dt-mod">⚡ Moderate</span></div>
         <div class="dt-row"><span class="dt-term">nam-mah</span><span>majesty</span><span>declared/performative status</span><span class="dt-mod">⚡ Moderate</span></div>
@@ -174,7 +174,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       <div class="tools-grid">
         <a href="/research/explorer" class="tool-card">
           <h3>🔍 Word Explorer</h3>
-          <p>Search any Sumerian word — see its semantic neighbors, usage contexts, and frequency across 394 texts.</p>
+          <p>Search any of 8,868 Sumerian words — see semantic neighbors, usage contexts, and frequency.</p>
         </a>
         <a href="/library/articles/me-are-not-decrees" class="tool-card">
           <h3>📄 The ME Are Not Decrees</h3>
@@ -196,16 +196,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="stat-label">Literary texts (ETCSL)</div>
         </div>
         <div class="stat">
-          <div class="stat-num">151,173</div>
-          <div class="stat-label">Annotated words</div>
+          <div class="stat-num">5M+</div>
+          <div class="stat-label">Total tokens (master corpus)</div>
         </div>
         <div class="stat">
-          <div class="stat-num">4,218</div>
-          <div class="stat-label">Unique lemmas</div>
+          <div class="stat-num">8,868</div>
+          <div class="stat-label">Words in semantic model</div>
         </div>
         <div class="stat">
-          <div class="stat-num">82,452</div>
-          <div class="stat-label">Administrative tablets (SumTablets)</div>
+          <div class="stat-num">526K</div>
+          <div class="stat-label">Sentences (deduplicated)</div>
         </div>
       </div>
     </section>
@@ -594,19 +594,31 @@ document.querySelectorAll('.vt-btn').forEach(btn => {
 loadViz('tsne');
 
 function initTSNE(points) {
-  const colors = {
-    "ME (divine powers)": "#ff4444",
-    "NAM- roles": "#ff8800",
-    "NAM- qualities": "#ffcc00",
-    "NAM- states": "#88cc00",
-    "NAM- crafts": "#00cc88",
-    "NAM- social": "#00aaff",
-    "Light/radiance": "#ffff00",
-    "Divine": "#cc44ff",
-    "Spatial/cosmic": "#44ccff",
-    "Blueprint/design": "#ff44cc",
-    "other": "#222222",
+  // Categorize words
+  const keyTerms = new Set(['me', 'me-lem4', 'me-te', 'nam-erim2', 'nam-tag', 'nam-tar', 'nam-lugal', 'nam-en', 'nam-mah', 'nam-sipad', 'ni2', 'zalag', 'babbar', 'nu11', 'jic-hur', 'cu', 'dijir', 'an', 'enlil', 'enki', 'inana', 'utu', 'nanna', 'lugal', 'e2', 'kur', 'abzu', 'ki', 'an-ki', 'ictaran', 'huluh', 'huc', 'dab5', 'dugud', 'du8', 'gal', 'mah']);
+  
+  function categorize(w) {
+    if (w === 'me' || w === 'me-lem4' || w === 'me-te' || w.startsWith('me-')) return 'me';
+    if (w.startsWith('nam-')) return 'nam';
+    if (['zalag', 'babbar', 'nu11', 'ud', 'iti'].includes(w)) return 'light';
+    if (['ni2', 'huluh', 'huc', 'su-zi'].includes(w)) return 'terror';
+    if (['dijir', 'an', 'enlil', 'enki', 'inana', 'utu', 'nanna', 'nin-lil2', 'ictaran', 'marduk'].includes(w)) return 'divine';
+    if (['e2', 'kur', 'abzu', 'ki', 'ub'].includes(w)) return 'spatial';
+    if (['jic-hur', 'biluda', 'cu-luh', 'jarza'].includes(w)) return 'design';
+    return 'other';
+  }
+  
+  const catColors = {
+    'me': '#ff4444', 'nam': '#ff8800', 'light': '#ffff00', 'terror': '#ff00aa',
+    'divine': '#cc44ff', 'spatial': '#44ccff', 'design': '#ff44cc', 'other': '#333'
   };
+  const catLabels = {
+    'me': 'ME (powers)', 'nam': 'NAM- (abstractions)', 'light': 'Light/radiance', 
+    'terror': 'Terror/awe', 'divine': 'Divine names', 'spatial': 'Spatial/cosmic', 
+    'design': 'Blueprint/design'
+  };
+
+  for (const p of points) { p.cat = categorize(p.w); p.isKey = keyTerms.has(p.w); }
 
   const canvas = document.getElementById('tsne-canvas');
   const ctx = canvas.getContext('2d');
@@ -614,81 +626,130 @@ function initTSNE(points) {
   const search = document.getElementById('tsne-search');
   const legend = document.getElementById('tsne-legend');
 
-  // Build legend
-  legend.innerHTML = Object.entries(colors)
-    .filter(([k]) => k !== 'other')
-    .map(([cat, col]) => 
-      `<div style="margin:3px 0;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${col};margin-right:6px;"></span>${cat}</div>`
-    ).join('');
+  legend.innerHTML = Object.entries(catLabels)
+    .map(([k, label]) => `<div style="margin:3px 0;font-size:0.75rem;"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${catColors[k]};margin-right:6px;"></span>${label}</div>`)
+    .join('');
 
-  let W, H, scale, ox, oy;
+  let zoomLevel = 1, panX = 0, panY = 0;
+  let isDragging = false, dragStartX, dragStartY, dragPanX, dragPanY;
   let highlighted = null;
+  let W, H, baseScale, baseOx, baseOy;
+
+  const xs = points.map(p => p.x), ys = points.map(p => p.y);
+  const xmin = Math.min(...xs), xmax = Math.max(...xs);
+  const ymin = Math.min(...ys), ymax = Math.max(...ys);
 
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
-    W = canvas.width = rect.width * window.devicePixelRatio;
-    H = canvas.height = rect.height * window.devicePixelRatio;
+    const dpr = window.devicePixelRatio;
+    W = canvas.width = rect.width * dpr;
+    H = canvas.height = rect.height * dpr;
     canvas.style.width = rect.width + 'px';
     canvas.style.height = rect.height + 'px';
-    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
-    
-    const xs = points.map(p => p.x), ys = points.map(p => p.y);
-    const xmin = Math.min(...xs), xmax = Math.max(...xs);
-    const ymin = Math.min(...ys), ymax = Math.max(...ys);
     const pad = 40;
     const w = rect.width, h = rect.height;
-    scale = Math.min((w - 2*pad) / (xmax - xmin), (h - 2*pad) / (ymax - ymin));
-    ox = pad - xmin * scale + (w - 2*pad - (xmax-xmin)*scale) / 2;
-    oy = pad - ymin * scale + (h - 2*pad - (ymax-ymin)*scale) / 2;
+    baseScale = Math.min((w - 2*pad) / (xmax - xmin), (h - 2*pad) / (ymax - ymin));
+    baseOx = pad - xmin * baseScale + (w - 2*pad - (xmax-xmin)*baseScale) / 2;
+    baseOy = pad - ymin * baseScale + (h - 2*pad - (ymax-ymin)*baseScale) / 2;
     draw();
   }
 
-  function toScreen(p) { return [p.x * scale + ox, p.y * scale + oy]; }
+  function toScreen(p) {
+    const s = baseScale * zoomLevel;
+    return [(p.x * baseScale + baseOx) * zoomLevel + panX, (p.y * baseScale + baseOy) * zoomLevel + panY];
+  }
 
   function draw() {
-    const w = W / window.devicePixelRatio;
-    const h = H / window.devicePixelRatio;
+    const dpr = window.devicePixelRatio;
+    const w = W / dpr, h = H / dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     ctx.clearRect(0, 0, w, h);
     
+    const searchTerm = highlighted;
+    const matchingWords = searchTerm ? points.filter(p => p.w.includes(searchTerm)) : [];
+    const matchSet = new Set(matchingWords.map(p => p.w));
+
+    // Draw all "other" points as tiny dots
     for (const p of points) {
-      if (p.category === 'other') {
+      if (p.cat === 'other' && !matchSet.has(p.w)) {
         const [sx, sy] = toScreen(p);
+        if (sx < -10 || sx > w+10 || sy < -10 || sy > h+10) continue;
         ctx.beginPath();
-        ctx.arc(sx, sy, 1.5, 0, Math.PI*2);
-        ctx.fillStyle = '#1a1a1a';
+        ctx.arc(sx, sy, 0.8, 0, Math.PI*2);
+        ctx.fillStyle = 'rgba(60,55,50,0.5)';
         ctx.fill();
       }
     }
+    
+    // Draw categorized points
     for (const p of points) {
-      if (p.category !== 'other') {
+      if (p.cat !== 'other' && !matchSet.has(p.w)) {
         const [sx, sy] = toScreen(p);
-        const isHL = highlighted === p.word;
+        if (sx < -20 || sx > w+20 || sy < -20 || sy > h+20) continue;
+        const r = p.isKey ? 4 : 2.5;
         ctx.beginPath();
-        ctx.arc(sx, sy, isHL ? 7 : 4, 0, Math.PI*2);
-        ctx.fillStyle = colors[p.category] || '#666';
+        ctx.arc(sx, sy, r, 0, Math.PI*2);
+        ctx.fillStyle = catColors[p.cat];
         ctx.fill();
-        ctx.font = isHL ? 'bold 12px Inter, sans-serif' : '9px Inter, sans-serif';
-        ctx.fillStyle = colors[p.category] || '#999';
-        ctx.fillText(p.word, sx + 6, sy + 3);
+        // Only label key terms when zoomed in enough or always for key terms
+        if (p.isKey && zoomLevel >= 1) {
+          ctx.font = '9px "JetBrains Mono", monospace';
+          ctx.fillStyle = catColors[p.cat];
+          ctx.globalAlpha = 0.8;
+          ctx.fillText(p.w, sx + 6, sy + 3);
+          ctx.globalAlpha = 1;
+        }
       }
     }
-    if (highlighted) {
-      const p = points.find(p => p.word === highlighted);
-      if (p) {
-        const [sx, sy] = toScreen(p);
-        ctx.beginPath();
-        ctx.arc(sx, sy, 10, 0, Math.PI*2);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-      }
+    
+    // Draw search matches highlighted
+    for (const p of matchingWords) {
+      const [sx, sy] = toScreen(p);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 7, 0, Math.PI*2);
+      ctx.fillStyle = '#fff';
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(sx, sy, 5, 0, Math.PI*2);
+      ctx.fillStyle = catColors[p.cat] || '#c4956a';
+      ctx.fill();
+      ctx.font = 'bold 11px "JetBrains Mono", monospace';
+      ctx.fillStyle = '#f5ebe0';
+      ctx.fillText(p.w, sx + 10, sy + 4);
     }
   }
 
-  canvas.addEventListener('mousemove', e => {
+  // Zoom with scroll
+  canvas.addEventListener('wheel', e => {
+    e.preventDefault();
     const rect = canvas.getBoundingClientRect();
     const mx = e.clientX - rect.left, my = e.clientY - rect.top;
-    let closest = null, minD = 15;
+    const oldZoom = zoomLevel;
+    zoomLevel *= e.deltaY < 0 ? 1.15 : 0.87;
+    zoomLevel = Math.max(0.3, Math.min(20, zoomLevel));
+    // Zoom toward mouse position
+    panX = mx - (mx - panX) * (zoomLevel / oldZoom);
+    panY = my - (my - panY) * (zoomLevel / oldZoom);
+    draw();
+  }, { passive: false });
+
+  // Pan with drag
+  canvas.addEventListener('mousedown', e => {
+    isDragging = true;
+    dragStartX = e.clientX; dragStartY = e.clientY;
+    dragPanX = panX; dragPanY = panY;
+    canvas.style.cursor = 'grabbing';
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (isDragging) {
+      panX = dragPanX + (e.clientX - dragStartX);
+      panY = dragPanY + (e.clientY - dragStartY);
+      draw();
+      return;
+    }
+    const rect = canvas.getBoundingClientRect();
+    const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+    let closest = null, minD = 12;
     for (const p of points) {
       const [sx, sy] = toScreen(p);
       const d = Math.hypot(mx-sx, my-sy);
@@ -696,20 +757,26 @@ function initTSNE(points) {
     }
     if (closest) {
       tooltip.style.display = 'block';
-      tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
-      tooltip.style.top = (e.clientY - rect.top - 10) + 'px';
-      tooltip.innerHTML = `<b>${closest.word}</b><br><span style="color:${colors[closest.category]}">${closest.category}</span>`;
+      tooltip.style.left = (mx + 15) + 'px';
+      tooltip.style.top = (my - 10) + 'px';
+      const catLabel = catLabels[closest.cat] || closest.cat;
+      tooltip.innerHTML = `<b>${closest.w}</b><br><span style="color:${catColors[closest.cat] || '#999'}">${catLabel}</span>`;
+      canvas.style.cursor = 'pointer';
     } else {
       tooltip.style.display = 'none';
+      canvas.style.cursor = isDragging ? 'grabbing' : 'grab';
     }
   });
+  canvas.addEventListener('mouseup', () => { isDragging = false; canvas.style.cursor = 'grab'; });
+  canvas.addEventListener('mouseleave', () => { isDragging = false; tooltip.style.display = 'none'; canvas.style.cursor = 'grab'; });
 
   search.addEventListener('input', () => {
-    highlighted = search.value.trim() || null;
+    highlighted = search.value.trim().toLowerCase() || null;
     draw();
   });
 
   window.addEventListener('resize', resize);
+  canvas.style.cursor = 'grab';
   resize();
 }
 </script>
