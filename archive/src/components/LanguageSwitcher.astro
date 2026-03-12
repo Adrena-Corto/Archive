@@ -26,8 +26,8 @@ const localeOptions = SUPPORTED_LOCALES.map(locale => {
     label: LOCALE_LABELS[locale],
     href,
     isActive: locale === currentLocale,
-    // For articles, flag that translation may not exist
-    hasTranslation: !isArticlePage || locale === DEFAULT_LOCALE,
+    // Only English is currently available
+    hasTranslation: locale === DEFAULT_LOCALE,
   };
 });
 ---
@@ -67,30 +67,35 @@ const localeOptions = SUPPORTED_LOCALES.map(locale => {
     aria-label="Language options"
   >
     {localeOptions.map(option => (
-      <a
-        href={option.href}
-        class:list={[
-          "block px-3 py-2 text-xs font-mono transition-colors",
-          option.isActive 
-            ? "bg-accent/10 text-accent" 
-            : "text-text-dim hover:text-text hover:bg-white/5",
-          !option.hasTranslation && "opacity-50"
-        ]}
-        role="option"
-        aria-selected={option.isActive}
-        aria-disabled={!option.hasTranslation}
-        title={!option.hasTranslation ? "Translation not yet available" : undefined}
-      >
-        {option.label}
-        {option.isActive && (
-          <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
-          </svg>
-        )}
-        {!option.hasTranslation && (
-          <span class="ml-1 text-[10px] text-text-dim/50" title="Translation not available">(*)</span>
-        )}
-      </a>
+      {option.hasTranslation ? (
+        <a
+          href={option.href}
+          class:list={[
+            "block px-3 py-2 text-xs font-mono transition-colors",
+            option.isActive 
+              ? "bg-accent/10 text-accent" 
+              : "text-text-dim hover:text-text hover:bg-white/5",
+          ]}
+          role="option"
+          aria-selected={option.isActive}
+        >
+          {option.label}
+          {option.isActive && (
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-3 w-3 ml-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          )}
+        </a>
+      ) : (
+        <span
+          class="block px-3 py-2 text-xs font-mono text-text-dim/30 cursor-not-allowed"
+          role="option"
+          aria-disabled="true"
+        >
+          {option.label}
+          <span class="ml-1 text-[10px] italic">soon</span>
+        </span>
+      )}
     ))}
   </div>
 </div>
