@@ -66,8 +66,8 @@ const localeOptions = SUPPORTED_LOCALES.map(locale => {
     role="listbox"
     aria-label="Language options"
   >
-    {localeOptions.map(option => (
-      {option.hasTranslation ? (
+    {localeOptions.map(option => 
+      option.hasTranslation ? (
         <a
           href={option.href}
           class:list={[
@@ -95,8 +95,8 @@ const localeOptions = SUPPORTED_LOCALES.map(locale => {
           {option.label}
           <span class="ml-1 text-[10px] italic">soon</span>
         </span>
-      )}
-    ))}
+      )
+    )}
   </div>
 </div>
 
