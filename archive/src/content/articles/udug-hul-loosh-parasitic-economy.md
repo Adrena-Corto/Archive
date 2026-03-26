@@ -8,7 +8,7 @@ featuredItems: []
 
 There is a specific kind of encounter that repeats across every culture, every era, every continent. The details differ — the entity is a shadow, a weight on the chest, a voice in the dark, a presence that drains. But the functional profile is identical. It feeds on fear. It targets the isolated and the vulnerable. It operates at night, in liminal states, at the boundary between waking and sleep. It does not kill outright — it farms.
 
-The Sumerians knew this profile. They catalogued it with the same administrative precision they applied to grain inventories and temple records. Robert Monroe, two thousand years of Christianity later, stumbled into the same architecture from the opposite direction — not through text, but through direct experience in altered states of consciousness. And in March 2026, a physicist named Thomas Minderle published a draft paper that, without referencing either tradition, derived the same predatory cycle from condensate field theory.
+The Sumerians knew this profile. They catalogued it with the same administrative precision they applied to grain inventories and temple records. Robert Monroe, two thousand years of Christianity later, stumbled into the same architecture from the opposite direction — not through text, but through direct experience in altered states of consciousness. And in March 2026, an independent researcher named Thomas Minderle published a draft paper that, without referencing either tradition, derived the same predatory cycle from condensate field theory.
 
 Three frameworks. Five thousand years apart. Same machine.
 
